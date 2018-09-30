@@ -231,10 +231,15 @@ def main():
     print('Script finished.')
 
 def inner(a,b):
-    '''
-    return <a|b>
-    
-    a,b multistates
+    r'''
+    Return :math:`\langle a | b \rangle`
+   
+    Parameters
+    ----------
+    a : dict
+        Multi configurational state
+    b : dict 
+        Multi configurational state
 
     Acknowledgement: Written entirely by Petter Saterskog
     '''
@@ -244,23 +249,44 @@ def inner(a,b):
     		acc += np.conj(a[state])*amp
     return acc
 
-def addToFirst(ms1,ms2,mul=1):
-    '''
-    To state |ms1>, add state |ms2>
+def addToFirst(psi1,psi2,mul=1):
+    r"""
+    To state :math:`|\psi_1\rangle`, add  :math:`mul * |\psi_2\rangle`.
     
-    Acknowledgement: Written entirely by Petter Saterskog
-    '''
-    for s,a in ms2.items():
-    	if s in ms1:
-    		ms1[s]+=a*mul
+    Acknowledgement: Written entirely by Petter Saterskog.
+
+    Parameters
+    ----------
+    psi1 : dict
+    psi2 : dict
+    mul : int, float or complex
+        Optional
+
+    """
+    for s,a in psi2.items():
+    	if s in psi1:
+    		psi1[s]+=a*mul
     	else:
-    		ms1[s]=a*mul
+    		psi1[s]=a*mul
 
 def c(i,psi):
-    '''
-    return |psi'> = c_i |psi>
+    r'''
+    Return :math:`|psi' \rangle = c_i |psi \rangle`.
     
     Acknowledgement: Written entirely by Petter Saterskog
+
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    psi : dict
+        Multi configurational state 
+
+    Returns
+    -------
+    ret : dict
+        New multi configurational state
+
     '''
     ret={}
     for state,amp in psi.items():
@@ -276,10 +302,23 @@ def c(i,psi):
     return ret
 
 def cd(i,psi):
-    '''
-    return |psi'> = c_i^dagger |psi>
+    r'''
+    Return :math:`|psi' \rangle = c_i^\dagger |psi \rangle`.
     
     Acknowledgement: Written entirely by Petter Saterskog
+
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    psi : dict
+        Multi configurational state 
+
+    Returns
+    -------
+    ret : dict
+        New multi configurational state
+
     '''
     ret={}
     for state,amp in psi.items():		
@@ -303,15 +342,23 @@ def cd(i,psi):
 
 def remove(i,state):
     '''
-    remove electron at orbital i from state.
+    Remove electron at orbital i in state.
 
-    Input parameters:
-    i - int
-        orbital index
-    state - tuple
-        Elements are indices of occupied orbitals 
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    state : tuple
+        Product state.
+        Elements are indices of occupied orbitals.
 
-    Returns new state and a state amplitude 
+    Returns
+    -------
+    stateNew : tuple
+        Product state
+    amp : int
+        Amplitude
+
     ''' 
     if i in state:
         j = state.index(i)
@@ -323,15 +370,23 @@ def remove(i,state):
 
 def create(i,state):
     '''
-    create electron at orbital i in state.
+    Create electron at orbital i in state.
 
-    Input parameters:
-    i - int
-        orbital index
-    state - tuple
-        Elements are indices of occupied orbitals 
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    state : tuple
+        Product state.
+        Elements are indices of occupied orbitals.
 
-    Returns new state and a state amplitude 
+    Returns
+    -------
+    stateNew : tuple
+        Product state
+    amp : int
+        Amplitude
+
     ''' 
     if i in state:
         return (),0
@@ -355,33 +410,47 @@ def gauntC(k,l,m,lp,mp,prec=16):
     return float(c)
 
 def getU(l1,m1,l2,m2,l3,m3,l4,m4,R):
-    '''
-    return Hubbard U term for four spherical harmonics functions
+    r'''
+    Return Hubbard U term for four spherical harmonics functions.
     
     Scattering process: 
-    u((l1,m1),(l2,m2),(l3,m3),(l4,m4)) 
-    * c_(l1,m1) c_(l2,m2) a_(l3,m3) a_(l4,m4),
-    where "c" ("a") is creation (annihilation) opperator.
+
+    :math:`u_{l_1,m_1,l_2,m_2,l_3,m_3,l_4,m_4} 
+    * c_{l_1,m_1}^\dagger c_{l_2,m_2}^\dagger c_{l_3,m_3} c_{l_4,m_4}`.
     
-    Input parameters:
-    l1 - angular momentum of orbital 1
-    m1 - z projected angular momentum of orbital 1  
-    l2 - angular momentum of orbital 2
-    m2 - z projected angular momentum of orbital 2  
-    l3 - angular momentum of orbital 3
-    m3 - z projected angular momentum of orbital 3
-    l4 - angular momentum of orbital 4
-    m4 - z projected angular momentum of orbital 4
-    R - List of corresponding Slater-Condon parameters.
-        Elements R[k] fullfill 0<=k<=min(|l1+l4|,|l2+l3|).
-        Note, U is nonzero if k+l1+l4 is an even integer 
-        and k+l3+l2 is an even integer.
-        For example: if l1=l2=l3=l4=2 
-        -> R = [R0,R1,R2,R3,R4] and only R0,R2 and R4 will 
+    Parameters
+    ----------
+    l1 : int
+        angular momentum of orbital 1
+    m1 : int
+        z projected angular momentum of orbital 1  
+    l2 : int
+        angular momentum of orbital 2
+    m2 : int 
+        z projected angular momentum of orbital 2  
+    l3 : int
+        angular momentum of orbital 3
+    m3 : int
+        z projected angular momentum of orbital 3
+    l4 : int
+        angular momentum of orbital 4
+    m4 : int
+        z projected angular momentum of orbital 4
+    R : list
+        Slater-Condon parameters.
+        Elements R[k] fullfill 
+        :math:`0<=k<=\textrm{min}(|l_1+l_4|,|l_2+l_3|)`.
+        Note, U is nonzero if :math:`k+l_1+l_4` is an even integer 
+        and :math:`k+l_3+l_2` is an even integer.
+        For example: if :math:`l_1=l_2=l_3=l_4=2`, 
+        R = [R0,R1,R2,R3,R4] and only R0,R2 and R4 will 
         give nonzero contribution.
     
-    Output parameter:
-    u - Hubbard U term
+    Returns
+    -------
+    u - float
+        Hubbard U term.
+
 '''
     # Check if angular momentum is conserved
     if m1+m2 == m3+m4:
@@ -396,9 +465,12 @@ def printGaunt(l=2,lp=2):
     '''
     print Gaunt coefficients.
     
-    Input parameters:
-    l - angular momentum
-    lp - angular momentum
+    Parameters
+    ----------
+    l : int
+        angular momentum
+    lp : int
+        angular momentum
     '''
     # Print Gauent coefficients
     for k in range(l+lp+1):
@@ -410,16 +482,18 @@ def printGaunt(l=2,lp=2):
             print s
         print
 
-def getNoSpinUopp(l1,l2,l3,l4,R):
+def getNoSpinUop(l1,l2,l3,l4,R):
     '''
-    return U operator.
+    Return non-spin polarized U operator.
     
     Scattering processes: 
-    1/2*sum_(m1,m2,m3,m4) u((l1,m1),(l2,m2),(l3,m3),(l4,m4)) 
-    * c_(l1,m1) c_(l2,m2) a_(l3,m3) a_(l4,m4),
-    where "c" ("a") is creation (annihilation) opperator.
 
-    No spin polarization considered, thus basis: (l,m)
+    :math:`1/2 \sum_{m_1,m_2,m_3,m_4} 
+    u_{l_1,m_1,l_2,m_2,l_3,m_3,l_4,m_4} 
+    c_{l_1,m_1}^\dagger c_{l_2,m_2}^\dagger c_{l_3,m_3} c_{l_4,m_4}`.
+
+    No spin polarization considered, thus basis is: (l,m)
+
     '''
     #uMatrix = np.zeros((2*l1+1,2*l2+1,2*l3+1,2*l4+1))
     uDict = {}
@@ -433,21 +507,27 @@ def getNoSpinUopp(l1,l2,l3,l4,R):
                         uDict[((l1,m1),(l2,m2),(l3,m3),(l4,m4))] = u/2.
     return uDict
 
-def getUopp(l1,l2,l3,l4,R):
-    '''
-    return U operator.
+def getUop(l1,l2,l3,l4,R):
+    r'''
+    Return U operator.
     
     Scattering processes: 
-    1/2*sum_(m1,m2,m3,m4) u((l1,m1),(l2,m2),(l3,m3),(l4,m4)) 
-    * sum_(s,sp) c_(l1,m1,s) c_(l2,m2,sp) a_(l3,m3,sp) a_(l4,m4,s),
-    where "c" ("a") is creation (annihilation) opperator.
+    :math:`1/2 \sum_{m_1,m_2,m_3,m_4} u_{l_1,m_1,l_2,m_2,l_3,m_3,l_4,m_4} 
+    * \sum_{s,sp} c_{l_1,m_1,s}^\dagger c_{l_2,m_2,sp}^\dagger 
+    c_{l_3,m_3,sp} c_{l_4,m_4,s}`.
     
-    Spin polarization considered, thus basis: (l,m,s)
-    where s \in \{-\frac{1}{2},\frac{1}{2} \}
+    Spin polarization is considered, thus basis: (l,m,s),
+    where :math:`s \in \{0, 1 \}` and these indices respectively 
+    corresponds to the physical values 
+    :math:`\{-\frac{1}{2},\frac{1}{2} \}`.
 
-    return dictonary with elements of the form:
-    (sorb1,sorb2,sorb3,sorb4):u/2.
-    where sorb1 is a superindex of (l,m,s).
+    Returns
+    -------
+    uDict : dict
+        Elements of the form:
+        (sorb1,sorb2,sorb3,sorb4) : u/2
+        where sorb1 is a superindex of (l,m,s).
+
     '''
     uDict = {}
     for m1 in range(-l1,l1+1):
@@ -467,50 +547,62 @@ def getUopp(l1,l2,l3,l4,R):
                                     uDict[proccess] = u/2. 
     return uDict
 
-def addOpps(opps):
+def addOps(ops):
     '''
-    return one opperator, represented as dictonary.
+    Return one operator, represented as a dictonary.
     
-    input parameters:
-    opps - List of opperators
-    '''
-    oppSum = {}
-    for opp in opps:
-        for sOpp,value in opp.iteritems():
-            if sOpp in oppSum:
-                oppSum[sOpp] += value
-            else:
-                oppSum[sOpp] = value
-    return oppSum
+    Parameters
+    ----------
+    ops : list
+        Operators
+    
+    Returns
+    -------
+    opSum : dict
 
-def get2p3dSlaterCondonUopp(Fdd=[9,0,8,0,6], Fpp=[20,0,8],
+    '''
+    opSum = {}
+    for op in ops:
+        for sOp,value in op.iteritems():
+            if sOp in opSum:
+                opSum[sOp] += value
+            else:
+                opSum[sOp] = value
+    return opSum
+
+def get2p3dSlaterCondonUop(Fdd=[9,0,8,0,6], Fpp=[20,0,8],
                             Fpd=[10,0,8], Gpd=[0,3,0,2]):
     '''
-    return a 2p-3d U operator containing a sum of 
+    Return a 2p-3d U operator containing a sum of 
     different Slater-Condon proccesses.
     
-    Note Slater-Condon parameters
+    Parameters
+    ----------
+    Fdd : list
+    Fpp : list
+    Fpd : list
+    Gpd : list    
+
     '''
     # Calculate F_dd^{0,2,4}
-    FddOpp = getUopp(l1=2,l2=2,l3=2,l4=2,R=Fdd)
+    FddOpp = getUop(l1=2,l2=2,l3=2,l4=2,R=Fdd)
     # Calculate F_pp^{0,2}
-    FppOpp = getUopp(l1=1,l2=1,l3=1,l4=1,R=Fpp)
+    FppOpp = getUop(l1=1,l2=1,l3=1,l4=1,R=Fpp)
     # Calculate F_pd^{0,2}
-    FpdOpp1 = getUopp(l1=1,l2=2,l3=2,l4=1,R=Fpd)
-    FpdOpp2 = getUopp(l1=2,l2=1,l3=1,l4=2,R=Fpd)
-    FpdOpp = addOpps([FpdOpp1,FpdOpp2])
+    FpdOpp1 = getUop(l1=1,l2=2,l3=2,l4=1,R=Fpd)
+    FpdOpp2 = getUop(l1=2,l2=1,l3=1,l4=2,R=Fpd)
+    FpdOpp = addOps([FpdOpp1,FpdOpp2])
     # Calculate G_pd^{1,3}
-    GpdOpp1 = getUopp(l1=1,l2=2,l3=1,l4=2,R=Gpd)
-    GpdOpp2 = getUopp(l1=2,l2=1,l3=2,l4=1,R=Gpd)
-    GpdOpp = addOpps([GpdOpp1,GpdOpp2])
+    GpdOpp1 = getUop(l1=1,l2=2,l3=1,l4=2,R=Gpd)
+    GpdOpp2 = getUop(l1=2,l2=1,l3=2,l4=1,R=Gpd)
+    GpdOpp = addOps([GpdOpp1,GpdOpp2])
     # Add operators
-    uOpp = addOpps([FddOpp,FppOpp,FpdOpp,GpdOpp])
+    uOpp = addOps([FddOpp,FppOpp,FpdOpp,GpdOpp])
     return uOpp
 
 def getSOCopp(xi,l=2):
     '''
-    return SOC operator for one l-shell.
-    
+    Return SOC operator for one l-shell.
     '''
     oppDict = {}
     for m in range(-l,l+1):
@@ -526,11 +618,14 @@ def getSOCopp(xi,l=2):
 
 def c2i(nBaths,spinOrb):
     '''
-    return an index, representing a spin-orbital.
+    Return an index, representing a spin-orbital.
     
-    Input parameters:
-    nbaths - dictonary. angular momentum : number of bath sets
-    spinOrb - tuple. (l,m,s) or (l,m,s,bathSet)
+    Parameters
+    ----------
+    nbaths : dict
+        angular momentum : number of bath sets
+    spinOrb : tuple
+        (l,m,s) or (l,m,s,bathSet)
     
     '''
     i = 0
@@ -550,14 +645,19 @@ def c2i(nBaths,spinOrb):
 
 def i2c(nBaths,i):
     '''
-    return an coordinate tuple, representing a spin-orbital.
+    Return an coordinate tuple, representing a spin-orbital.
     
-    Input parameters:
-    nbaths - dictonary. angular momentum : number of bath sets
-    i - int. corresponds to a spin orbital
+    Parameters
+    ----------
+    nbaths : dict
+        angular momentum : number of bath sets
+    i : int
+        Spin orbital index.
     
-    return parameter:
-    spinOrb - tuple. (l,m,s) or (l,m,s,bathSet)
+    Returns
+    -------
+    spinOrb : tuple
+        (l,m,s) or (l,m,s,bathSet)
     
     '''
     k = 0
@@ -591,11 +691,16 @@ def i2c(nBaths,i):
                     k += 1
 
 def getLz3d(nBaths,psi):
-    '''
-    return expectation value <psi|Lz_3d|psi>
+    r'''
+    Return expectation value :math:`\langle psi| Lz_{3d} |psi \rangle`.
+   
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        Multi configurational state.
     
-    where |psi> is normalized 
-    and represented by a dictonary 
     '''
     Lz = 0
     for state,amp in psi.items():
@@ -608,11 +713,16 @@ def getLz3d(nBaths,psi):
     return Lz
 
 def getSz3d(nBaths,psi):
-    '''
-    return expectation value <psi|Sz_3d|psi>
+    r'''
+    Return expectation value :math:`\langle psi| Sz_{3d} |psi \rangle`.
+   
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        Multi configurational state.
     
-    where |psi> is normalized 
-    and represented by a dictonary 
     '''
     Sz = 0
     for state,amp in psi.items():
@@ -625,11 +735,16 @@ def getSz3d(nBaths,psi):
     return Sz
 
 def getSsqr3dWithBath(nBaths,psi,tol=1e-8):
-    '''
-    return expectation value <psi|S^2|psi>
+    r'''
+    Return expectation value :math:`\langle psi| S^2 |psi \rangle`.
+   
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        normalized multi configurational state.
     
-    where |psi> is normalized 
-    and represented by a dictonary 
     '''
     psi1 = applySz3dWithBath(nBaths,psi)
     psi2 = applySplus3dWithBath(nBaths,psi)
@@ -640,11 +755,16 @@ def getSsqr3dWithBath(nBaths,psi,tol=1e-8):
     return S2.real    
 
 def getSsqr3d(nBaths,psi,tol=1e-8):
-    '''
-    return expectation value <psi|S^2_3d|psi>
+    r'''
+    Return expectation value :math:`\langle psi| S^2_{3d} |psi \rangle`.
+   
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        normalized multi configurational state.
     
-    where |psi> is normalized 
-    and represented by a dictonary 
     '''
     psi1 = applySz3d(nBaths,psi)
     psi2 = applySplus3d(nBaths,psi)
@@ -655,11 +775,16 @@ def getSsqr3d(nBaths,psi,tol=1e-8):
     return S2.real    
 
 def getLsqr3dWithBath(nBaths,psi,tol=1e-8):
-    '''
-    return expectation value <psi|L^2|psi>
-    
-    where |psi> is normalized 
-    and represented by a dictonary 
+    r'''
+    Return expectation value :math:`\langle psi| L^2 |psi \rangle`.
+   
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        normalized multi configurational state.
+
     '''
     psi1 = applyLz3dWithBath(nBaths,psi)
     psi2 = applyLplus3dWithBath(nBaths,psi)
@@ -670,11 +795,16 @@ def getLsqr3dWithBath(nBaths,psi,tol=1e-8):
     return L2.real    
 
 def getLsqr3d(nBaths,psi,tol=1e-8):
-    '''
-    return expectation value <psi|L^2_3d|psi>
+    r'''
+    Return expectation value :math:`\langle psi| L^2_{3d} |psi \rangle`.
     
-    where |psi> is normalized 
-    and represented by a dictonary 
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        normalized multi configurational state.
+    
     '''
     psi1 = applyLz3d(nBaths,psi)
     psi2 = applyLplus3d(nBaths,psi)
@@ -685,8 +815,18 @@ def getLsqr3d(nBaths,psi,tol=1e-8):
     return L2.real    
 
 def getTraceDensityMatrix(nBaths,psi,l=2):
-    '''
-    return  <psi|sum_i c_i^dagger c_i |psi> 
+    r'''
+    Return  :math:`\langle psi| \sum_i c_i^\dagger c_i |psi \rangle`. 
+    
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets 
+    psi : dict
+        Multi configurational state.
+    l : int (optional)
+        Angular momentum
+    
     '''
     n = 0
     for state,amp in psi.items():
@@ -701,23 +841,34 @@ def getTraceDensityMatrix(nBaths,psi,l=2):
     return n
 
 def getDensityMatrix(nBaths,psi,l=2):
-    '''
-    return density matrix in spherical harmonics basis.
+    r'''
+    Return density matrix in spherical harmonics basis.
 
-    return n_ij = <i|\tilde{n}|j> = <psi|c_j^dagger c_i|psi>
-    The return variable is as dictonary of the form:
-    densityMatrix[((l,mi,si),(l,mj,sj))] = <psi| c_j^dagger c_i |psi>
+    :math:`n_{ij} = \langle i| \tilde{n} |j \rangle = \langle psi| c_j^\dagger c_i |psi \rangle`.
     
+    Returns
+    -------
+    densityMatrix : dict
+        keys of the form: :math:`((l,mi,si),(l,mj,sj))`.
+        values of the form: :math:`\langle psi| c_j^\dagger c_i |psi \rangle`.
+    
+    Notes
+    ----- 
     The perhaps suprising index notation is because
     of the following four equations:
-    * G_ij(tau->0^-) = < c_j^dagger c_i>
-    * G_ij(tau->0^-) = <i|\tilde{G}(tau->0^-)|j>
-    * \tilde{G}(tau->0^-) = \tilde{n}
-    * n_ij = <i|\tilde{n}|j>
+
+    :math:`G_{ij}(\tau->0^-) = \langle c_j^\dagger c_i \rangle`.
+
+    :math:`G_ij(\tau->0^-) = \langle i|\tilde{G}(\tau->0^-)|j \rangle`.
+
+    :math:`\tilde{G}(\tau->0^-) = \tilde{n}`.
+
+    :math:`n_{ij} = \langle i| \tilde{n} |j \rangle`.
 
     Note: Switched index order compared to the order of operators, 
-    where op[((li,mi,si),(lj,mj,sj))] = value 
-    means operator: value * c_{li,mi,si}^dagger c_{lj,mj,sj} 
+    where :math:`op[((li,mi,si),(lj,mj,sj))] = value` 
+    means operator: :math:`value * c_{li,mi,si}^\dagger c_{lj,mj,sj}` 
+
     '''
     densityMatrix = OrderedDict()
     for mi in range(-l,l+1):
@@ -732,22 +883,26 @@ def getDensityMatrix(nBaths,psi,l=2):
     return densityMatrix
 
 def getDensityMatrixCubic(nBaths,psi):
-    '''
-    return density matrix in cubic harmonics basis.
+    r'''
+    Return density matrix in cubic harmonics basis.
     
-    return n_{ic,jc} = <ic|\tilde{n}|jc> = <psi|c_{jc}^dagger c_{ic}|psi>
+    :math:`n_{ic,jc} = \langle ic| \tilde{n} |jc \rangle =  \langle psi| c_{jc}^\dagger c_{ic} |psi \rangle`,
     where ic is a index containing a cubic harmonics and a spin.
+    
+    :math:`c_{ic}^\dagger = \sum_j u[j,i] c_j^\dagger`
+    
+    This gives: 
+    :math:`\langle psi| c_{jc}^\dagger c_{ic} |psi \rangle  
+    = \sum_{k,m} u[k,j] u[m,i]^{*}   
+    * \langle psi| c_{k,sj}^\dagger c_{m,si} |psi \rangle 
+    = \sum_{k,m} u[m,i]^* n[{m,si},{k,sj}] u[k,j]`
+    
+    Returns
+    -------
+    densityMatrix : dict
+        keys of the form: :math:`((i,si),(j,sj))`.
+        values of the form: :math:`\langle psi| c_{jc}^\dagger c_{ic} |psi \rangle`.
 
-    The return variable is as dictonary of the form:
-    densityMatrix[((i,si),(j,sj))] = <psi| c_{jc}^dagger c_{ic} |psi>
-    
-    c_{ic}^dagger = sum_j u[j,i] c_j^dagger
-    
-    -> 
-    <psi| c_{jc}^dagger c_{ic} |psi> = 
-    = sum_{k,m} u[k,j] u[m,i]^{*}   
-    * <psi| c_{k,sj}^dagger c_{m,si} |psi>
-    = sum_{k,m} u[m,i]^*  n[{m,si},{k,sj}] u[k,j]
     '''
     # density matrix in spherical harmonics
     nSph = getDensityMatrix(nBaths,psi)
@@ -773,19 +928,21 @@ def getDensityMatrixCubic(nBaths,psi):
     return nCub
 
 def getEgT2gOccupation(nBaths,psi):
-    '''
-    return Eg_dn, Eg_up, T2g_dn, T2g_up occupations.
+    r'''
+    Return occupations of :math:`eg_\downarrow, eg_\uparrow, t2g_\downarrow, t2g_\uparrow` states.
     
     Calculate from density matrix diagonal:
-    n_ii = <psi| c_i^dagger c_i |psi>,
-    where i is a cubic harmonics index, and
-    c(cubic)_i^dagger = sum_j u[j,i] c(spherical)_j^dagger
+    :math:`n_{ic,ic} = \langle psi| c_{ic}^\dagger c_{ic} |psi \rangle`,
+    where `ic` is a cubic harmonics index, and
+    :math:`c_{ic}^\dagger = \sum_j u[j,ic] c_j^\dagger`,
+    where `j` is a spherical harmonics index.
     
-    -> 
-    <psi| c(cubic)_{i,s}^dagger c(cubic)_{i,s} |psi> = 
-    = sum_{j,k} u[j,i] u[k,i]^{*}   
-    * <psi| c(spherical)_{j,s}^dagger c(spherical)_{k,s} |psi>
-    = sum_{j,k} u[k,i]^*  n[{k,s},{j,s}] u[j,i]
+    This gives: 
+    :math:`\langle psi| c_{ic,s}^\dagger c_{ic,s} |psi \rangle  
+    = \sum_{j,k} u[j,ic] u[k,ic]^{*}   
+    * \langle psi| c_{j,s}^\dagger c_{k,s} |psi \rangle  
+    = \sum_{j,k} u[k,ic]^*  n[{k,s},{j,s}] u[j,ic]`
+
     '''
     l = 2
     # |i(cubic)> = sum_j u[j,i] |j(spherical)>
@@ -817,17 +974,24 @@ def getEgT2gOccupation(nBaths,psi):
     return occs
 
 def applySz3dWithBath(nBaths,psi):
-    '''
-    return |psi'> = Sz(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = S^{z} |psi \rangle`. 
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -845,17 +1009,24 @@ def applySz3dWithBath(nBaths,psi):
     return psiNew
 
 def applySz3d(nBaths,psi):
-    '''
-    return |psi'> = Sz(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = S^{z}_{3d} |psi \rangle`. 
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -867,17 +1038,24 @@ def applySz3d(nBaths,psi):
     return psiNew
 
 def applyLz3dWithBath(nBaths,psi):
-    '''
-    return |psi'> = Lz|psi> 
+    r'''
+    Return :math:`|psi' \rangle = L^{z} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -895,17 +1073,24 @@ def applyLz3dWithBath(nBaths,psi):
     return psiNew
 
 def applyLz3d(nBaths,psi):
-    '''
-    return |psi'> = Lz(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = L^{z}_{3d} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -916,41 +1101,25 @@ def applyLz3d(nBaths,psi):
             addToFirst(psiNew,psiP,m)
     return psiNew
 
-def applyLz3dSlow(nBaths,psi):
-    '''
-    return |psi'> = Lz|psi> 
-    
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
-    
-    return new state of the same format as psi. 
-    '''
-    psiNew = {}
-    for state,amp in psi.items():
-        Lz3d = 0
-        for i in state:
-            spinOrb = i2c(nBaths,i)
-            if len(spinOrb)==3 and spinOrb[0]==2:
-                Lz3d += spinOrb[1]
-        addToFirst(psiNew,{state:amp*Lz3d})
-    return psiNew
-
 def applySplus3dWithBath(nBaths,psi):
-    '''
-    return |psi'> = S+|psi> 
+    r'''
+    Return :math:`|psi' \rangle = S^{+} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -971,17 +1140,24 @@ def applySplus3dWithBath(nBaths,psi):
     return psiNew
 
 def applySplus3d(nBaths,psi):
-    '''
-    return |psi'> = S+(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = S^{+}_{3d} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -995,17 +1171,24 @@ def applySplus3d(nBaths,psi):
     return psiNew
 
 def applyLplus3dWithBath(nBaths,psi):
-    '''
-    return |psi'> = L+|psi> 
+    r'''
+    Return :math:`|psi' \rangle = L^{+} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+
     '''
     psiNew = {}
     l = 2
@@ -1025,17 +1208,24 @@ def applyLplus3dWithBath(nBaths,psi):
     return psiNew
 
 def applyLplus3d(nBaths,psi):
-    '''
-    return |psi'> = L+(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = L^{+}_{3d} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+
     '''
     psiNew = {}
     l = 2
@@ -1048,17 +1238,24 @@ def applyLplus3d(nBaths,psi):
     return psiNew
 
 def applySminus3dWithBath(nBaths,psi):
-    '''
-    return |psi'> = S-|psi> 
+    r'''
+    Return :math:`|psi' \rangle = S^{-} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -1079,17 +1276,24 @@ def applySminus3dWithBath(nBaths,psi):
     return psiNew
 
 def applySminus3d(nBaths,psi):
-    '''
-    return |psi'> = S-(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = S^{-}_{3d} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+    
     '''
     psiNew = {}
     l = 2
@@ -1103,18 +1307,25 @@ def applySminus3d(nBaths,psi):
     return psiNew
 
 def applyLminus3dWithBath(nBaths,psi):
-    '''
-    return |psi'> = L-|psi> 
+    r"""
+    Return :math:`|psi' \rangle = L^{-} |psi \rangle`.
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
-    '''
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+
+    """
     psiNew = {}
     l = 2
     for m in range(-l+1,l+1):
@@ -1133,17 +1344,24 @@ def applyLminus3dWithBath(nBaths,psi):
     return psiNew
 
 def applyLminus3d(nBaths,psi):
-    '''
-    return |psi'> = L-(3d)|psi> 
+    r'''
+    Return :math:`|psi' \rangle = L^{-}_{3d} |psi \rangle`. 
     
-    Input parameters:
-    nBaths - dict. angular momentum : number of bath sets
-    psi - dict. Multi-configurational state of 
-            format tuple : amplitude
-            where each tuple describes a
-            Fock state.
+    Parameters
+    ----------
+    nBaths : dict
+        angular momentum : number of bath sets
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
     
-    return new state of the same format as psi. 
+    Returns
+    -------
+    psiNew : dict
+        With the same format as psi. 
+
     '''
     psiNew = {}
     l = 2
@@ -1214,23 +1432,28 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
 
 
 def applyOpTest(op,psi):
-    '''
-    return |psi'> = Op|psi> 
+    r'''
+    Return :math:`|psi' \rangle = op |psi \rangle`. 
     
-    Input parameters:
-    psi - dict
-        Multi-configurational state of 
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
-    Op - dict
+    Parameters
+    ----------
+    op : dict
         Operator of the format
         tuple : amplitude,
         where each tuple describes a 
         (one or two particle) scattering
         process.
-    
-    return new state of the same format as psi. 
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
+   
+    Returns
+    ------- 
+    psiNew : dict
+        New state of the same format as psi. 
+
     '''
     psiNew = {}
     for i,h in op.items():
@@ -1280,23 +1503,28 @@ def applyOpTest(op,psi):
     return psiNew
 
 def applyOp(op,psi):
-    '''
-    return |psi'> = Op|psi> 
+    r'''
+    Return :math:`|psi' \rangle = op |psi \rangle`. 
     
-    Input parameters:
-    psi - dict
-        Multi-configurational state of 
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
-    Op - dict
+    Parameters
+    ----------
+    op : dict
         Operator of the format
         tuple : amplitude,
         where each tuple describes a 
         (one or two particle) scattering
         process.
-    
-    return new state of the same format as psi. 
+    psi : dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
+   
+    Returns
+    ------- 
+    psiNew : dict
+        New state of the same format as psi. 
+
     '''
     psiNew = {}
     for i,h in op.items():
@@ -1314,23 +1542,29 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
                            DCinfo,impurityInfo,hz,
                            vHoppings,eBaths):
     '''
-    return the Hamiltonian, in operator form.
+    Return the Hamiltonian, in operator form.
     
-    Input parameters:
-    nBaths - dict. Number of bath sets for each 
-             angular momentum.
-    nBaths - dict. Number of valence bath sets for each 
-             angular momentum.
-    slaterCondon - list. List of Slater-Condon parameters.
-    SOCs - list. list of SOC parameters.
-    DCinfo - list. Contains information needed for the 
-             double counting energy.
-    impurityInfo - list. Contains information of 3d single 
-                   particle energies.
-    hz - float. External magnetic field.  
-    vHoppings - list. Contains information about hybridization 
-                hoppings.
-    eBaths - list. Contains information about bath energies.
+    Parameters
+    ----------
+    nBaths : dict
+        Number of bath sets for each angular momentum.
+    nBaths : dict
+        Number of valence bath sets for each angular momentum.
+    slaterCondon : list
+        List of Slater-Condon parameters.
+    SOCs : list
+        List of SOC parameters.
+    DCinfo : list
+        Contains information needed for the double counting energy.
+    impurityInfo : list
+        Contains information of 3d single particle energies.
+    hz : float
+        External magnetic field.  
+    vHoppings : list
+        Contains information about hybridization hoppings.
+    eBaths : list
+        Contains information about bath energies.
+
     '''
     
     # Divide up input parameters to more concrete variables 
@@ -1345,7 +1579,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
     l1,l2 = nBaths.keys()
      
     # Calculate U operator  
-    uOpperator = get2p3dSlaterCondonUopp(Fdd=Fdd,Fpp=Fpp,
+    uOpperator = get2p3dSlaterCondonUop(Fdd=Fdd,Fpp=Fpp,
                                          Fpd=Fpd,Gpd=Gpd)
     # Add SOC 
     SOC2pOperator = getSOCopp(xi_2p,l=l1)
@@ -1423,7 +1657,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
                         eBath3dOperator[((l2,mi,s,bathSet),(l2,mj,s,bathSet))] = eBath
     
     # Add Hamiltonian terms to one operator 
-    hOperator = addOpps([uOpperator,
+    hOperator = addOps([uOpperator,
                          hImp3dOperator,
                          hHzOperator,
                          SOC2pOperator,
@@ -1439,17 +1673,19 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
     return hOp
 
 def getDipoleOperator(nBaths,n):
-    '''
-    return dipole transition operator T.
+    r'''
+    Return dipole transition operator :math:`\hat{T}`.
     
-    transition between states of different angular momentum,
+    Transition between states of different angular momentum,
     defined by the keys in the nBaths dictionary.
     
-    Input parameters:
-    nBaths - dict
+    Parameters
+    ----------
+    nBaths : dict
         angular momentum: number of bath sets
-    n - list
+    n : list
         polarization vector n = [nx,ny,nz]
+
     '''
     tOp = {}
     nDict = {-1:(n[0]+1j*n[1])/sqrt(2),0:n[2],1:(-n[0]+1j*n[1])/sqrt(2)}
@@ -1561,62 +1797,78 @@ def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
     basis = tuple(basis)
     return basis
 
-def add(ms1,ms2,mul=1):
-    '''
-    return |ms'> = |ms1> + mul*|ms2>
-    '''
-    ret={}
-    for s,a in ms1.items():
-        if s in ret:
-            ret[s] += a
+def add(psi1,psi2,mul=1):
+    r"""
+    Return :math:`|\psi\rangle = |\psi_1\rangle + mul * |\psi_2\rangle`
+
+    Parameters
+    ----------
+    psi1 : dict
+    psi2 : dict
+    mul : int, float or complex
+        Optional
+
+    Returns
+    -------
+    psi : dict
+
+    """
+    psi = {}
+    for s,a in psi1.items():
+        if s in psi:
+            psi[s] += a
         else:
-            ret[s] = a
-    for s,a in ms2.items():
-        if s in ret:
-            ret[s] += mul*a
+            psi[s] = a
+    for s,a in psi2.items():
+        if s in psi:
+            psi[s] += mul*a
         else:
-            ret[s] = mul*a
-    return ret
+            psi[s] = mul*a
+    return psi
 
 def norm2(psi):
-    '''
-    return <psi|psi>
+    r'''
+    Return :math:`\langle psi|psi \rangle`.
     
-    Input parameters:
-    psi - dict
-        Multi state 
+    Parameters
+    ----------
+    psi : dict
+        Multi configurational state. 
+
     '''
     return sum(abs(a)**2 for a in psi.values())
 
 def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
-    '''
-    return Green's function for states with low enough energy.
+    r'''
+    Return Green's function for states with low enough energy.
     
-    For states |psi> with e < e[0] + energyCut, calculate: 
+    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate: 
 
-    g(w+1j*delta) = 
-    = <psi| tOp^dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp |psi>,
+    :math:`g(w+1j*delta) = 
+    = \langle psi| tOp^\dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp 
+    |psi \rangle`,
 
-    where e = <psi| hOp |psi> 
+    where :math:`e = \langle psi| hOp |psi \rangle` 
     
     Lanczos algorithm is used.
      
-    Input parameters:
-    hOp - dict
+    Parameters
+    ----------
+    hOp : dict
         Operator
-    tOps - list
+    tOps : list
         List of dict operators
-    psis - list
+    psis : list
         List of Multi state dictionaries
-    es - list
+    es : list
         Total energies
-    w - list 
+    w : list 
         Real axis energy mesh
-    delta - float
+    delta : float
         Deviation from real axis
-    krylovSize - int
+    krylovSize : int
         Size of the Krylov space
-    energyCut - float
+    energyCut : float
         Restrict the number of considered states
     
     '''
@@ -1637,23 +1889,25 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
     return gs
 
 def getGreen(e,psi,hOp,omega,delta,krylovSize):
-    '''
+    r'''
     return Green's function 
-    <psi|((omega+1j*delta+e)*\hat{1} - hOp)^{-1}|psi>
+    :math:`\langle psi|((omega+1j*delta+e)\hat{1} - hOp)^{-1} |psi \rangle`.
     
-    Input parameters:
-    e - float
+    Parameters
+    ----------
+    e : float
         Total energy
-    psi - dict
+    psi : dict
         Multi state
-    hOp - dict
+    hOp : dict
         Operator
-    omega - list 
+    omega : list 
         Real axis energy mesh
-    delta - float
+    delta : float
         Deviation from real axis
-    krylovSize - int
+    krylovSize : int
         Size of the Krylov space
+
     '''
     # Allocations
     g = np.zeros(len(omega),dtype=np.complex)
