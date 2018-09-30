@@ -1,7 +1,4 @@
-
-# coding: utf-8
-
-# In[ ]:
+#!/usr/bin/env python3
 
 from math import pi,sqrt
 import numpy as np
@@ -11,12 +8,126 @@ import itertools
 import matplotlib.pylab as plt
 import cProfile
 
-from finite import c,cd,addToFirst,inner
 from py4rspt.unitarytransform import get_spherical_2_cubic_matrix 
 from py4rspt.quantyt import thermal_average
 from py4rspt.constants import k_B
 from py4rspt.rsptt import dc_MLFT
 
+def inner(a,b):
+    '''
+    return <a|b>
+    
+    a,b multistates
+
+    Acknowledgement: Written entirely by Petter Saterskog
+    '''
+    acc=0
+    for state,amp in b.items():
+    	if state in a:
+    		acc += np.conj(a[state])*amp
+    return acc
+
+def addToFirst(ms1,ms2,mul=1):
+    '''
+    To state |ms1>, add state |ms2>
+    
+    Acknowledgement: Written entirely by Petter Saterskog
+    '''
+    for s,a in ms2.items():
+    	if s in ms1:
+    		ms1[s]+=a*mul
+    	else:
+    		ms1[s]=a*mul
+
+def c(i,psi):
+    '''
+    return |psi'> = c_i |psi>
+    
+    Acknowledgement: Written entirely by Petter Saterskog
+    '''
+    ret={}
+    for state,amp in psi.items():
+    	for j in range(len(state)):
+    		if i==state[j]:
+    			cstate=state[:j] + state[j+1:]
+    			camp=amp if j%2==0 else -amp
+    			# if cstate in ret:
+    			# 	ret[cstate]+=camp
+    			# else:
+    			ret[cstate]=camp
+    			break
+    return ret
+
+def cd(i,psi):
+    '''
+    return |psi'> = c_i^dagger |psi>
+    
+    Acknowledgement: Written entirely by Petter Saterskog
+    '''
+    ret={}
+    for state,amp in psi.items():		
+    	ip=len(state)
+    	for j in range(len(state)):
+    		p=state[j]
+    		if i==p:
+    			ip=-1
+    			break
+    		if i<p:
+    			ip=j
+    			break
+    	if ip!=-1:
+    		camp=amp if ip%2==0 else -amp
+    		cstate=state[:ip] + (i,) + state[ip:]
+    		# if cstate in ret:
+    		# 	ret[cstate]+=camp
+    		# else:
+    		ret[cstate]=camp
+    return ret
+
+def remove(i,state):
+    '''
+    remove electron at orbital i from state.
+
+    Input parameters:
+    i - int
+        orbital index
+    state - tuple
+        Elements are indices of occupied orbitals 
+
+    Returns new state and a state amplitude 
+    ''' 
+    if i in state:
+        j = state.index(i)
+        stateNew = state[:j] + state[j+1:]
+        amp = 1 if j%2==0 else -1
+        return stateNew,amp
+    else:
+        return (),0
+
+def create(i,state):
+    '''
+    create electron at orbital i in state.
+
+    Input parameters:
+    i - int
+        orbital index
+    state - tuple
+        Elements are indices of occupied orbitals 
+
+    Returns new state and a state amplitude 
+    ''' 
+    if i in state:
+        return (),0
+    else:
+    	ip = len(state)
+    	for j in range(len(state)):
+    		p = state[j]
+    		if i<p:
+    			ip=j
+    			break
+        amp = 1 if ip%2==0 else -1
+        stateNew = state[:ip] + (i,) + state[ip:]
+        return stateNew,amp
 
 def gauntC(k,l,m,lp,mp,prec=16):
     '''
@@ -374,29 +485,90 @@ def getTraceDensityMatrix(nBaths,psi,l=2):
 
 def getDensityMatrix(nBaths,psi,l=2):
     '''
-    return <psi|c_i^dagger c_j |psi> as dictonary
+    return density matrix in spherical harmonics basis.
+
+    return n_ij = <i|\tilde{n}|j> = <psi|c_j^dagger c_i|psi>
+    The return variable is as dictonary of the form:
+    densityMatrix[((l,mi,si),(l,mj,sj))] = <psi| c_j^dagger c_i |psi>
+    
+    The perhaps suprising index notation is because
+    of the following four equations:
+    * G_ij(tau->0^-) = < c_j^dagger c_i>
+    * G_ij(tau->0^-) = <i|\tilde{G}(tau->0^-)|j>
+    * \tilde{G}(tau->0^-) = \tilde{n}
+    * n_ij = <i|\tilde{n}|j>
+
+    Note: Switched index order compared to the order of operators, 
+    where op[((li,mi,si),(lj,mj,sj))] = value 
+    means operator: value * c_{li,mi,si}^dagger c_{lj,mj,sj} 
     '''
-    densityMatrix = {}
-    for m in range(-l,l+1):
-            for mp in range(-l,l+1):
-                for s in range(2):
-                    for sp in range(2):
-                        i = c2i(nBaths,(l,m,s))
-                        j = c2i(nBaths,(l,mp,sp))
-                        densityMatrix[((l,m,s),(l,mp,sp))] = inner(psi,cd(i,c(j,psi)))
+    densityMatrix = OrderedDict()
+    for mi in range(-l,l+1):
+            for mj in range(-l,l+1):
+                for si in range(2):
+                    for sj in range(2):
+                        i = c2i(nBaths,(l,mi,si))
+                        j = c2i(nBaths,(l,mj,sj))
+                        tmp = inner(psi,cd(j,c(i,psi)))
+                        if tmp != 0:
+                            densityMatrix[((l,mi,si),(l,mj,sj))] = tmp
     return densityMatrix
+
+def getDensityMatrixCubic(nBaths,psi):
+    '''
+    return density matrix in cubic harmonics basis.
+    
+    return n_{ic,jc} = <ic|\tilde{n}|jc> = <psi|c_{jc}^dagger c_{ic}|psi>
+    where ic is a index containing a cubic harmonics and a spin.
+
+    The return variable is as dictonary of the form:
+    densityMatrix[((i,si),(j,sj))] = <psi| c_{jc}^dagger c_{ic} |psi>
+    
+    c_{ic}^dagger = sum_j u[j,i] c_j^dagger
+    
+    -> 
+    <psi| c_{jc}^dagger c_{ic} |psi> = 
+    = sum_{k,m} u[k,j] u[m,i]^{*}   
+    * <psi| c_{k,sj}^dagger c_{m,si} |psi>
+    = sum_{k,m} u[m,i]^*  n[{m,si},{k,sj}] u[k,j]
+    '''
+    # density matrix in spherical harmonics
+    nSph = getDensityMatrix(nBaths,psi)
+    l = 2
+    # |i(cubic)> = sum_j u[j,i] |j(spherical)>
+    u = get_spherical_2_cubic_matrix()     
+    nCub = OrderedDict()
+    for i in range(2*l+1):
+        for j in range(2*l+1):
+            for si in range(2):
+                for sj in range(2):
+                    for k,mk in enumerate(range(-l,l+1)):
+                        for m,mm in enumerate(range(-l,l+1)):
+                            eSph = ((l,mm,si),(l,mk,sj))
+                            if eSph in nSph:
+                                tmp = np.conj(u[m,i])*nSph[eSph]*u[k,j]
+                                if tmp != 0:
+                                    eCub = ((i,si),(j,sj))
+                                    if eCub in nCub:
+                                        nCub[eCub] += tmp
+                                    else:
+                                        nCub[eCub] = tmp
+    return nCub
 
 def getEgT2gOccupation(nBaths,psi):
     '''
     return Eg_dn, Eg_up, T2g_dn, T2g_up occupations.
     
-    Calculate from density matrix n_ij = <psi| c_i^dagger c_i |psi>,
-    where i is a cubic harmonics index
-    and c(cubic)_i^dagger = sum_j u[j,i] c(spherical)_j^dagger
+    Calculate from density matrix diagonal:
+    n_ii = <psi| c_i^dagger c_i |psi>,
+    where i is a cubic harmonics index, and
+    c(cubic)_i^dagger = sum_j u[j,i] c(spherical)_j^dagger
     
     -> 
-    c(cubic)_i^dagger c(cubic)_i = 
-    = sum_{j,k} u[j,i] u[k,i]^* c(spherical)_j^dagger c(spherical)_k
+    <psi| c(cubic)_{i,s}^dagger c(cubic)_{i,s} |psi> = 
+    = sum_{j,k} u[j,i] u[k,i]^{*}   
+    * <psi| c(spherical)_{j,s}^dagger c(spherical)_{k,s} |psi>
+    = sum_{j,k} u[k,i]^*  n[{k,s},{j,s}] u[j,i]
     '''
     l = 2
     # |i(cubic)> = sum_j u[j,i] |j(spherical)>
@@ -794,34 +966,101 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
             lowest energy is not considered in the average.
     '''
     e = es - es[0]
+    # Select relevant energies
     mask = e < cutOff*k_B*T
     e = e[mask]
     psis = np.array(psis)[mask]
-    tol = 1.1
-    print '<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T,tol=tol))
+    print '<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T))
     print '<N(3d)> = {:4.3f}'.format(thermal_average(
             e,
             [getTraceDensityMatrix(nBaths,psi) for psi in psis],
-            T=T,tol=tol))
+            T=T))
     occs = thermal_average(
-        e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]).T,
-        T=T,tol=tol)
+        e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]),
+        T=T)
     print '<N(egDn)> = {:4.3f}'.format(occs[0])
     print '<N(egUp)> = {:4.3f}'.format(occs[1])
     print '<N(t2gDn)> = {:4.3f}'.format(occs[2])
     print '<N(t2gUp)> = {:4.3f}'.format(occs[3])
     print '<Lz(3d)> = {:4.3f}'.format(thermal_average(
             e,[getLz3d(nBaths,psi) for psi in psis],
-            T=T,tol=tol))
+            T=T))
     print '<Sz(3d)> = {:4.3f}'.format(thermal_average(
             e,[getSz3d(nBaths,psi) for psi in psis],
-            T=T,tol=tol))
+            T=T))
     print '<L^2(3d)> = {:4.3f}'.format(thermal_average(
             e,[getLsqr3d(nBaths,psi) for psi in psis],
-            T=T,tol=tol))
+            T=T))
     print '<S^2(3d)> = {:4.3f}'.format(thermal_average(
             e,[getSsqr3d(nBaths,psi) for psi in psis],
-            T=T,tol=tol))
+            T=T))
+
+
+def applyOpTest(op,psi):
+    '''
+    return |psi'> = Op|psi> 
+    
+    Input parameters:
+    psi - dict
+        Multi-configurational state of 
+        format tuple : amplitude
+        where each tuple describes a
+        Fock state.
+    Op - dict
+        Operator of the format
+        tuple : amplitude,
+        where each tuple describes a 
+        (one or two particle) scattering
+        process.
+    
+    return new state of the same format as psi. 
+    '''
+    psiNew = {}
+    for i,h in op.items():
+        assert h != 0
+        if len(i) == 4:
+            for s0,A0 in psi.items():
+                assert A0 != 0
+                # Remove electron
+                s1,A1 = remove(i[3],s0)
+                if A1 == 0:
+                    continue
+                # Remove electron
+                s2,A2 = remove(i[2],s1)
+                if A2 == 0:
+                    continue
+                # Create electron
+                s3,A3 = create(i[1],s2)
+                if A3 == 0:
+                    continue
+                # Create electron
+                s4,A4 = create(i[0],s3)
+                if A4 == 0:
+                    continue
+                # Add state to return variable
+                if s4 in psiNew:
+                    psiNew[s4] += h*A0*A1*A2*A3*A4
+                else:
+                    psiNew[s4] = h*A0*A1*A2*A3*A4
+        elif len(i) == 2:
+            for s0,A0 in psi.items():
+                assert A0 != 0
+                # Remove electron
+                s1,A1 = remove(i[1],s0)
+                if A1 == 0:
+                    continue
+                # Create electron
+                s2,A2 = create(i[0],s1)
+                if A2 == 0:
+                    continue
+                # Add state to return variable
+                if s2 in psiNew:
+                    psiNew[s2] += h*A0*A1*A2
+                else:
+                    psiNew[s2] = h*A0*A1*A2
+        else:
+            print 'Warning: Strange operator!'
+    return psiNew
 
 def applyOp(op,psi):
     '''
@@ -1030,7 +1269,8 @@ def getHamiltonianMatrix(hOp,basis):
         if progress + 10 <= int(j*100./len(basis)): 
             progress = int(j*100./len(basis))
             print '{:d}% done'.format(progress)
-        res = applyOp(hOp,{basis[j]:1})
+        #res = applyOp(hOp,{basis[j]:1})
+        res = applyOpTest(hOp,{basis[j]:1})
         for k,v in res.items():
             if k in basisIndex:
                 h[basisIndex[k],j] = v
@@ -1136,8 +1376,11 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
     return Green's function for states with low enough energy.
     
     For states |psi> with e < e[0] + energyCut, calculate: 
+
     g(w+1j*delta) = 
-    = <psi|tOp^dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp |psi> 
+    = <psi| tOp^dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp |psi>,
+
+    where e = <psi| hOp |psi> 
     
     Lanczos algorithm is used.
      
@@ -1166,7 +1409,8 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
     gs = np.zeros((len(tOps),len(esR),len(w)),dtype=np.complex)
     # Loop over transition operators
     for t,tOp in enumerate(tOps): 
-        psisR = [applyOp(tOp,psi) for psi in psis[:len(esR)]]  
+        #psisR = [applyOp(tOp,psi) for psi in psis[:len(esR)]]  
+        psisR = [applyOpTest(tOp,psi) for psi in psis[:len(esR)]]  
         normalizations = [sqrt(norm2(psi)) for psi in psisR]
         for i in range(len(psisR)):
             for state in psisR[i].keys(): 
@@ -1203,11 +1447,13 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
     beta = np.zeros(krylovSize-1,dtype=np.float)
     # Initialization 
     v[0] = psi
-    wp[0] = applyOp(hOp,v[0])
+    #wp[0] = applyOp(hOp,v[0])
+    wp[0] = applyOpTest(hOp,v[0])
     alpha[0] = inner(wp[0],v[0]).real
     w[0] = add(wp[0],v[0],-alpha[0])
-
-    print 'alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e)
+    
+    # Approximate position of spectrum
+    #print 'alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e)
 
     # Construct Krylov states, 
     # and elements alpha and beta
@@ -1219,7 +1465,8 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
             # Pick normalized state v[j],
             # orthogonal to v[0],v[1],v[2],...,v[j-1]
             print 'Warning: beta==0, implementation missing!'
-        wp[j] = applyOp(hOp,v[j])
+        #wp[j] = applyOp(hOp,v[j])
+        wp[j] = applyOpTest(hOp,v[j])
         alpha[j] = inner(wp[j],v[j]).real
         w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
 
@@ -1297,8 +1544,15 @@ def main():
     vConEg = 0.6
     vConT2g = 0.4
     # -----------------------
+    # Slater determinant truncation parameters
+    # Removes Slater determinants with weights
+    # smaller than this optimization parameter.
+    slaterWeightMin = 1e-8
+    # -----------------------
     # Printing parameters
-    nPrintExpValues = 5
+    nPrintExpValues = 10
+    nPrintSlaterWeights = 25
+    tolPrintOccupation = 0.1
     # -----------------------
     # Spectra parameters
     # Polarization vectors
@@ -1307,9 +1561,9 @@ def main():
     T = 300
     # How much above lowest eigenenergy to consider 
     energyCut = 10*k_B*T
-    w = np.linspace(-10,20,300)
+    w = np.linspace(-10,15,1000)
     delta = 0.2
-    krylovSize = 1
+    krylovSize = 50
     # -----------------------
     
     # Hamiltonian
@@ -1320,11 +1574,13 @@ def main():
                                  [eImp3d,deltaO],hz,
                                  [vValEg,vValT2g,vConEg,vConT2g],
                                  [eValEg,eValT2g,eConEg,eConT2g])
-    # Many body basis
+    # Many body basis for the ground state
     print 'Create basis...'    
     basis = getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
                      dnTol,n0imp)
     print '#basis states = {:d}'.format(len(basis)) 
+
+    # Full diagonalization of restricted active space Hamiltonian
     print 'Create Hamiltonian matrix...' 
     h = getHamiltonianMatrix(hOp,basis)    
     print '<#Hamiltonian elements/column> = {:d}'.format(
@@ -1333,11 +1589,12 @@ def main():
     es, vecs = np.linalg.eigh(h)
     print '{:d} eigenstates found!'.format(len(es))
     psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
-              if vecs[i,vi]!=0}) 
+              if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
             for vi in range(len(es))]
     
     printThermalExpValues(nBaths,es,psis)
     printExpValues(nBaths,es,psis,n=nPrintExpValues) 
+
     
     print 'Create spectra...'
     # Dipole transition operators
@@ -1350,22 +1607,62 @@ def main():
     # Sum over transition operators
     aTs = -np.sum(gs.imag,axis=0)
     # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs.T,T=T)
+    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
     print '#polarization = {:d}'.format(np.shape(gs)[0])
     print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
     print '#mesh points = {:d}'.format(np.shape(gs)[2])
     # Save spectra to disk
+    print 'Save spectra to disk...'
     tmp = [w,aAvg]
     # Each transition operator seperatly
     for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[2]],-np.imag(gs[i,:,:]).T)
+        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
         tmp.append(a)
-    np.savetxt('spectra.dat',np.array(tmp).T,fmt='%8.4f',
+    filename = 'output/spectra_krylovSize' + str(krylovSize) + '.dat'
+    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
                header='E  sum  T1  T2  T3 ...')
-    
+
+    # Print Slater determinants and weights 
+    print 'Slater determinants and weights'
+    weights = []
+    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
+        print 'Eigenstate {:d}'.format(i)
+        print 'Number of Slater determinants: {:d}'.format(len(psi))
+        ws = np.array([ abs(a)**2 for s,a in psi.items() ])
+        s = np.array([ s for s,a in psi.items() ])
+        j = np.argsort(ws)
+        ws = ws[j[-1::-1]]
+        s = s[j[-1::-1]]
+        weights.append(ws)
+        print 'Highest weights:'
+        print ws[:nPrintSlaterWeights]
+        print 'Corresponding Slater determinantss:'
+        print s[:nPrintSlaterWeights]
+        print 
+    ## Plot Slater determinant wegiths
+    #plt.figure()
+    #for i,psi in range(np.shape(gs)[1]):
+    #    plt.plot(weights[i],'-o',label=str(i))
+    #plt.legend()
+    #plt.show()
+
+    # Test to calculate density matrix 
+    print 'Density matrix (in cubic basis):'
+    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
+        print 'Eigenstate {:d}'.format(i)
+        n = getDensityMatrixCubic(nBaths,psi)
+        print '#element={:d}'.format(len(n))
+        for e,ne in n.items():
+            if abs(ne) > tolPrintOccupation: 
+                if e[0] == e[1]:
+                    print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
+                else:
+                    print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
+        print  
+
     # Plot spectra
     
-    # Plot all spectra
+    ## Plot all spectra
     #plt.figure()
     #for t in range(np.shape(gs)[0]):
     #    for i in range(np.shape(gs)[1]):
@@ -1376,34 +1673,32 @@ def main():
     #plt.legend()
     #plt.tight_layout()
     #plt.show()
-    
-    
-    # Plot spectra for each transition operator
-    plt.figure()
-    plt.plot(w,aAvg,'-k',label='sum')
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[2]],-np.imag(gs[i,:,:]).T)
-        plt.plot(w,a,label='T_{:d}'.format(i))
-    plt.xlabel('w')
-    plt.ylabel('intensity')
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
+    #
+    #
+    ## Plot spectra for each transition operator
+    #plt.figure()
+    #plt.plot(w,aAvg,'-k',label='sum')
+    #for i in range(np.shape(gs)[0]):
+    #    a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+    #    plt.plot(w,a,label='T_{:d}'.format(i))
+    #plt.xlabel('w')
+    #plt.ylabel('intensity')
+    #plt.legend()
+    #plt.tight_layout()
+    #plt.show()
 
-    # Plot spectra for each eigenstate
-    plt.figure()
-    plt.plot(w,aAvg,'-k',label='avg')
-    for i in range(np.shape(aTs)[0]):
-        plt.plot(w,aTs[i,:],label='eig_{:d}'.format(i))
-    plt.xlabel('w')
-    plt.ylabel('intensity')
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-    
+    ## Plot spectra for each eigenstate
+    #plt.figure()
+    #plt.plot(w,aAvg,'-k',label='avg')
+    #for i in range(np.shape(aTs)[0]):
+    #    plt.plot(w,aTs[i,:],label='eig_{:d}'.format(i))
+    #plt.xlabel('w')
+    #plt.ylabel('intensity')
+    #plt.legend()
+    #plt.tight_layout()
+    #plt.show()
 
-
-# In[ ]:
+    print('Script finished.')
 
 if __name__== "__main__":
     main()
