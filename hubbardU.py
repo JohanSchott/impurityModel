@@ -13,6 +13,223 @@ from py4rspt.quantyt import thermal_average
 from py4rspt.constants import k_B
 from py4rspt.rsptt import dc_MLFT
 
+def main():
+    
+    #printGaunt()
+    
+    # -----------------------
+    # System imformation  
+    l1,l2 = 1,2 # Angular momentum
+    # Number of bath sets
+    nBaths = OrderedDict()
+    nBaths[l1] = 0
+    nBaths[l2] = 1
+    # Number of valence bath sets
+    valBaths = OrderedDict()
+    valBaths[l1] = 0
+    valBaths[l2] = 1
+    # -----------------------
+    # Occupation imformation. 
+    # Angular momentum : initial impurity occupation 
+    n0imp = OrderedDict()
+    n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
+    n0imp[l2] = 8 # 8 for Ni+2
+    # Angular momentum : max devation of initial impurity occupation
+    dnTol = OrderedDict()
+    dnTol[l1] = 0
+    dnTol[l2] = 2
+    # Angular momentum : max number of electrons to leave 
+    # valence bath orbitals 
+    dnValBaths = OrderedDict()
+    dnValBaths[l1] = 0
+    dnValBaths[l2] = 2 
+    # Angular momentum : max number of electrons to enter 
+    # conduction bath orbitals 
+    dnConBaths = OrderedDict()
+    dnConBaths[l1] = 0
+    dnConBaths[l2] = 0
+    # -----------------------
+    # Hamiltonian parameters
+    # Slater-Condon parameters
+    Fdd=[7.5,0,9.9,0,6.6]
+    Fpp=[0,0,0]
+    Fpd=[8.9,0,6.8]
+    Gpd=[0,5,0,2.8] 
+    # SOC values
+    xi_2p = 11.629
+    xi_3d = 0.096
+    # Double counting parameter
+    chargeTransferCorrection = 1.5
+    # Onsite 3d energy parameters
+    eImp3d = -1.31796
+    deltaO = 0.60422
+    hz = 0.00001
+    # Bath energies and hoppings for 3d orbitals
+    eValEg = -4.4
+    eValT2g = -6.5
+    eConEg = 3
+    eConT2g = 2
+    vValEg = 1.883
+    vValT2g = 1.395
+    vConEg = 0.6
+    vConT2g = 0.4
+    # -----------------------
+    # Slater determinant truncation parameters
+    # Removes Slater determinants with weights
+    # smaller than this optimization parameter.
+    slaterWeightMin = 1e-8
+    # -----------------------
+    # Printing parameters
+    nPrintExpValues = 10
+    nPrintSlaterWeights = 25
+    tolPrintOccupation = 0.1
+    # -----------------------
+    # Spectra parameters
+    # Polarization vectors
+    epsilons = [[1,0,0],[0,1,0],[0,0,1]] 
+    # Temperature
+    T = 300
+    # How much above lowest eigenenergy to consider 
+    energyCut = 10*k_B*T
+    w = np.linspace(-10,15,1000)
+    delta = 0.2
+    krylovSize = 50
+    # -----------------------
+    
+    # Hamiltonian
+    print 'Construct the Hamiltonian operator...'
+    hOp = getHamiltonianOperator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
+                                 [xi_2p,xi_3d],
+                                 [n0imp,chargeTransferCorrection],
+                                 [eImp3d,deltaO],hz,
+                                 [vValEg,vValT2g,vConEg,vConT2g],
+                                 [eValEg,eValT2g,eConEg,eConT2g])
+    # Many body basis for the ground state
+    print 'Create basis...'    
+    basis = getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
+                     dnTol,n0imp)
+    print '#basis states = {:d}'.format(len(basis)) 
+
+    # Full diagonalization of restricted active space Hamiltonian
+    print 'Create Hamiltonian matrix...' 
+    h = getHamiltonianMatrix(hOp,basis)    
+    print '<#Hamiltonian elements/column> = {:d}'.format(
+        int(len(np.nonzero(h)[0])*1./len(basis)))     
+    print 'Diagonalize the Hamiltonian...'
+    es, vecs = np.linalg.eigh(h)
+    print '{:d} eigenstates found!'.format(len(es))
+    psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
+              if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
+            for vi in range(len(es))]
+    
+    printThermalExpValues(nBaths,es,psis)
+    printExpValues(nBaths,es,psis,n=nPrintExpValues) 
+
+    
+    print 'Create spectra...'
+    # Dipole transition operators
+    tOps = []
+    for epsilon in epsilons:
+        tOps.append(getDipoleOperator(nBaths,epsilon))
+    # Green's function 
+    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut)
+    
+    # Sum over transition operators
+    aTs = -np.sum(gs.imag,axis=0)
+    # thermal average
+    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
+    print '#polarization = {:d}'.format(np.shape(gs)[0])
+    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
+    print '#mesh points = {:d}'.format(np.shape(gs)[2])
+    # Save spectra to disk
+    print 'Save spectra to disk...'
+    tmp = [w,aAvg]
+    # Each transition operator seperatly
+    for i in range(np.shape(gs)[0]):
+        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+        tmp.append(a)
+    filename = 'output/spectra_krylovSize' + str(krylovSize) + '.dat'
+    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+               header='E  sum  T1  T2  T3 ...')
+
+    # Print Slater determinants and weights 
+    print 'Slater determinants and weights'
+    weights = []
+    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
+        print 'Eigenstate {:d}'.format(i)
+        print 'Number of Slater determinants: {:d}'.format(len(psi))
+        ws = np.array([ abs(a)**2 for s,a in psi.items() ])
+        s = np.array([ s for s,a in psi.items() ])
+        j = np.argsort(ws)
+        ws = ws[j[-1::-1]]
+        s = s[j[-1::-1]]
+        weights.append(ws)
+        print 'Highest weights:'
+        print ws[:nPrintSlaterWeights]
+        print 'Corresponding Slater determinantss:'
+        print s[:nPrintSlaterWeights]
+        print 
+    ## Plot Slater determinant weigths
+    #plt.figure()
+    #for i,psi in range(np.shape(gs)[1]):
+    #    plt.plot(weights[i],'-o',label=str(i))
+    #plt.legend()
+    #plt.show()
+
+    # Test to calculate density matrix 
+    print 'Density matrix (in cubic basis):'
+    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
+        print 'Eigenstate {:d}'.format(i)
+        n = getDensityMatrixCubic(nBaths,psi)
+        print '#element={:d}'.format(len(n))
+        for e,ne in n.items():
+            if abs(ne) > tolPrintOccupation: 
+                if e[0] == e[1]:
+                    print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
+                else:
+                    print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
+        print  
+
+    # Plot spectra
+    
+    ## Plot all spectra
+    #plt.figure()
+    #for t in range(np.shape(gs)[0]):
+    #    for i in range(np.shape(gs)[1]):
+    #        plt.plot(w,-gs[t,i,:].imag,
+    #                 label='t={:d},i={:d}'.format(t,i))
+    #plt.xlabel('w')
+    #plt.ylabel('intensity')
+    #plt.legend()
+    #plt.tight_layout()
+    #plt.show()
+    #
+    #
+    ## Plot spectra for each transition operator
+    #plt.figure()
+    #plt.plot(w,aAvg,'-k',label='sum')
+    #for i in range(np.shape(gs)[0]):
+    #    a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+    #    plt.plot(w,a,label='T_{:d}'.format(i))
+    #plt.xlabel('w')
+    #plt.ylabel('intensity')
+    #plt.legend()
+    #plt.tight_layout()
+    #plt.show()
+
+    ## Plot spectra for each eigenstate
+    #plt.figure()
+    #plt.plot(w,aAvg,'-k',label='avg')
+    #for i in range(np.shape(aTs)[0]):
+    #    plt.plot(w,aTs[i,:],label='eig_{:d}'.format(i))
+    #plt.xlabel('w')
+    #plt.ylabel('intensity')
+    #plt.legend()
+    #plt.tight_layout()
+    #plt.show()
+
+    print('Script finished.')
+
 def inner(a,b):
     '''
     return <a|b>
@@ -1483,222 +1700,6 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
     return g
 
 
-def main():
-    
-    #printGaunt()
-    
-    # -----------------------
-    # System imformation  
-    l1,l2 = 1,2 # Angular momentum
-    # Number of bath sets
-    nBaths = OrderedDict()
-    nBaths[l1] = 0
-    nBaths[l2] = 1
-    # Number of valence bath sets
-    valBaths = OrderedDict()
-    valBaths[l1] = 0
-    valBaths[l2] = 1
-    # -----------------------
-    # Occupation imformation. 
-    # Angular momentum : initial impurity occupation 
-    n0imp = OrderedDict()
-    n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
-    n0imp[l2] = 8 # 8 for Ni+2
-    # Angular momentum : max devation of initial impurity occupation
-    dnTol = OrderedDict()
-    dnTol[l1] = 0
-    dnTol[l2] = 2
-    # Angular momentum : max number of electrons to leave 
-    # valence bath orbitals 
-    dnValBaths = OrderedDict()
-    dnValBaths[l1] = 0
-    dnValBaths[l2] = 2 
-    # Angular momentum : max number of electrons to enter 
-    # conduction bath orbitals 
-    dnConBaths = OrderedDict()
-    dnConBaths[l1] = 0
-    dnConBaths[l2] = 0
-    # -----------------------
-    # Hamiltonian parameters
-    # Slater-Condon parameters
-    Fdd=[7.5,0,9.9,0,6.6]
-    Fpp=[0,0,0]
-    Fpd=[8.9,0,6.8]
-    Gpd=[0,5,0,2.8] 
-    # SOC values
-    xi_2p = 11.629
-    xi_3d = 0.096
-    # Double counting parameter
-    chargeTransferCorrection = 1.5
-    # Onsite 3d energy parameters
-    eImp3d = -1.31796
-    deltaO = 0.60422
-    hz = 0.00001
-    # Bath energies and hoppings for 3d orbitals
-    eValEg = -4.4
-    eValT2g = -6.5
-    eConEg = 3
-    eConT2g = 2
-    vValEg = 1.883
-    vValT2g = 1.395
-    vConEg = 0.6
-    vConT2g = 0.4
-    # -----------------------
-    # Slater determinant truncation parameters
-    # Removes Slater determinants with weights
-    # smaller than this optimization parameter.
-    slaterWeightMin = 1e-8
-    # -----------------------
-    # Printing parameters
-    nPrintExpValues = 10
-    nPrintSlaterWeights = 25
-    tolPrintOccupation = 0.1
-    # -----------------------
-    # Spectra parameters
-    # Polarization vectors
-    epsilons = [[1,0,0],[0,1,0],[0,0,1]] 
-    # Temperature
-    T = 300
-    # How much above lowest eigenenergy to consider 
-    energyCut = 10*k_B*T
-    w = np.linspace(-10,15,1000)
-    delta = 0.2
-    krylovSize = 50
-    # -----------------------
-    
-    # Hamiltonian
-    print 'Construct the Hamiltonian operator...'
-    hOp = getHamiltonianOperator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
-                                 [xi_2p,xi_3d],
-                                 [n0imp,chargeTransferCorrection],
-                                 [eImp3d,deltaO],hz,
-                                 [vValEg,vValT2g,vConEg,vConT2g],
-                                 [eValEg,eValT2g,eConEg,eConT2g])
-    # Many body basis for the ground state
-    print 'Create basis...'    
-    basis = getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
-                     dnTol,n0imp)
-    print '#basis states = {:d}'.format(len(basis)) 
-
-    # Full diagonalization of restricted active space Hamiltonian
-    print 'Create Hamiltonian matrix...' 
-    h = getHamiltonianMatrix(hOp,basis)    
-    print '<#Hamiltonian elements/column> = {:d}'.format(
-        int(len(np.nonzero(h)[0])*1./len(basis)))     
-    print 'Diagonalize the Hamiltonian...'
-    es, vecs = np.linalg.eigh(h)
-    print '{:d} eigenstates found!'.format(len(es))
-    psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
-              if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
-            for vi in range(len(es))]
-    
-    printThermalExpValues(nBaths,es,psis)
-    printExpValues(nBaths,es,psis,n=nPrintExpValues) 
-
-    
-    print 'Create spectra...'
-    # Dipole transition operators
-    tOps = []
-    for epsilon in epsilons:
-        tOps.append(getDipoleOperator(nBaths,epsilon))
-    # Green's function 
-    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut)
-    
-    # Sum over transition operators
-    aTs = -np.sum(gs.imag,axis=0)
-    # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
-    print '#polarization = {:d}'.format(np.shape(gs)[0])
-    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
-    print '#mesh points = {:d}'.format(np.shape(gs)[2])
-    # Save spectra to disk
-    print 'Save spectra to disk...'
-    tmp = [w,aAvg]
-    # Each transition operator seperatly
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-        tmp.append(a)
-    filename = 'output/spectra_krylovSize' + str(krylovSize) + '.dat'
-    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
-               header='E  sum  T1  T2  T3 ...')
-
-    # Print Slater determinants and weights 
-    print 'Slater determinants and weights'
-    weights = []
-    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
-        print 'Eigenstate {:d}'.format(i)
-        print 'Number of Slater determinants: {:d}'.format(len(psi))
-        ws = np.array([ abs(a)**2 for s,a in psi.items() ])
-        s = np.array([ s for s,a in psi.items() ])
-        j = np.argsort(ws)
-        ws = ws[j[-1::-1]]
-        s = s[j[-1::-1]]
-        weights.append(ws)
-        print 'Highest weights:'
-        print ws[:nPrintSlaterWeights]
-        print 'Corresponding Slater determinantss:'
-        print s[:nPrintSlaterWeights]
-        print 
-    ## Plot Slater determinant wegiths
-    #plt.figure()
-    #for i,psi in range(np.shape(gs)[1]):
-    #    plt.plot(weights[i],'-o',label=str(i))
-    #plt.legend()
-    #plt.show()
-
-    # Test to calculate density matrix 
-    print 'Density matrix (in cubic basis):'
-    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
-        print 'Eigenstate {:d}'.format(i)
-        n = getDensityMatrixCubic(nBaths,psi)
-        print '#element={:d}'.format(len(n))
-        for e,ne in n.items():
-            if abs(ne) > tolPrintOccupation: 
-                if e[0] == e[1]:
-                    print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
-                else:
-                    print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
-        print  
-
-    # Plot spectra
-    
-    ## Plot all spectra
-    #plt.figure()
-    #for t in range(np.shape(gs)[0]):
-    #    for i in range(np.shape(gs)[1]):
-    #        plt.plot(w,-gs[t,i,:].imag,
-    #                 label='t={:d},i={:d}'.format(t,i))
-    #plt.xlabel('w')
-    #plt.ylabel('intensity')
-    #plt.legend()
-    #plt.tight_layout()
-    #plt.show()
-    #
-    #
-    ## Plot spectra for each transition operator
-    #plt.figure()
-    #plt.plot(w,aAvg,'-k',label='sum')
-    #for i in range(np.shape(gs)[0]):
-    #    a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-    #    plt.plot(w,a,label='T_{:d}'.format(i))
-    #plt.xlabel('w')
-    #plt.ylabel('intensity')
-    #plt.legend()
-    #plt.tight_layout()
-    #plt.show()
-
-    ## Plot spectra for each eigenstate
-    #plt.figure()
-    #plt.plot(w,aAvg,'-k',label='avg')
-    #for i in range(np.shape(aTs)[0]):
-    #    plt.plot(w,aTs[i,:],label='eig_{:d}'.format(i))
-    #plt.xlabel('w')
-    #plt.ylabel('intensity')
-    #plt.legend()
-    #plt.tight_layout()
-    #plt.show()
-
-    print('Script finished.')
 
 if __name__== "__main__":
     main()
