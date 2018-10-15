@@ -1,0 +1,464 @@
+Construct the Hamiltonian operator...
+Create basis...
+l= 1
+New partition occupations:
+nImp,nVal,nCon = 6,0,0
+l= 2
+New partition occupations:
+nImp,nVal,nCon = 8,10,0
+New partition occupations:
+nImp,nVal,nCon = 9,9,0
+New partition occupations:
+nImp,nVal,nCon = 10,8,0
+#basis states = 190
+Create Hamiltonian matrix...
+Filling the Hamiltonian...
+10% done
+20% done
+30% done
+40% done
+50% done
+60% done
+70% done
+80% done
+90% done
+<#Hamiltonian elements/column> = 5
+Diagonalize the Hamiltonian...
+190 eigenstates found!
+<E-E0> = 0.000
+<N(3d)> = 8.135
+<N(egDn)> = 1.078
+<N(egUp)> = 1.077
+<N(t2gDn)> = 2.990
+<N(t2gUp)> = 2.990
+<Lz(3d)> = -0.000
+<Sz(3d)> = -0.000
+<L^2(3d)> = 11.189
+<S^2(3d)> = 1.830
+E0 = -756.42
+i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)
+0  0.000  8.14  1.998   0.157    2.992   2.988   -0.38  -0.92   11.19    1.83    12.00     2.00
+1  0.000  8.14  1.078   1.078    2.990   2.990   -0.00  -0.00   11.19    1.83    12.00     2.00
+2  0.000  8.14  0.157   1.998    2.988   2.992    0.38   0.92   11.19    1.83    12.00     2.00
+3  0.832  8.10  1.541   1.541    2.509   2.508   -0.00  -0.00   11.39    1.86    11.98     1.98
+4  0.832  8.10  1.541   1.541    2.508   2.508    0.00  -0.00   11.39    1.86    11.98     1.98
+5  0.858  8.10  1.769   1.316    2.733   2.281    0.02  -0.45   11.41    1.88    12.00     2.00
+6  0.858  8.10  1.542   1.543    2.507   2.507    0.00   0.00   11.41    1.88    12.00     2.00
+7  0.858  8.10  1.316   1.769    2.281   2.733   -0.02   0.45   11.41    1.88    12.00     2.00
+8  0.921  8.10  1.752   1.312    2.766   2.270   -0.11  -0.47   11.38    1.87    11.98     1.99
+9  0.921  8.10  1.532   1.532    2.518   2.518    0.00  -0.00   11.38    1.87    11.98     1.99
+10  0.921  8.10  1.312   1.752    2.270   2.766    0.11   0.47   11.38    1.87    11.98     1.99
+11  0.943  8.10  1.535   1.536    2.514   2.515   -0.00   0.00   11.40    1.88    12.00     2.00
+12  1.366  8.08  1.802   1.802    2.238   2.238   -0.00  -0.00   11.08    1.89    11.46     1.99
+13  1.446  8.08  1.870   1.713    2.629   1.870    0.89  -0.46   10.99    1.90    11.36     2.00
+14  1.446  8.08  1.792   1.792    2.249   2.249    0.00   0.00   10.99    1.90    11.36     2.00
+15  1.446  8.08  1.713   1.870    1.870   2.629   -0.89   0.46   10.99    1.90    11.36     2.00
+16  1.498  8.13  1.565   1.565    2.498   2.498    0.00  -0.00    9.71    1.33    10.23     1.36
+17  1.498  8.13  1.565   1.565    2.498   2.498    0.00   0.00    9.71    1.33    10.23     1.36
+18  1.564  8.09  1.883   1.668    2.622   1.914    0.37  -0.46   10.76    1.89    11.13     2.00
+19  1.564  8.09  1.776   1.776    2.267   2.268   -0.00   0.00   10.76    1.89    11.13     2.00
+20  1.564  8.09  1.668   1.883    1.913   2.622   -0.37   0.46   10.76    1.89    11.13     2.00
+21  1.750  8.17  1.348   1.348    2.739   2.739   -0.00   0.00    9.80    0.73    10.69     0.66
+22  1.750  8.17  1.348   1.348    2.739   2.739   -0.00   0.00    9.80    0.73    10.69     0.66
+23  2.522  8.15  1.624   1.621    2.527   2.375   -0.42  -0.08    6.86    0.40     7.21     0.34
+24  2.522  8.15  1.623   1.623    2.451   2.451   -0.00  -0.00    6.86    0.40     7.21     0.34
+25  2.522  8.15  1.621   1.624    2.375   2.527    0.42   0.08    6.86    0.40     7.21     0.34
+26  2.603  8.26  1.284   1.284    2.848   2.848    0.00  -0.00   15.27    0.22    17.77     0.04
+27  2.838  8.13  1.771   1.771    2.293   2.293   -0.00  -0.00    3.49    1.83     3.12     1.99
+28  2.838  8.13  1.771   1.771    2.293   2.293    0.00  -0.00    3.49    1.83     3.12     1.99
+29  2.891  8.13  1.832   1.663    2.625   2.015   -0.31  -0.39    4.41    1.55     4.22     1.66
+Create spectra...
+#polarization = 3
+#relevant eigenstates = 3
+#mesh points = 1000
+Save spectra to disk...
+Slater determinants and weights
+Eigenstate 0
+Number of Slater determinants: 38
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Eigenstate 1
+Number of Slater determinants: 42
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Eigenstate 2
+Number of Slater determinants: 38
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Density matrix (in cubic basis):
+Eigenstate 0
+#element=38
+
+Eigenstate 1
+#element=42
+
+Eigenstate 2
+#element=38
+
+Script finished.
+         25458945 function calls (25446504 primitive calls) in 27.582 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001   27.582   27.582 <string>:1(<module>)
+        1    0.002    0.002   27.581   27.581 impurityModel.py:17(main)
+      244    8.443    0.035   21.982    0.090 impurityModel.py:1495(applyOp)
+        1    0.001    0.001   20.345   20.345 impurityModel.py:1891(getSpectra)
+        9    0.003    0.000   20.330    2.259 impurityModel.py:1940(getGreen)
+  4217124    4.202    0.000    7.170    0.000 impurityModel.py:372(removeList)
+  2652686    4.743    0.000    6.256    0.000 impurityModel.py:432(createList)
+        1    0.002    0.002    4.230    4.230 impurityModel.py:1437(printExpValues)
+       33    0.128    0.004    2.454    0.074 impurityModel.py:991(getEgT2gOccupation)
+  3848468    1.683    0.000    1.683    0.000 {method 'index' of 'list' objects}
+        1    0.003    0.003    1.677    1.677 impurityModel.py:1764(getHamiltonianMatrix)
+    12828    1.315    0.000    1.581    0.000 impurityModel.py:273(c)
+    12828    1.265    0.000    1.538    0.000 impurityModel.py:305(cd)
+  3189133    1.316    0.000    1.316    0.000 {range}
+  3848100    1.285    0.000    1.285    0.000 {method 'remove' of 'list' objects}
+        1    0.002    0.002    0.772    0.772 impurityModel.py:1593(getHamiltonianOperator)
+     2054    0.008    0.000    0.698    0.000 impurityModel.py:464(gauntC)
+        1    0.000    0.000    0.672    0.672 impurityModel.py:634(get2p3dSlaterCondonUop)
+        6    0.005    0.001    0.671    0.112 impurityModel.py:570(getUop)
+     1606    0.003    0.000    0.665    0.000 impurityModel.py:472(getU)
+     2054    0.026    0.000    0.616    0.000 wigner.py:550(gaunt)
+  4556629    0.519    0.000    0.519    0.000 {len}
+       30    0.000    0.000    0.509    0.017 impurityModel.py:838(getLsqr3dWithBath)
+    71616    0.248    0.000    0.505    0.000 impurityModel.py:707(i2c)
+    42498    0.274    0.000    0.475    0.000 impurityModel.py:680(c2i)
+       30    0.000    0.000    0.427    0.014 impurityModel.py:798(getSsqr3dWithBath)
+      964    0.009    0.000    0.397    0.000 evalf.py:1363(evalf)
+  1420408    0.386    0.000    0.386    0.000 {method 'insert' of 'list' objects}
+11580/964    0.050    0.000    0.377    0.000 evalf.py:1303(evalf)
+      944    0.031    0.000    0.371    0.000 evalf.py:546(evalf_mul)
+        1    0.000    0.000    0.314    0.314 impurityModel.py:1457(printThermalExpValues)
+       33    0.026    0.001    0.284    0.009 impurityModel.py:776(getSz3d)
+       33    0.023    0.001    0.277    0.008 impurityModel.py:754(getLz3d)
+       33    0.000    0.000    0.239    0.007 impurityModel.py:858(getLsqr3d)
+       30    0.005    0.000    0.223    0.007 impurityModel.py:1037(applySz3dWithBath)
+       30    0.005    0.000    0.216    0.007 impurityModel.py:1101(applyLz3dWithBath)
+   114121    0.127    0.000    0.210    0.000 collections.py:117(keys)
+9915/9683    0.014    0.000    0.207    0.000 decorators.py:84(__sympifyit_wrapper)
+     8595    0.200    0.000    0.205    0.000 impurityModel.py:234(inner)
+       33    0.000    0.000    0.193    0.006 impurityModel.py:818(getSsqr3d)
+3877/3474    0.013    0.000    0.188    0.000 assumptions.py:242(getit)
+   271304    0.161    0.000    0.161    0.000 {method 'items' of 'dict' objects}
+       33    0.016    0.000    0.156    0.005 impurityModel.py:878(getTraceDensityMatrix)
+       30    0.003    0.000    0.145    0.005 impurityModel.py:1370(applyLminus3dWithBath)
+       30    0.003    0.000    0.144    0.005 impurityModel.py:1234(applyLplus3dWithBath)
+     5718    0.067    0.000    0.141    0.000 facts.py:503(deduce_all_facts)
+     2830    0.004    0.000    0.136    0.000 assumptions.py:226(copy)
+     2830    0.008    0.000    0.132    0.000 assumptions.py:215(__init__)
+5723/5719    0.007    0.000    0.115    0.000 decorators.py:122(binary_op_wrapper)
+        3    0.016    0.005    0.108    0.036 impurityModel.py:946(getDensityMatrixCubic)
+     4278    0.102    0.000    0.105    0.000 impurityModel.py:253(addToFirst)
+       33    0.003    0.000    0.105    0.003 impurityModel.py:1072(applySz3d)
+       33    0.003    0.000    0.104    0.003 impurityModel.py:1136(applyLz3d)
+   429850    0.104    0.000    0.104    0.000 collections.py:90(__iter__)
+       30    0.002    0.000    0.103    0.003 impurityModel.py:1165(applySplus3dWithBath)
+       30    0.002    0.000    0.096    0.003 impurityModel.py:1301(applySminus3dWithBath)
+     3420    0.013    0.000    0.095    0.000 evalf.py:660(evalf_pow)
+        3    0.003    0.001    0.090    0.030 impurityModel.py:904(getDensityMatrix)
+  304/241    0.003    0.000    0.076    0.000 operations.py:28(__new__)
+  215/193    0.011    0.000    0.067    0.000 mul.py:97(flatten)
+       33    0.002    0.000    0.067    0.002 impurityModel.py:1407(applyLminus3d)
+       33    0.002    0.000    0.064    0.002 impurityModel.py:1271(applyLplus3d)
+       10    0.062    0.006    0.062    0.006 {numpy.core.multiarray.dot}
+    29125    0.039    0.000    0.059    0.000 collections.py:125(items)
+     9950    0.022    0.000    0.053    0.000 sympify.py:76(sympify)
+      944    0.004    0.000    0.053    0.000 miscellaneous.py:64(sqrt)
+     1911    0.009    0.000    0.052    0.000 expr.py:142(__rmul__)
+   147/31    0.002    0.000    0.047    0.002 power.py:244(__new__)
+       31    0.001    0.000    0.046    0.001 mul.py:628(_eval_power)
+       33    0.001    0.000    0.043    0.001 impurityModel.py:1339(applySminus3d)
+       33    0.001    0.000    0.042    0.001 impurityModel.py:1203(applySplus3d)
+      190    0.037    0.000    0.041    0.000 impurityModel.py:122(<dictcomp>)
+27068/27038    0.010    0.000    0.040    0.000 {all}
+       30    0.001    0.000    0.040    0.001 power.py:836(_eval_expand_power_base)
+3007/2910    0.008    0.000    0.039    0.000 assumptions.py:254(_ask)
+        3    0.000    0.000    0.037    0.012 impurityModel.py:1726(getDipoleOperator)
+     2863    0.006    0.000    0.037    0.000 expr.py:137(__mul__)
+        1    0.036    0.036    0.036    0.036 linalg.py:1141(eigh)
+    78174    0.027    0.000    0.034    0.000 facts.py:537(<genexpr>)
+     4672    0.002    0.000    0.033    0.000 impurityModel.py:1723(<genexpr>)
+     3706    0.007    0.000    0.030    0.000 numbers.py:1088(_new)
+     2945    0.012    0.000    0.027    0.000 numbers.py:1636(__div__)
+     4650    0.020    0.000    0.024    0.000 numbers.py:80(mpf_norm)
+     3648    0.004    0.000    0.023    0.000 evalf.py:1264(<lambda>)
+    39581    0.023    0.000    0.023    0.000 facts.py:486(_tell)
+    53/30    0.001    0.000    0.023    0.001 numbers.py:2216(_eval_power)
+     1888    0.004    0.000    0.020    0.000 libelefun.py:318(mpf_pow)
+     3648    0.005    0.000    0.020    0.000 libmpf.py:466(from_rational)
+      944    0.004    0.000    0.019    0.000 expr.py:179(__rdiv__)
+     5536    0.012    0.000    0.017    0.000 libmpf.py:925(mpf_div)
+      944    0.007    0.000    0.017    0.000 numbers.py:954(__new__)
+      423    0.001    0.000    0.017    0.000 impurityModel.py:1879(norm2)
+     3420    0.011    0.000    0.017    0.000 libmpf.py:1339(mpf_sqrt)
+       81    0.016    0.000    0.017    0.000 impurityModel.py:1850(add)
+     3598    0.006    0.000    0.016    0.000 evalf.py:114(pure_complex)
+      423    0.004    0.000    0.016    0.000 {sum}
+     8551    0.008    0.000    0.016    0.000 numbers.py:739(__hash__)
+        1    0.006    0.006    0.015    0.015 npyio.py:969(savetxt)
+     3422    0.010    0.000    0.015    0.000 numbers.py:162(igcd)
+     1820    0.004    0.000    0.014    0.000 numbers.py:1267(__eq__)
+    38064    0.014    0.000    0.014    0.000 {isinstance}
+     9297    0.009    0.000    0.014    0.000 numbers.py:2008(__new__)
+     3836    0.004    0.000    0.013    0.000 numbers.py:1367(__hash__)
+     2970    0.002    0.000    0.012    0.000 sympify.py:375(_sympify)
+    16162    0.010    0.000    0.012    0.000 impurityModel.py:1889(<genexpr>)
+    86672    0.011    0.000    0.011    0.000 {method 'get' of 'dict' objects}
+16718/16389    0.009    0.000    0.011    0.000 basic.py:121(__hash__)
+     4510    0.005    0.000    0.011    0.000 numbers.py:1838(__hash__)
+      944    0.001    0.000    0.009    0.000 numbers.py:610(__float__)
+     1061    0.003    0.000    0.009    0.000 mul.py:767(as_coeff_Mul)
+    15716    0.009    0.000    0.009    0.000 {hasattr}
+     3430    0.004    0.000    0.009    0.000 libmpf.py:601(mpf_lt)
+     5954    0.006    0.000    0.009    0.000 basic.py:96(__new__)
+     1888    0.002    0.000    0.008    0.000 evalf.py:1269(<lambda>)
+        1    0.008    0.008    0.008    0.008 {method 'close' of 'file' objects}
+    63258    0.008    0.000    0.008    0.000 {abs}
+    88/45    0.001    0.000    0.007    0.000 factor_.py:265(perfect_power)
+     1888    0.004    0.000    0.007    0.000 libelefun.py:114(f)
+    13106    0.006    0.000    0.006    0.000 {gmpy2._mpmath_normalize}
+      297    0.003    0.000    0.006    0.000 basic.py:1695(_exec_constructor_postprocessors)
+      944    0.001    0.000    0.006    0.000 numbers.py:1124(_as_mpf_val)
+     8902    0.005    0.000    0.006    0.000 libmpf.py:330(from_int)
+  453/408    0.001    0.000    0.006    0.000 numbers.py:2121(__mul__)
+       36    0.006    0.000    0.006    0.000 impurityModel.py:1982(<dictcomp>)
+       39    0.000    0.000    0.005    0.000 function.py:418(__new__)
+     1908    0.004    0.000    0.005    0.000 libmpf.py:64(dps_to_prec)
+       60    0.000    0.000    0.005    0.000 iterables.py:624(sift)
+      836    0.001    0.000    0.005    0.000 operations.py:68(_new_rawargs)
+       60    0.000    0.000    0.005    0.000 power.py:872(pred)
+     3430    0.004    0.000    0.005    0.000 libmpf.py:549(mpf_cmp)
+       10    0.000    0.000    0.005    0.000 expr.py:780(_eval_is_negative)
+      430    0.002    0.000    0.004    0.000 mul.py:379(_gather)
+       94    0.000    0.000    0.004    0.000 generate.py:598(primerange)
+     1052    0.002    0.000    0.004    0.000 operations.py:54(_from_args)
+     6125    0.004    0.000    0.004    0.000 {method 'update' of 'set' objects}
+     5530    0.003    0.000    0.004    0.000 numbers.py:2205(__hash__)
+     1542    0.001    0.000    0.004    0.000 evalf.py:1265(<lambda>)
+      139    0.000    0.000    0.004    0.000 numbers.py:1622(__mul__)
+     5970    0.004    0.000    0.004    0.000 {gmpy2._mpmath_create}
+      215    0.000    0.000    0.003    0.000 mul.py:32(_mulsort)
+      944    0.002    0.000    0.003    0.000 libmpf.py:410(from_float)
+     6072    0.003    0.000    0.003    0.000 compatibility.py:348(as_int)
+       20    0.000    0.000    0.003    0.000 expr.py:1743(as_real_imag)
+    11640    0.003    0.000    0.003    0.000 basic.py:630(func)
+      215    0.001    0.000    0.003    0.000 {method 'sort' of 'list' objects}
+     9252    0.003    0.000    0.003    0.000 {max}
+      382    0.001    0.000    0.003    0.000 {map}
+     2768    0.002    0.000    0.003    0.000 assumptions.py:229(generator)
+       30    0.000    0.000    0.003    0.000 mul.py:1221(_eval_is_imaginary)
+        4    0.003    0.001    0.003    0.001 impurityModel.py:610(addOps)
+       39    0.000    0.000    0.003    0.000 function.py:181(nargs)
+       37    0.002    0.000    0.003    0.000 unitarytransform.py:176(get_spherical_2_cubic_matrix)
+       92    0.000    0.000    0.002    0.000 functools.py:86(__lt__)
+      990    0.002    0.000    0.002    0.000 numbers.py:1583(__add__)
+     2654    0.002    0.000    0.002    0.000 numbers.py:1138(_eval_is_infinite)
+     3113    0.002    0.000    0.002    0.000 numbers.py:2159(__eq__)
+   184/92    0.001    0.000    0.002    0.000 basic.py:170(compare)
+       39    0.001    0.000    0.002    0.000 sets.py:1519(__new__)
+     1303    0.002    0.000    0.002    0.000 numbers.py:3416(__hash__)
+      948    0.002    0.000    0.002    0.000 evalf.py:34(bitcount)
+     3776    0.002    0.000    0.002    0.000 {divmod}
+     5954    0.002    0.000    0.002    0.000 {built-in method __new__ of type object at 0x101481f38}
+7766/7653    0.002    0.000    0.002    0.000 {hash}
+  200/124    0.001    0.000    0.002    0.000 numbers.py:1480(__new__)
+       62    0.000    0.000    0.002    0.000 generate.py:138(primerange)
+     7613    0.002    0.000    0.002    0.000 basic.py:656(args)
+       31    0.000    0.000    0.002    0.000 mul.py:1142(_eval_is_zero)
+       43    0.000    0.000    0.002    0.000 numbers.py:1841(factors)
+      944    0.001    0.000    0.002    0.000 libmpf.py:429(to_float)
+      129    0.001    0.000    0.002    0.000 factor_.py:806(factorint)
+       43    0.000    0.000    0.002    0.000 factor_.py:1217(factorrat)
+       39    0.000    0.000    0.002    0.000 sets.py:553(__contains__)
+     1888    0.002    0.000    0.002    0.000 libelefun.py:94(g)
+      944    0.001    0.000    0.002    0.000 wigner.py:45(_calc_factlist)
+     1951    0.002    0.000    0.002    0.000 {gmpy2.isqrt_rem}
+     4593    0.002    0.000    0.002    0.000 {min}
+      598    0.001    0.000    0.001    0.000 {method 'mro' of 'type' objects}
+       88    0.000    0.000    0.001    0.000 numbers.py:1185(__mul__)
+       39    0.000    0.000    0.001    0.000 sets.py:269(contains)
+      119    0.000    0.000    0.001    0.000 numbers.py:2132(__rmul__)
+     6444    0.001    0.000    0.001    0.000 {gmpy2.bit_length}
+     1810    0.001    0.000    0.001    0.000 libmpf.py:512(mpf_eq)
+     5598    0.001    0.000    0.001    0.000 {gmpy2.mpz}
+       78    0.001    0.000    0.001    0.000 compatibility.py:562(ordered)
+     2854    0.001    0.000    0.001    0.000 {method 'copy' of 'dict' objects}
+     3430    0.001    0.000    0.001    0.000 libmpf.py:667(mpf_sign)
+     1888    0.001    0.000    0.001    0.000 evalf.py:81(fastlog)
+       39    0.000    0.000    0.001    0.000 sets.py:1589(_contains)
+      542    0.000    0.000    0.001    0.000 {method 'setdefault' of 'dict' objects}
+        1    0.001    0.001    0.001    0.001 impurityModel.py:1782(getBasis)
+       72    0.001    0.000    0.001    0.000 {method 'format' of 'str' objects}
+       43    0.000    0.000    0.001    0.000 factor_.py:1281(primefactors)
+      350    0.001    0.000    0.001    0.000 collections.py:71(__setitem__)
+     1533    0.001    0.000    0.001    0.000 {gmpy2.isqrt}
+       11    0.000    0.000    0.001    0.000 quantyt.py:621(thermal_average)
+     2654    0.001    0.000    0.001    0.000 expr.py:2995(as_coeff_Add)
+      944    0.001    0.000    0.001    0.000 {math.ldexp}
+       39    0.001    0.000    0.001    0.000 relational.py:305(__new__)
+       30    0.000    0.000    0.001    0.000 numbers.py:667(__mul__)
+     1908    0.001    0.000    0.001    0.000 {round}
+     3599    0.001    0.000    0.001    0.000 {math.sqrt}
+      368    0.001    0.000    0.001    0.000 core.py:73(__cmp__)
+      598    0.001    0.000    0.001    0.000 basic.py:1714(<genexpr>)
+      109    0.001    0.000    0.001    0.000 {numpy.core.multiarray.zeros}
+       20    0.001    0.000    0.001    0.000 {numpy.core.multiarray.array}
+       39    0.000    0.000    0.001    0.000 function.py:235(__new__)
+     1898    0.001    0.000    0.001    0.000 numbers.py:1109(_hashable_content)
+      119    0.000    0.000    0.001    0.000 numbers.py:3396(__ne__)
+     1001    0.001    0.000    0.001    0.000 {method 'write' of 'file' objects}
+       10    0.000    0.000    0.001    0.000 numbers.py:1333(__lt__)
+      184    0.000    0.000    0.001    0.000 core.py:96(__lt__)
+      944    0.001    0.000    0.001    0.000 {math.frexp}
+      119    0.000    0.000    0.001    0.000 numbers.py:3384(__eq__)
+     3021    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}
+      184    0.000    0.000    0.001    0.000 core.py:101(__gt__)
+      104    0.000    0.000    0.001    0.000 basic.py:297(__eq__)
+       98    0.000    0.000    0.001    0.000 power.py:30(integer_nthroot)
+      392    0.000    0.000    0.001    0.000 power.py:763(as_base_exp)
+        1    0.000    0.000    0.000    0.000 {open}
+      114    0.000    0.000    0.000    0.000 operations.py:343(make_args)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:1490(nonzero)
+     1732    0.000    0.000    0.000    0.000 expr.py:2991(as_coeff_Mul)
+        1    0.000    0.000    0.000    0.000 {method 'nonzero' of 'numpy.ndarray' objects}
+       11    0.000    0.000    0.000    0.000 numbers.py:2326(_eval_is_composite)
+      195    0.000    0.000    0.000    0.000 numbers.py:2874(__hash__)
+       13    0.000    0.000    0.000    0.000 collections.py:50(__init__)
+       57    0.000    0.000    0.000    0.000 random.py:277(shuffle)
+      423    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+      944    0.000    0.000    0.000    0.000 numbers.py:1902(as_coeff_Add)
+       29    0.000    0.000    0.000    0.000 generate.py:245(search)
+      272    0.000    0.000    0.000    0.000 {sorted}
+       50    0.000    0.000    0.000    0.000 numbers.py:1745(__eq__)
+      992    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+       40    0.000    0.000    0.000    0.000 factor_.py:705(_factorint_small)
+     1179    0.000    0.000    0.000    0.000 numbers.py:2546(__nonzero__)
+       10    0.000    0.000    0.000    0.000 basic.py:583(is_comparable)
+    61/31    0.000    0.000    0.000    0.000 expr.py:366(is_number)
+    39/35    0.000    0.000    0.000    0.000 factor_.py:194(multiplicity)
+      849    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+       66    0.000    0.000    0.000    0.000 numbers.py:2092(__radd__)
+       61    0.000    0.000    0.000    0.000 expr.py:1126(args_cnc)
+       88    0.000    0.000    0.000    0.000 libmpf.py:825(gmpy_mpf_mul)
+      119    0.000    0.000    0.000    0.000 numbers.py:2166(__ne__)
+       30    0.000    0.000    0.000    0.000 mul.py:1179(_eval_real_imag)
+       31    0.000    0.000    0.000    0.000 power.py:472(_eval_is_zero)
+      107    0.000    0.000    0.000    0.000 {zip}
+       44    0.000    0.000    0.000    0.000 numbers.py:606(_as_mpf_op)
+       64    0.000    0.000    0.000    0.000 numbers.py:2001(_as_mpf_val)
+       10    0.000    0.000    0.000    0.000 numbers.py:603(_eval_evalf)
+       78    0.000    0.000    0.000    0.000 numbers.py:214(igcd2)
+       11    0.000    0.000    0.000    0.000 fromnumeric.py:2300(amin)
+      598    0.000    0.000    0.000    0.000 {built-in method from_iterable}
+      2/1    0.000    0.000    0.000    0.000 numbers.py:1684(_eval_power)
+       11    0.000    0.000    0.000    0.000 numeric.py:86(zeros_like)
+      575    0.000    0.000    0.000    0.000 basic.py:130(_hashable_content)
+       12    0.000    0.000    0.000    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+       58    0.000    0.000    0.000    0.000 primetest.py:426(isprime)
+       39    0.000    0.000    0.000    0.000 sets.py:53(_infimum_key)
+       15    0.000    0.000    0.000    0.000 numbers.py:2321(_eval_is_prime)
+      5/2    0.000    0.000    0.000    0.000 expr.py:152(__pow__)
+       11    0.000    0.000    0.000    0.000 numbers.py:2169(__gt__)
+       11    0.000    0.000    0.000    0.000 _methods.py:28(_amin)
+   183/93    0.000    0.000    0.000    0.000 expr.py:416(<genexpr>)
+      5/2    0.000    0.000    0.000    0.000 expr.py:147(_pow)
+        2    0.000    0.000    0.000    0.000 impurityModel.py:664(getSOCop)
+       71    0.000    0.000    0.000    0.000 factor_.py:156(trailing)
+       21    0.000    0.000    0.000    0.000 fromnumeric.py:1574(shape)
+       46    0.000    0.000    0.000    0.000 generate.py:479(nextprime)
+      263    0.000    0.000    0.000    0.000 functools.py:84(__init__)
+       88    0.000    0.000    0.000    0.000 {math.log}
+        3    0.000    0.000    0.000    0.000 fromnumeric.py:828(argsort)
+      149    0.000    0.000    0.000    0.000 numbers.py:1898(as_coeff_Mul)
+       19    0.000    0.000    0.000    0.000 integers.py:20(eval)
+       13    0.000    0.000    0.000    0.000 abc.py:148(__subclasscheck__)
+        8    0.000    0.000    0.000    0.000 numeric.py:414(asarray)
+       60    0.000    0.000    0.000    0.000 power.py:870(<lambda>)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:1743(sum)
+       78    0.000    0.000    0.000    0.000 boolalg.py:318(__hash__)
+        6    0.000    0.000    0.000    0.000 numeric.py:1835(array_str)
+        3    0.000    0.000    0.000    0.000 {method 'argsort' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 libelefun.py:233(pi_fixed)
+       60    0.000    0.000    0.000    0.000 logic.py:89(fuzzy_bool)
+      128    0.000    0.000    0.000    0.000 evalf.py:1268(<lambda>)
+      134    0.000    0.000    0.000    0.000 numbers.py:2038(__int__)
+       14    0.000    0.000    0.000    0.000 {method 'conjugate' of 'numpy.generic' objects}
+      243    0.000    0.000    0.000    0.000 {method 'random' of '_random.Random' objects}
+        1    0.000    0.000    0.000    0.000 impurityModel.py:1768(<dictcomp>)
+      172    0.000    0.000    0.000    0.000 numbers.py:3263(__eq__)
+        1    0.000    0.000    0.000    0.000 function_base.py:9(linspace)
+        1    0.000    0.000    0.000    0.000 _methods.py:31(_sum)
+       44    0.000    0.000    0.000    0.000 numbers.py:1130(_as_mpf_op)
+        1    0.000    0.000    0.000    0.000 type_check.py:237(iscomplexobj)
+        5    0.000    0.000    0.000    0.000 index_tricks.py:665(fill_diagonal)
+        6    0.000    0.000    0.000    0.000 arrayprint.py:340(array2string)
+        4    0.000    0.000    0.000    0.000 {issubclass}
+      7/1    0.000    0.000    0.000    0.000 libelefun.py:211(bs_chudnovsky)
+       39    0.000    0.000    0.000    0.000 {method 'pop' of 'list' objects}
+       13    0.000    0.000    0.000    0.000 _abcoll.py:548(update)
+       10    0.000    0.000    0.000    0.000 numbers.py:3260(__hash__)
+       62    0.000    0.000    0.000    0.000 numbers.py:1577(_eval_is_zero)
+       11    0.000    0.000    0.000    0.000 {numpy.core.multiarray.copyto}
+       77    0.000    0.000    0.000    0.000 numbers.py:1571(_hashable_content)
+       13    0.000    0.000    0.000    0.000 _weakrefset.py:70(__contains__)
+       91    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+       29    0.000    0.000    0.000    0.000 {_bisect.bisect}
+       11    0.000    0.000    0.000    0.000 {numpy.core.multiarray.empty_like}
+       92    0.000    0.000    0.000    0.000 power.py:296(base)
+       44    0.000    0.000    0.000    0.000 numbers.py:1160(_eval_is_zero)
+       29    0.000    0.000    0.000    0.000 generate.py:80(extend)
+       61    0.000    0.000    0.000    0.000 power.py:300(exp)
+       40    0.000    0.000    0.000    0.000 factor_.py:719(done)
+        1    0.000    0.000    0.000    0.000 function.py:63(_coeff_isneg)
+        1    0.000    0.000    0.000    0.000 linalg.py:139(_commonType)
+       20    0.000    0.000    0.000    0.000 sympify.py:13(__init__)
+       21    0.000    0.000    0.000    0.000 boolalg.py:406(<lambda>)
+        6    0.000    0.000    0.000    0.000 {_functools.reduce}
+        3    0.000    0.000    0.000    0.000 type_check.py:141(imag)
+        1    0.000    0.000    0.000    0.000 linalg.py:106(_makearray)
+       50    0.000    0.000    0.000    0.000 boolalg.py:313(__nonzero__)
+       78    0.000    0.000    0.000    0.000 {method 'bit_length' of 'int' objects}
+       50    0.000    0.000    0.000    0.000 numbers.py:634(_eval_is_finite)
+        3    0.000    0.000    0.000    0.000 {method 'astype' of 'numpy.ndarray' objects}
+       10    0.000    0.000    0.000    0.000 complexes.py:52(eval)
+       10    0.000    0.000    0.000    0.000 complexes.py:148(eval)
+        3    0.000    0.000    0.000    0.000 numeric.py:484(asanyarray)
+        2    0.000    0.000    0.000    0.000 linalg.py:124(_realType)
+       16    0.000    0.000    0.000    0.000 {method 'iteritems' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.arange}
+       10    0.000    0.000    0.000    0.000 boolalg.py:376(__nonzero__)
+       11    0.000    0.000    0.000    0.000 logic.py:148(fuzzy_not)
+        1    0.000    0.000    0.000    0.000 rsptt.py:890(dc_MLFT)
+        1    0.000    0.000    0.000    0.000 linalg.py:209(_assertNdSquareness)
+       10    0.000    0.000    0.000    0.000 evalf.py:1266(<lambda>)
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.result_type}
+        1    0.000    0.000    0.000    0.000 linalg.py:101(get_linalg_error_extobj)
+        1    0.000    0.000    0.000    0.000 linalg.py:198(_assertRankAtLeast2)
+        2    0.000    0.000    0.000    0.000 linalg.py:111(isComplexType)
+        2    0.000    0.000    0.000    0.000 numbers.py:1580(__neg__)
+       12    0.000    0.000    0.000    0.000 numbers.py:1574(_eval_is_positive)
+       10    0.000    0.000    0.000    0.000 numbers.py:3253(_as_mpf_val)
+        1    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'count' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 arrayprint.py:34(product)
+        1    0.000    0.000    0.000    0.000 _iotools.py:31(_is_string_like)
+        1    0.000    0.000    0.000    0.000 {getattr}
+        1    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method '__array_prepare__' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+

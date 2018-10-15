@@ -30,7 +30,7 @@ def main():
     valBaths[l1] = 0
     valBaths[l2] = 1
     # -----------------------
-    # Occupation imformation. 
+    # Basis occupation information. 
     # Angular momentum : initial impurity occupation 
     n0imp = OrderedDict()
     n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
@@ -95,6 +95,10 @@ def main():
     w = np.linspace(-10,15,1000)
     delta = 0.2
     krylovSize = 5
+    # Occupation restrictions 
+    # Used when spectra is generated
+    restrictions = {}
+    restrictions[tuple(c2i(nBaths,(l2,m,s)) for m in range(-l2,l2+1) for s in range(2))] = (n0imp[l2],n0imp[l2]+2)
     # -----------------------
     
     # Hamiltonian
@@ -133,7 +137,7 @@ def main():
     for epsilon in epsilons:
         tOps.append(getDipoleOperator(nBaths,epsilon))
     # Green's function 
-    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut)
+    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions)
     
     # Sum over transition operators
     aTs = -np.sum(gs.imag,axis=0)
@@ -585,7 +589,7 @@ def getUop(l1,l2,l3,l4,R):
     -------
     uDict : dict
         Elements of the form:
-        (sorb1,sorb2,sorb3,sorb4) : u/2
+        ((sorb1,'c'),(sorb2,'c'),(sorb3,'a'),(sorb4,'a')) : u/2
         where sorb1 is a superindex of (l,m,s).
 
     '''
@@ -598,8 +602,8 @@ def getUop(l1,l2,l3,l4,R):
                     if u != 0:
                         for s in range(2):
                             for sp in range(2):
-                                proccess = ((l1,m1,s),(l2,m2,sp),
-                                            (l3,m3,sp),(l4,m4,s))
+                                proccess = (((l1,m1,s),'c'),((l2,m2,sp),'c'),
+                                            ((l3,m3,sp),'a'),((l4,m4,s),'a'))
                                 # Pauli exclusion principle
                                 if not(s == sp and 
                                        ((l1,m1)==(l2,m2) or 
@@ -646,35 +650,35 @@ def get2p3dSlaterCondonUop(Fdd=[9,0,8,0,6], Fpp=[20,0,8],
 
     '''
     # Calculate F_dd^{0,2,4}
-    FddOpp = getUop(l1=2,l2=2,l3=2,l4=2,R=Fdd)
+    FddOp = getUop(l1=2,l2=2,l3=2,l4=2,R=Fdd)
     # Calculate F_pp^{0,2}
-    FppOpp = getUop(l1=1,l2=1,l3=1,l4=1,R=Fpp)
+    FppOp = getUop(l1=1,l2=1,l3=1,l4=1,R=Fpp)
     # Calculate F_pd^{0,2}
-    FpdOpp1 = getUop(l1=1,l2=2,l3=2,l4=1,R=Fpd)
-    FpdOpp2 = getUop(l1=2,l2=1,l3=1,l4=2,R=Fpd)
-    FpdOpp = addOps([FpdOpp1,FpdOpp2])
+    FpdOp1 = getUop(l1=1,l2=2,l3=2,l4=1,R=Fpd)
+    FpdOp2 = getUop(l1=2,l2=1,l3=1,l4=2,R=Fpd)
+    FpdOp = addOps([FpdOp1,FpdOp2])
     # Calculate G_pd^{1,3}
-    GpdOpp1 = getUop(l1=1,l2=2,l3=1,l4=2,R=Gpd)
-    GpdOpp2 = getUop(l1=2,l2=1,l3=2,l4=1,R=Gpd)
-    GpdOpp = addOps([GpdOpp1,GpdOpp2])
+    GpdOp1 = getUop(l1=1,l2=2,l3=1,l4=2,R=Gpd)
+    GpdOp2 = getUop(l1=2,l2=1,l3=2,l4=1,R=Gpd)
+    GpdOp = addOps([GpdOp1,GpdOp2])
     # Add operators
-    uOpp = addOps([FddOpp,FppOpp,FpdOpp,GpdOpp])
-    return uOpp
+    uOp = addOps([FddOp,FppOp,FpdOp,GpdOp])
+    return uOp
 
-def getSOCopp(xi,l=2):
+def getSOCop(xi,l=2):
     '''
     Return SOC operator for one l-shell.
     '''
-    oppDict = {}
+    opDict = {}
     for m in range(-l,l+1):
         for s in range(2):
             value = xi*m*(1/2. if s==1 else -1/2.)
-            oppDict[((l,m,s),(l,m,s))] = value  
+            opDict[(((l,m,s),'c'),((l,m,s),'a'))] = value  
     for m in range(-l,l):
         value = xi/2.*sqrt((l-m)*(l+m+1))
-        oppDict[((l,m,1),(l,m+1,0))] = value
-        oppDict[((l,m+1,0),(l,m,1))] = value
-    return oppDict
+        opDict[(((l,m,1),'c'),((l,m+1,0),'a'))] = value
+        opDict[(((l,m+1,0),'c'),((l,m,1),'a'))] = value
+    return opDict
 
 
 def c2i(nBaths,spinOrb):
@@ -1492,7 +1496,7 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
             T=T))
 
 
-def applyOp(op,psi,method='newTuple'):
+def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
     r'''
     Return :math:`|psi' \rangle = op |psi \rangle`. 
     
@@ -1501,14 +1505,23 @@ def applyOp(op,psi,method='newTuple'):
     op : dict
         Operator of the format
         tuple : amplitude,
-        where each tuple describes a 
-        (one or two particle) scattering
-        process.
+        where each tuple describes a scattering
+        process. Examples of possible tuples (and their meanings) are:
+        ((i,'c'))  <-> c_i^dagger
+        ((i,'a'))  <-> c_i
+        ((i,'c'),(j,'a'))  <-> c_i^dagger c_j
+        ((i,'c'),(j,'c'),(k,'a'),(l,'a')) <-> c_i^dagger c_j^dagger c_k c_l
     psi : dict
         Multi-configurational state of 
         format tuple : amplitude
         where each tuple describes a
         Fock state.
+    slaterWeightMin : float
+        Restrict the number of product states by
+        looking at |amplitudes|^2. 
+    restrictions : dict
+        Restriction the occupation of generated 
+        product states.
     method : str
         Determine which way to calculate the result.
          
@@ -1524,177 +1537,80 @@ def applyOp(op,psi,method='newTuple'):
     They return the same result, but calculations vary a bit.
 
     '''
+    psiNew = {}
     if method == 'compact':
-        psiNew = {}
-        for i,h in op.items():
-            if len(i) == 4:
-                psiP = cd(i[0],cd(i[1],c(i[2],c(i[3],psi))))
-                addToFirst(psiNew,psiP,h)
-            elif len(i) == 2:
-                psiP = cd(i[0],c(i[1],psi))
-                addToFirst(psiNew,psiP,h)
-            else:
-                print 'Warning: Strange operator!'
+        for process,h in op.items():
+            assert h != 0
+            # Initialize state
+            psiA = psi
+            for i,action in process[-1::-1]:
+                if action == 'a':
+                    psiB = c(i,psiA)     
+                elif action == 'c':
+                    psiB = cd(i,psiA)     
+                psiA = psiB
+            addToFirst(psiNew,psiB,h)
     elif method == 'newTuple':
-        psiNew = {}
-        for i,h in op.items():
+        for process,h in op.items():
             assert h != 0
-            if len(i) == 4:
-                for s0,A0 in psi.items():
-                    assert A0 != 0
-                    # Remove electron
-                    s1,A1 = remove(i[3],s0)
-                    if A1 == 0:
-                        continue
-                    # Remove electron
-                    s2,A2 = remove(i[2],s1)
-                    if A2 == 0:
-                        continue
-                    # Create electron
-                    s3,A3 = create(i[1],s2)
-                    if A3 == 0:
-                        continue
-                    # Create electron
-                    s4,A4 = create(i[0],s3)
-                    if A4 == 0:
-                        continue
-                    # Add state to return variable
-                    if s4 in psiNew:
-                        psiNew[s4] += h*A0*A1*A2*A3*A4
+            for state,amp in psi.items():
+                assert amp != 0
+                # Initialize state
+                sA = state
+                signTot = 1
+                for i,action in process[-1::-1]:
+                    if action == 'a':
+                        sB,sign = remove(i,sA)
+                    elif action == 'c':
+                        sB,sign = create(i,sA)
+                    if sign == 0:
+                        break
+                    sA = sB
+                    signTot *= sign
+                else:
+                    if sB in psiNew:
+                        psiNew[sB] += h*amp*signTot
                     else:
-                        psiNew[s4] = h*A0*A1*A2*A3*A4
-            elif len(i) == 2:
-                for s0,A0 in psi.items():
-                    assert A0 != 0
-                    # Remove electron
-                    s1,A1 = remove(i[1],s0)
-                    if A1 == 0:
-                        continue
-                    # Create electron
-                    s2,A2 = create(i[0],s1)
-                    if A2 == 0:
-                        continue
-                    # Add state to return variable
-                    if s2 in psiNew:
-                        psiNew[s2] += h*A0*A1*A2
-                    else:
-                        psiNew[s2] = h*A0*A1*A2
-            else:
-                print 'Warning: Strange operator!'
+                        psiNew[sB] = h*amp*signTot
     elif method == 'oneList':
-        psiNew = {}
-        for i,h in op.items():
+        for process,h in op.items():
             assert h != 0
-            if len(i) == 4:
-                for s0,A0 in psi.items():
-                    assert A0 != 0
-                    # Initialize state
-                    s = list(s0)
-                    amp = A0
-                    # Remove electron
-                    amp *= removeList(i[3],s)
-                    if amp == 0:
-                        continue
-                    # Remove electron
-                    amp *= removeList(i[2],s)
-                    if amp == 0:
-                        continue
-                    # Create electron
-                    amp *= createList(i[1],s)
-                    if amp == 0:
-                        continue
-                    # Create electron
-                    amp *= createList(i[0],s)
-                    if amp == 0:
-                        continue
+            for state,amp in psi.items():
+                assert amp != 0
+                # Initialize state
+                s = list(state)
+                signTot = 1
+                for i,action in process[-1::-1]:
+                    if action == 'a':
+                        signTot *= removeList(i,s)
+                    elif action == 'c':
+                        signTot *= createList(i,s)
+                    if signTot == 0:
+                        break
+                else:
                     # Convert back to tuple
                     s = tuple(s)
-                    # Add state to return variable
                     if s in psiNew:
-                        psiNew[s] += h*amp
+                        psiNew[s] += h*amp*signTot
                     else:
-                        psiNew[s] = h*amp
-            elif len(i) == 2:
-                for s0,A0 in psi.items():
-                    assert A0 != 0
-                    # Initialize state
-                    s = list(s0)
-                    amp = A0
-                    # Remove electron
-                    amp *= removeList(i[1],s)
-                    if amp == 0:
-                        continue
-                    # Create electron
-                    amp *= createList(i[0],s)
-                    if amp == 0:
-                        continue
-                    # Convert back to tuple
-                    s = tuple(s)
-                    # Add state to return variable
-                    if s in psiNew:
-                        psiNew[s] += h*amp
-                    else:
-                        psiNew[s] = h*amp
-            else:
-                print 'Warning: Strange operator!'
-    elif method == 'fortran':
-        psiNew = {}
-        for i,h in op.items():
-            assert h != 0
-            if len(i) == 4:
-                for s0,A0 in psi.items():
-                    assert A0 != 0
-                    # Initialize fortran variables
-                    fortran.s = s0
-                    fortran.amp = 1
-                    # Remove electron
-                    fortran.remove(i[3])
-                    if fortran.amp == 0:
-                        continue
-                    # Remove electron
-                    fortran.remove(i[2])
-                    if fortran.amp == 0:
-                        continue
-                    # Transfer back result to Python
-                    s2 = tuple(fortran.s)
-                    # Create electron
-                    s3,A3 = create(i[1],s2)
-                    if A3 == 0:
-                        continue
-                    # Create electron
-                    s4,A4 = create(i[0],s3)
-                    if A4 == 0:
-                        continue
-                    # Add state to return variable
-                    if s4 in psiNew:
-                        psiNew[s4] += h*A0*fortran.amp*A3*A4
-                    else:
-                        psiNew[s4] = h*A0*fortran.amp*A3*A4
-            elif len(i) == 2:
-                for s0,A0 in psi.items():
-                    assert A0 != 0
-                    # Initialize fortran variables
-                    fortran.s = s0
-                    fortran.amp = 1
-                    # Remove electron
-                    fortran.remove(i[1])
-                    if fortran.amp == 0:
-                        continue
-                    # Transfer back result to Python
-                    s1 = tuple(fortran.s)
-                    # Create electron
-                    s2,A2 = create(i[0],s1)
-                    if A2 == 0:
-                        continue
-                    # Add state to return variable
-                    if s2 in psiNew:
-                        psiNew[s2] += h*A0*fortran.amp*A2
-                    else:
-                        psiNew[s2] = h*A0*fortran.amp*A2
-            else:
-                print 'Warning: Strange operator!'
+                        psiNew[s] = h*amp*signTot
     else:
         print 'Warning: method not implemented.'
+    if restrictions != None:
+        psiTmp = {}
+        for state,amp in psiNew.items():
+            for restriction,occupations in restrictions.items():
+                n = 0
+                for i in restriction:
+                    if i in state:
+                        n += 1
+                if n < occupations[0] or occupations[1] < n:
+                    break
+            else:
+                psiTmp[state] = amp
+        psiNew = psiTmp
+    # Remove product states with small weight
+    psiNew = {state:amp for state,amp in psiNew.items() if abs(amp)**2 > slaterWeightMin}
     return psiNew
     
 def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
@@ -1738,11 +1654,11 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
     l1,l2 = nBaths.keys()
      
     # Calculate U operator  
-    uOpperator = get2p3dSlaterCondonUop(Fdd=Fdd,Fpp=Fpp,
+    uOperator = get2p3dSlaterCondonUop(Fdd=Fdd,Fpp=Fpp,
                                          Fpd=Fpd,Gpd=Gpd)
     # Add SOC 
-    SOC2pOperator = getSOCopp(xi_2p,l=l1)
-    SOC3dOperator = getSOCopp(xi_3d,l=l2)
+    SOC2pOperator = getSOCop(xi_2p,l=l1)
+    SOC3dOperator = getSOCop(xi_3d,l=l2)
     
     # Double counting (DC) correction
     # MLFT DC 
@@ -1752,7 +1668,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
     for il,l in enumerate([2,1]):
         for m in range(-l,l+1):
             for s in range(2):
-                eDCOperator[((l,m,s),(l,m,s))] = -dc[il]
+                eDCOperator[(((l,m,s),'c'),((l,m,s),'a'))] = -dc[il]
     
     # Calculate impurity 3d Hamiltonian
     # (Either by reading matrix or parameterize it)
@@ -1770,13 +1686,13 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
         for j,mj in enumerate(range(-l2,l2+1)):
             if hImp3d[i,j] != 0:
                 for s in range(2):
-                    hImp3dOperator[((l2,mi,s),(l2,mj,s))] = hImp3d[i,j]
+                    hImp3dOperator[(((l2,mi,s),'c'),((l2,mj,s),'a'))] = hImp3d[i,j]
     
     # Magnetic field
     hHzOperator = {}
     for m in range(-l2,l2+1):
         for s in range(2):
-            hHzOperator[((l2,m,s),(l2,m,s))] = hz*1/2. if s==1 else -hz*1/2.        
+            hHzOperator[(((l2,m,s),'c'),((l2,m,s),'a'))] = hz*1/2. if s==1 else -hz*1/2.        
     
     # Bath (3d) on-site energies and hoppings
     # Calculate hopping terms between bath and (3d) impurity
@@ -1809,26 +1725,25 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
                     eBath = eBathCon3d[i,j]
                 if vHopp != 0:
                     for s in range(2):
-                        hHoppOperator[((l2,mi,s),(l2,mj,s,bathSet))] = vHopp
-                        hHoppOperator[((l2,mj,s,bathSet),(l2,mi,s))] = vHopp.conjugate()
+                        hHoppOperator[(((l2,mi,s),'c'),((l2,mj,s,bathSet),'a'))] = vHopp
+                        hHoppOperator[(((l2,mj,s,bathSet),'c'),((l2,mi,s),'a'))] = vHopp.conjugate()
                 if eBath != 0:
                     for s in range(2):
-                        eBath3dOperator[((l2,mi,s,bathSet),(l2,mj,s,bathSet))] = eBath
+                        eBath3dOperator[(((l2,mi,s,bathSet),'c'),((l2,mj,s,bathSet),'a'))] = eBath
     
     # Add Hamiltonian terms to one operator 
-    hOperator = addOps([uOpperator,
-                         hImp3dOperator,
-                         hHzOperator,
-                         SOC2pOperator,
-                         SOC3dOperator,
-                         eDCOperator,
-                         hHoppOperator,
-                         eBath3dOperator])
+    hOperator = addOps([uOperator,
+                        hImp3dOperator,
+                        hHzOperator,
+                        SOC2pOperator,
+                        SOC3dOperator,
+                        eDCOperator,
+                        hHoppOperator,
+                        eBath3dOperator])
     # Convert spin-orbital indices to a single index
     hOp = {}
-    for op,value in hOperator.items():
-        hOp[tuple(c2i(nBaths,spinOrb) for spinOrb in op)] = value
-
+    for process,value in hOperator.items():
+        hOp[tuple((c2i(nBaths,spinOrb),action) for spinOrb,action in process)] = value
     return hOp
 
 def getDipoleOperator(nBaths,n):
@@ -1866,7 +1781,7 @@ def getDipoleOperator(nBaths,n):
                     if tij != 0:
                         i = c2i(nBaths,(l2,m,s))
                         j = c2i(nBaths,(l1,mp,s)) 
-                        tOp[(i,j)] = tij                      
+                        tOp[((i,'c'),(j,'a'))] = tij                      
     return tOp
 
 def getHamiltonianMatrix(hOp,basis):
@@ -1996,7 +1911,7 @@ def norm2(psi):
     '''
     return sum(abs(a)**2 for a in psi.values())
 
-def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
+def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions=None):
     r'''
     Return Green's function for states with low enough energy.
     
@@ -2026,8 +1941,14 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
         Deviation from real axis
     krylovSize : int
         Size of the Krylov space
+    slaterWeightMin : float
+        Restrict the number of product states by
+        looking at |amplitudes|^2. 
     energyCut : float
         Restrict the number of considered states
+    restrictions : dict
+        Restriction the occupation of generated 
+        product states.
     
     '''
     # Relevant eigen energies  
@@ -2036,16 +1957,16 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
     gs = np.zeros((len(tOps),len(esR),len(w)),dtype=np.complex)
     # Loop over transition operators
     for t,tOp in enumerate(tOps): 
-        psisR = [applyOp(tOp,psi) for psi in psis[:len(esR)]]  
+        psisR = [applyOp(tOp,psi,slaterWeightMin,restrictions) for psi in psis[:len(esR)]]  
         normalizations = [sqrt(norm2(psi)) for psi in psisR]
         for i in range(len(psisR)):
             for state in psisR[i].keys(): 
                 psisR[i][state] /= normalizations[i] 
         for i,(e,psi) in enumerate(zip(esR,psisR)):
-            gs[t,i,:] = getGreen(e,psi,hOp,w,delta,krylovSize)
+            gs[t,i,:] = getGreen(e,psi,hOp,w,delta,krylovSize,slaterWeightMin,restrictions)
     return gs
 
-def getGreen(e,psi,hOp,omega,delta,krylovSize):
+def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None):
     r'''
     return Green's function 
     :math:`\langle psi|((omega+1j*delta+e)\hat{1} - hOp)^{-1} |psi \rangle`.
@@ -2064,6 +1985,12 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
         Deviation from real axis
     krylovSize : int
         Size of the Krylov space
+    slaterWeightMin : float
+        Restrict the number of product states by
+        looking at |amplitudes|^2. 
+    restrictions : dict
+        Restriction the occupation of generated 
+        product states.
 
     '''
     # Allocations
@@ -2075,7 +2002,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
     beta = np.zeros(krylovSize-1,dtype=np.float)
     # Initialization 
     v[0] = psi
-    wp[0] = applyOp(hOp,v[0])
+    wp[0] = applyOp(hOp,v[0],slaterWeightMin,restrictions)
     alpha[0] = inner(wp[0],v[0]).real
     w[0] = add(wp[0],v[0],-alpha[0])
     
@@ -2092,7 +2019,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
             # Pick normalized state v[j],
             # orthogonal to v[0],v[1],v[2],...,v[j-1]
             print 'Warning: beta==0, implementation missing!'
-        wp[j] = applyOp(hOp,v[j])
+        wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions)
         alpha[j] = inner(wp[j],v[j]).real
         w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
 
@@ -2111,6 +2038,6 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
 
 
 if __name__== "__main__":
-    #main()
-    cProfile.run('main()',sort='cumulative')
+    main()
+    #cProfile.run('main()',sort='cumulative')
 
