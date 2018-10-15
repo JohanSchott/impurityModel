@@ -1,0 +1,461 @@
+Construct the Hamiltonian operator...
+Create basis...
+l= 1
+New partition occupations:
+nImp,nVal,nCon = 6,0,0
+l= 2
+New partition occupations:
+nImp,nVal,nCon = 8,10,0
+New partition occupations:
+nImp,nVal,nCon = 9,9,0
+New partition occupations:
+nImp,nVal,nCon = 10,8,0
+#basis states = 190
+Create Hamiltonian matrix...
+Filling the Hamiltonian...
+10% done
+20% done
+30% done
+40% done
+50% done
+60% done
+70% done
+80% done
+90% done
+<#Hamiltonian elements/column> = 5
+Diagonalize the Hamiltonian...
+190 eigenstates found!
+<E-E0> = 0.000
+<N(3d)> = 8.135
+<N(egDn)> = 1.078
+<N(egUp)> = 1.077
+<N(t2gDn)> = 2.990
+<N(t2gUp)> = 2.990
+<Lz(3d)> = -0.000
+<Sz(3d)> = -0.000
+<L^2(3d)> = 11.189
+<S^2(3d)> = 1.830
+E0 = -756.42
+i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)
+0  0.000  8.14  1.998   0.157    2.992   2.988   -0.38  -0.92   11.19    1.83    12.00     2.00
+1  0.000  8.14  1.078   1.078    2.990   2.990   -0.00  -0.00   11.19    1.83    12.00     2.00
+2  0.000  8.14  0.157   1.998    2.988   2.992    0.38   0.92   11.19    1.83    12.00     2.00
+3  0.832  8.10  1.541   1.541    2.509   2.508   -0.00  -0.00   11.39    1.86    11.98     1.98
+4  0.832  8.10  1.541   1.541    2.508   2.508    0.00  -0.00   11.39    1.86    11.98     1.98
+5  0.858  8.10  1.769   1.316    2.733   2.281    0.02  -0.45   11.41    1.88    12.00     2.00
+6  0.858  8.10  1.542   1.543    2.507   2.507    0.00   0.00   11.41    1.88    12.00     2.00
+7  0.858  8.10  1.316   1.769    2.281   2.733   -0.02   0.45   11.41    1.88    12.00     2.00
+8  0.921  8.10  1.752   1.312    2.766   2.270   -0.11  -0.47   11.38    1.87    11.98     1.99
+9  0.921  8.10  1.532   1.532    2.518   2.518    0.00  -0.00   11.38    1.87    11.98     1.99
+10  0.921  8.10  1.312   1.752    2.270   2.766    0.11   0.47   11.38    1.87    11.98     1.99
+11  0.943  8.10  1.535   1.536    2.514   2.515   -0.00   0.00   11.40    1.88    12.00     2.00
+12  1.366  8.08  1.802   1.802    2.238   2.238   -0.00  -0.00   11.08    1.89    11.46     1.99
+13  1.446  8.08  1.870   1.713    2.629   1.870    0.89  -0.46   10.99    1.90    11.36     2.00
+14  1.446  8.08  1.792   1.792    2.249   2.249    0.00   0.00   10.99    1.90    11.36     2.00
+15  1.446  8.08  1.713   1.870    1.870   2.629   -0.89   0.46   10.99    1.90    11.36     2.00
+16  1.498  8.13  1.565   1.565    2.498   2.498    0.00  -0.00    9.71    1.33    10.23     1.36
+17  1.498  8.13  1.565   1.565    2.498   2.498    0.00   0.00    9.71    1.33    10.23     1.36
+18  1.564  8.09  1.883   1.668    2.622   1.914    0.37  -0.46   10.76    1.89    11.13     2.00
+19  1.564  8.09  1.776   1.776    2.267   2.268   -0.00   0.00   10.76    1.89    11.13     2.00
+20  1.564  8.09  1.668   1.883    1.913   2.622   -0.37   0.46   10.76    1.89    11.13     2.00
+21  1.750  8.17  1.348   1.348    2.739   2.739   -0.00   0.00    9.80    0.73    10.69     0.66
+22  1.750  8.17  1.348   1.348    2.739   2.739   -0.00   0.00    9.80    0.73    10.69     0.66
+23  2.522  8.15  1.624   1.621    2.527   2.375   -0.42  -0.08    6.86    0.40     7.21     0.34
+24  2.522  8.15  1.623   1.623    2.451   2.451   -0.00  -0.00    6.86    0.40     7.21     0.34
+25  2.522  8.15  1.621   1.624    2.375   2.527    0.42   0.08    6.86    0.40     7.21     0.34
+26  2.603  8.26  1.284   1.284    2.848   2.848    0.00  -0.00   15.27    0.22    17.77     0.04
+27  2.838  8.13  1.771   1.771    2.293   2.293   -0.00  -0.00    3.49    1.83     3.12     1.99
+28  2.838  8.13  1.771   1.771    2.293   2.293    0.00  -0.00    3.49    1.83     3.12     1.99
+29  2.891  8.13  1.832   1.663    2.625   2.015   -0.31  -0.39    4.41    1.55     4.22     1.66
+Create spectra...
+#polarization = 3
+#relevant eigenstates = 3
+#mesh points = 1000
+Save spectra to disk...
+Slater determinants and weights
+Eigenstate 0
+Number of Slater determinants: 38
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Eigenstate 1
+Number of Slater determinants: 42
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Eigenstate 2
+Number of Slater determinants: 38
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Density matrix (in cubic basis):
+Eigenstate 0
+#element=38
+
+Eigenstate 1
+#element=42
+
+Eigenstate 2
+#element=38
+
+Script finished.
+         23818049 function calls (23805602 primitive calls) in 24.055 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   24.055   24.055 <string>:1(<module>)
+        1    0.002    0.002   24.054   24.054 hubbardU.py:17(main)
+      244    0.803    0.003   18.646    0.076 hubbardU.py:1495(applyOp)
+        1    0.001    0.001   16.225   16.225 hubbardU.py:1999(getSpectra)
+        9    0.003    0.000   16.208    1.801 hubbardU.py:2048(getGreen)
+   448608    9.204    0.000   11.321    0.000 hubbardU.py:273(c)
+   448608    6.886    0.000    8.548    0.000 hubbardU.py:305(cd)
+        1    0.002    0.002    4.106    4.106 hubbardU.py:1437(printExpValues)
+  8638749    2.855    0.000    2.855    0.000 {range}
+        1    0.003    0.003    2.451    2.451 hubbardU.py:1872(getHamiltonianMatrix)
+       33    0.088    0.003    2.315    0.070 hubbardU.py:991(getEgT2gOccupation)
+   230908    1.017    0.000    1.066    0.000 hubbardU.py:253(addToFirst)
+ 11482841    0.826    0.000    0.826    0.000 {len}
+        1    0.003    0.003    0.800    0.800 hubbardU.py:1700(getHamiltonianOperator)
+     2054    0.008    0.000    0.727    0.000 hubbardU.py:464(gauntC)
+        1    0.000    0.000    0.699    0.699 hubbardU.py:634(get2p3dSlaterCondonUop)
+        6    0.004    0.001    0.698    0.116 hubbardU.py:570(getUop)
+     1606    0.002    0.000    0.694    0.000 hubbardU.py:472(getU)
+     2054    0.026    0.000    0.640    0.000 wigner.py:550(gaunt)
+    71616    0.252    0.000    0.516    0.000 hubbardU.py:707(i2c)
+       30    0.000    0.000    0.506    0.017 hubbardU.py:838(getLsqr3dWithBath)
+    42498    0.264    0.000    0.459    0.000 hubbardU.py:680(c2i)
+      962    0.009    0.000    0.419    0.000 evalf.py:1363(evalf)
+11578/962    0.053    0.000    0.398    0.000 evalf.py:1303(evalf)
+       30    0.000    0.000    0.397    0.013 hubbardU.py:798(getSsqr3dWithBath)
+      944    0.033    0.000    0.392    0.000 evalf.py:546(evalf_mul)
+  1142864    0.389    0.000    0.389    0.000 {method 'items' of 'dict' objects}
+       33    0.025    0.001    0.292    0.009 hubbardU.py:754(getLz3d)
+        1    0.000    0.000    0.286    0.286 hubbardU.py:1457(printThermalExpValues)
+       33    0.026    0.001    0.281    0.009 hubbardU.py:776(getSz3d)
+       33    0.000    0.000    0.241    0.007 hubbardU.py:858(getLsqr3d)
+       30    0.005    0.000    0.219    0.007 hubbardU.py:1101(applyLz3dWithBath)
+       30    0.005    0.000    0.216    0.007 hubbardU.py:1037(applySz3dWithBath)
+9915/9683    0.014    0.000    0.214    0.000 decorators.py:84(__sympifyit_wrapper)
+   114121    0.121    0.000    0.205    0.000 collections.py:117(keys)
+3880/3474    0.013    0.000    0.197    0.000 assumptions.py:242(getit)
+       33    0.000    0.000    0.190    0.006 hubbardU.py:818(getSsqr3d)
+     8595    0.184    0.000    0.189    0.000 hubbardU.py:234(inner)
+       33    0.017    0.001    0.166    0.005 hubbardU.py:878(getTraceDensityMatrix)
+     5721    0.071    0.000    0.150    0.000 facts.py:503(deduce_all_facts)
+     2830    0.004    0.000    0.144    0.000 assumptions.py:226(copy)
+       30    0.003    0.000    0.142    0.005 hubbardU.py:1234(applyLplus3dWithBath)
+       30    0.003    0.000    0.141    0.005 hubbardU.py:1370(applyLminus3dWithBath)
+     2830    0.008    0.000    0.140    0.000 assumptions.py:215(__init__)
+5723/5719    0.007    0.000    0.119    0.000 decorators.py:122(binary_op_wrapper)
+       33    0.003    0.000    0.108    0.003 hubbardU.py:1136(applyLz3d)
+       33    0.003    0.000    0.105    0.003 hubbardU.py:1072(applySz3d)
+   429850    0.103    0.000    0.103    0.000 collections.py:90(__iter__)
+     3420    0.014    0.000    0.100    0.000 evalf.py:660(evalf_pow)
+       30    0.002    0.000    0.089    0.003 hubbardU.py:1301(applySminus3dWithBath)
+       30    0.002    0.000    0.088    0.003 hubbardU.py:1165(applySplus3dWithBath)
+        3    0.010    0.003    0.085    0.028 hubbardU.py:946(getDensityMatrixCubic)
+  304/241    0.003    0.000    0.079    0.000 operations.py:28(__new__)
+        3    0.002    0.001    0.074    0.025 hubbardU.py:904(getDensityMatrix)
+  215/193    0.011    0.000    0.069    0.000 mul.py:97(flatten)
+       10    0.065    0.007    0.065    0.007 {numpy.core.multiarray.dot}
+       33    0.002    0.000    0.065    0.002 hubbardU.py:1271(applyLplus3d)
+       33    0.002    0.000    0.064    0.002 hubbardU.py:1407(applyLminus3d)
+    29125    0.040    0.000    0.060    0.000 collections.py:125(items)
+     9937    0.023    0.000    0.055    0.000 sympify.py:76(sympify)
+     1911    0.009    0.000    0.054    0.000 expr.py:142(__rmul__)
+      944    0.004    0.000    0.053    0.000 miscellaneous.py:64(sqrt)
+   147/31    0.002    0.000    0.047    0.002 power.py:244(__new__)
+       31    0.001    0.000    0.046    0.001 mul.py:628(_eval_power)
+27055/27025    0.011    0.000    0.042    0.000 {all}
+       33    0.001    0.000    0.041    0.001 hubbardU.py:1203(applySplus3d)
+       33    0.001    0.000    0.041    0.001 hubbardU.py:1339(applySminus3d)
+3010/2910    0.009    0.000    0.041    0.000 assumptions.py:254(_ask)
+       30    0.001    0.000    0.040    0.001 power.py:836(_eval_expand_power_base)
+     2863    0.007    0.000    0.038    0.000 expr.py:137(__mul__)
+        3    0.000    0.000    0.037    0.012 hubbardU.py:1834(getDipoleOperator)
+    78134    0.028    0.000    0.035    0.000 facts.py:537(<genexpr>)
+      190    0.030    0.000    0.034    0.000 hubbardU.py:122(<dictcomp>)
+     3704    0.007    0.000    0.032    0.000 numbers.py:1088(_new)
+     4672    0.002    0.000    0.032    0.000 hubbardU.py:1830(<genexpr>)
+     2945    0.012    0.000    0.027    0.000 numbers.py:1636(__div__)
+    39600    0.026    0.000    0.026    0.000 facts.py:486(_tell)
+     4648    0.021    0.000    0.025    0.000 numbers.py:80(mpf_norm)
+     3648    0.004    0.000    0.024    0.000 evalf.py:1264(<lambda>)
+    53/30    0.001    0.000    0.023    0.001 numbers.py:2216(_eval_power)
+     3648    0.006    0.000    0.021    0.000 libmpf.py:466(from_rational)
+     1888    0.004    0.000    0.021    0.000 libelefun.py:318(mpf_pow)
+      944    0.004    0.000    0.020    0.000 expr.py:179(__rdiv__)
+      944    0.008    0.000    0.019    0.000 numbers.py:954(__new__)
+     5536    0.013    0.000    0.018    0.000 libmpf.py:925(mpf_div)
+     3420    0.011    0.000    0.017    0.000 libmpf.py:1339(mpf_sqrt)
+     3598    0.006    0.000    0.017    0.000 evalf.py:114(pure_complex)
+     8534    0.008    0.000    0.016    0.000 numbers.py:739(__hash__)
+     1818    0.004    0.000    0.015    0.000 numbers.py:1267(__eq__)
+     3422    0.010    0.000    0.015    0.000 numbers.py:162(igcd)
+      423    0.001    0.000    0.015    0.000 hubbardU.py:1987(norm2)
+     3830    0.004    0.000    0.014    0.000 numbers.py:1367(__hash__)
+    38056    0.014    0.000    0.014    0.000 {isinstance}
+        1    0.014    0.014    0.014    0.014 linalg.py:1141(eigh)
+      423    0.003    0.000    0.014    0.000 {sum}
+     9295    0.009    0.000    0.013    0.000 numbers.py:2008(__new__)
+     2967    0.002    0.000    0.013    0.000 sympify.py:375(_sympify)
+       81    0.012    0.000    0.012    0.000 hubbardU.py:1958(add)
+        1    0.004    0.004    0.012    0.012 npyio.py:969(savetxt)
+16701/16372    0.009    0.000    0.012    0.000 basic.py:121(__hash__)
+    86631    0.011    0.000    0.011    0.000 {method 'get' of 'dict' objects}
+     4510    0.005    0.000    0.011    0.000 numbers.py:1838(__hash__)
+    16162    0.009    0.000    0.010    0.000 hubbardU.py:1997(<genexpr>)
+      944    0.001    0.000    0.010    0.000 numbers.py:610(__float__)
+     1061    0.003    0.000    0.010    0.000 mul.py:767(as_coeff_Mul)
+     5950    0.007    0.000    0.009    0.000 basic.py:96(__new__)
+     1888    0.002    0.000    0.009    0.000 evalf.py:1269(<lambda>)
+     3429    0.004    0.000    0.009    0.000 libmpf.py:601(mpf_lt)
+    15712    0.009    0.000    0.009    0.000 {hasattr}
+    63258    0.007    0.000    0.007    0.000 {abs}
+        1    0.007    0.007    0.007    0.007 {method 'close' of 'file' objects}
+     1888    0.004    0.000    0.007    0.000 libelefun.py:114(f)
+    88/45    0.001    0.000    0.007    0.000 factor_.py:265(perfect_power)
+    13104    0.007    0.000    0.007    0.000 {gmpy2._mpmath_normalize}
+      297    0.003    0.000    0.006    0.000 basic.py:1695(_exec_constructor_postprocessors)
+      944    0.001    0.000    0.006    0.000 numbers.py:1124(_as_mpf_val)
+  453/408    0.001    0.000    0.006    0.000 numbers.py:2121(__mul__)
+     8899    0.005    0.000    0.006    0.000 libmpf.py:330(from_int)
+     1906    0.004    0.000    0.006    0.000 libmpf.py:64(dps_to_prec)
+      836    0.002    0.000    0.005    0.000 operations.py:68(_new_rawargs)
+       37    0.000    0.000    0.005    0.000 function.py:418(__new__)
+     3429    0.004    0.000    0.005    0.000 libmpf.py:549(mpf_cmp)
+       60    0.000    0.000    0.005    0.000 iterables.py:624(sift)
+       60    0.000    0.000    0.005    0.000 power.py:872(pred)
+      430    0.002    0.000    0.005    0.000 mul.py:379(_gather)
+     1052    0.003    0.000    0.004    0.000 operations.py:54(_from_args)
+       94    0.001    0.000    0.004    0.000 generate.py:598(primerange)
+        9    0.000    0.000    0.004    0.000 expr.py:780(_eval_is_negative)
+     6126    0.004    0.000    0.004    0.000 {method 'update' of 'set' objects}
+       36    0.004    0.000    0.004    0.000 hubbardU.py:2090(<dictcomp>)
+     1541    0.001    0.000    0.004    0.000 evalf.py:1265(<lambda>)
+      139    0.000    0.000    0.004    0.000 numbers.py:1622(__mul__)
+     5520    0.003    0.000    0.004    0.000 numbers.py:2205(__hash__)
+     5967    0.004    0.000    0.004    0.000 {gmpy2._mpmath_create}
+      215    0.000    0.000    0.004    0.000 mul.py:32(_mulsort)
+      944    0.002    0.000    0.004    0.000 libmpf.py:410(from_float)
+    11638    0.003    0.000    0.003    0.000 basic.py:630(func)
+     6072    0.003    0.000    0.003    0.000 compatibility.py:348(as_int)
+      215    0.001    0.000    0.003    0.000 {method 'sort' of 'list' objects}
+     9247    0.003    0.000    0.003    0.000 {max}
+     2768    0.002    0.000    0.003    0.000 assumptions.py:229(generator)
+       18    0.000    0.000    0.003    0.000 expr.py:1743(as_real_imag)
+      378    0.001    0.000    0.003    0.000 {map}
+       30    0.000    0.000    0.003    0.000 mul.py:1221(_eval_is_imaginary)
+       92    0.000    0.000    0.003    0.000 functools.py:86(__lt__)
+      990    0.002    0.000    0.002    0.000 numbers.py:1583(__add__)
+       37    0.000    0.000    0.002    0.000 function.py:181(nargs)
+   184/92    0.001    0.000    0.002    0.000 basic.py:170(compare)
+     2654    0.002    0.000    0.002    0.000 numbers.py:1138(_eval_is_infinite)
+      948    0.002    0.000    0.002    0.000 evalf.py:34(bitcount)
+     1303    0.002    0.000    0.002    0.000 numbers.py:3416(__hash__)
+     3776    0.002    0.000    0.002    0.000 {divmod}
+     3110    0.002    0.000    0.002    0.000 numbers.py:2159(__eq__)
+     5950    0.002    0.000    0.002    0.000 {built-in method __new__ of type object at 0x107f95f38}
+       37    0.000    0.000    0.002    0.000 sets.py:1519(__new__)
+  200/124    0.001    0.000    0.002    0.000 numbers.py:1480(__new__)
+       62    0.000    0.000    0.002    0.000 generate.py:138(primerange)
+7751/7638    0.002    0.000    0.002    0.000 {hash}
+       37    0.002    0.000    0.002    0.000 unitarytransform.py:176(get_spherical_2_cubic_matrix)
+     7613    0.002    0.000    0.002    0.000 basic.py:656(args)
+      944    0.001    0.000    0.002    0.000 libmpf.py:429(to_float)
+       43    0.000    0.000    0.002    0.000 numbers.py:1841(factors)
+      129    0.001    0.000    0.002    0.000 factor_.py:806(factorint)
+     1888    0.002    0.000    0.002    0.000 libelefun.py:94(g)
+       31    0.000    0.000    0.002    0.000 mul.py:1142(_eval_is_zero)
+     1951    0.002    0.000    0.002    0.000 {gmpy2.isqrt_rem}
+       43    0.000    0.000    0.002    0.000 factor_.py:1217(factorrat)
+      944    0.001    0.000    0.002    0.000 wigner.py:45(_calc_factlist)
+        4    0.002    0.000    0.002    0.000 hubbardU.py:610(addOps)
+       37    0.000    0.000    0.002    0.000 sets.py:553(__contains__)
+     4592    0.002    0.000    0.002    0.000 {min}
+       88    0.000    0.000    0.002    0.000 numbers.py:1185(__mul__)
+      598    0.002    0.000    0.002    0.000 {method 'mro' of 'type' objects}
+     6444    0.001    0.000    0.001    0.000 {gmpy2.bit_length}
+     5596    0.001    0.000    0.001    0.000 {gmpy2.mpz}
+      119    0.000    0.000    0.001    0.000 numbers.py:2132(__rmul__)
+       37    0.000    0.000    0.001    0.000 sets.py:269(contains)
+       74    0.001    0.000    0.001    0.000 compatibility.py:562(ordered)
+     2854    0.001    0.000    0.001    0.000 {method 'copy' of 'dict' objects}
+     1809    0.001    0.000    0.001    0.000 libmpf.py:512(mpf_eq)
+     3429    0.001    0.000    0.001    0.000 libmpf.py:667(mpf_sign)
+     1888    0.001    0.000    0.001    0.000 evalf.py:81(fastlog)
+       43    0.000    0.000    0.001    0.000 factor_.py:1281(primefactors)
+      542    0.000    0.000    0.001    0.000 {method 'setdefault' of 'dict' objects}
+     1533    0.001    0.000    0.001    0.000 {gmpy2.isqrt}
+     2654    0.001    0.000    0.001    0.000 expr.py:2995(as_coeff_Add)
+       37    0.000    0.000    0.001    0.000 sets.py:1589(_contains)
+     1906    0.001    0.000    0.001    0.000 {round}
+       20    0.001    0.000    0.001    0.000 {numpy.core.multiarray.array}
+      944    0.001    0.000    0.001    0.000 {math.ldexp}
+        1    0.000    0.000    0.001    0.001 hubbardU.py:1890(getBasis)
+       30    0.000    0.000    0.001    0.000 numbers.py:667(__mul__)
+     3599    0.001    0.000    0.001    0.000 {math.sqrt}
+       37    0.001    0.000    0.001    0.000 relational.py:305(__new__)
+      368    0.001    0.000    0.001    0.000 core.py:73(__cmp__)
+       72    0.001    0.000    0.001    0.000 {method 'format' of 'str' objects}
+      598    0.001    0.000    0.001    0.000 basic.py:1714(<genexpr>)
+       14    0.000    0.000    0.001    0.000 numbers.py:2326(_eval_is_composite)
+       11    0.000    0.000    0.001    0.000 quantyt.py:621(thermal_average)
+      109    0.001    0.000    0.001    0.000 {numpy.core.multiarray.zeros}
+     1897    0.001    0.000    0.001    0.000 numbers.py:1109(_hashable_content)
+      119    0.000    0.000    0.001    0.000 numbers.py:3396(__ne__)
+       37    0.000    0.000    0.001    0.000 function.py:235(__new__)
+     3014    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}
+      944    0.001    0.000    0.001    0.000 {math.frexp}
+      184    0.000    0.000    0.001    0.000 core.py:96(__lt__)
+        9    0.000    0.000    0.001    0.000 numbers.py:1333(__lt__)
+      119    0.000    0.000    0.001    0.000 numbers.py:3384(__eq__)
+      184    0.000    0.000    0.001    0.000 core.py:101(__gt__)
+      392    0.000    0.000    0.001    0.000 power.py:763(as_base_exp)
+      104    0.000    0.000    0.001    0.000 basic.py:297(__eq__)
+       98    0.000    0.000    0.001    0.000 power.py:30(integer_nthroot)
+     1732    0.000    0.000    0.000    0.000 expr.py:2991(as_coeff_Mul)
+      114    0.000    0.000    0.000    0.000 operations.py:343(make_args)
+      350    0.000    0.000    0.000    0.000 collections.py:71(__setitem__)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:1490(nonzero)
+        1    0.000    0.000    0.000    0.000 {method 'nonzero' of 'numpy.ndarray' objects}
+      185    0.000    0.000    0.000    0.000 numbers.py:2874(__hash__)
+       57    0.000    0.000    0.000    0.000 random.py:277(shuffle)
+     1001    0.000    0.000    0.000    0.000 {method 'write' of 'file' objects}
+      423    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+      944    0.000    0.000    0.000    0.000 numbers.py:1902(as_coeff_Add)
+       29    0.000    0.000    0.000    0.000 generate.py:245(search)
+     1177    0.000    0.000    0.000    0.000 numbers.py:2546(__nonzero__)
+       13    0.000    0.000    0.000    0.000 collections.py:50(__init__)
+       49    0.000    0.000    0.000    0.000 numbers.py:1745(__eq__)
+      984    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+       40    0.000    0.000    0.000    0.000 factor_.py:705(_factorint_small)
+      270    0.000    0.000    0.000    0.000 {sorted}
+    61/31    0.000    0.000    0.000    0.000 expr.py:366(is_number)
+        9    0.000    0.000    0.000    0.000 basic.py:583(is_comparable)
+       61    0.000    0.000    0.000    0.000 expr.py:1126(args_cnc)
+       66    0.000    0.000    0.000    0.000 numbers.py:2092(__radd__)
+       30    0.000    0.000    0.000    0.000 mul.py:1179(_eval_real_imag)
+       31    0.000    0.000    0.000    0.000 power.py:472(_eval_is_zero)
+    39/35    0.000    0.000    0.000    0.000 factor_.py:194(multiplicity)
+       88    0.000    0.000    0.000    0.000 libmpf.py:825(gmpy_mpf_mul)
+       44    0.000    0.000    0.000    0.000 numbers.py:606(_as_mpf_op)
+      119    0.000    0.000    0.000    0.000 numbers.py:2166(__ne__)
+       78    0.000    0.000    0.000    0.000 numbers.py:214(igcd2)
+      849    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+       62    0.000    0.000    0.000    0.000 numbers.py:2001(_as_mpf_val)
+       18    0.000    0.000    0.000    0.000 numbers.py:2321(_eval_is_prime)
+      368    0.000    0.000    0.000    0.000 {method 'index' of 'list' objects}
+       14    0.000    0.000    0.000    0.000 numbers.py:2169(__gt__)
+        1    0.000    0.000    0.000    0.000 {open}
+       61    0.000    0.000    0.000    0.000 primetest.py:426(isprime)
+      107    0.000    0.000    0.000    0.000 {zip}
+      598    0.000    0.000    0.000    0.000 {built-in method from_iterable}
+       37    0.000    0.000    0.000    0.000 sets.py:53(_infimum_key)
+        9    0.000    0.000    0.000    0.000 numbers.py:603(_eval_evalf)
+      575    0.000    0.000    0.000    0.000 basic.py:130(_hashable_content)
+       11    0.000    0.000    0.000    0.000 fromnumeric.py:2300(amin)
+      2/1    0.000    0.000    0.000    0.000 numbers.py:1684(_eval_power)
+   183/93    0.000    0.000    0.000    0.000 expr.py:416(<genexpr>)
+       12    0.000    0.000    0.000    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+       71    0.000    0.000    0.000    0.000 factor_.py:156(trailing)
+       11    0.000    0.000    0.000    0.000 numeric.py:86(zeros_like)
+        6    0.000    0.000    0.000    0.000 numeric.py:1835(array_str)
+      5/2    0.000    0.000    0.000    0.000 expr.py:152(__pow__)
+      5/2    0.000    0.000    0.000    0.000 expr.py:147(_pow)
+      263    0.000    0.000    0.000    0.000 functools.py:84(__init__)
+       18    0.000    0.000    0.000    0.000 sympify.py:13(__init__)
+       11    0.000    0.000    0.000    0.000 _methods.py:28(_amin)
+       21    0.000    0.000    0.000    0.000 fromnumeric.py:1574(shape)
+      214    0.000    0.000    0.000    0.000 {method 'insert' of 'list' objects}
+       46    0.000    0.000    0.000    0.000 generate.py:479(nextprime)
+        3    0.000    0.000    0.000    0.000 fromnumeric.py:828(argsort)
+       88    0.000    0.000    0.000    0.000 {math.log}
+        1    0.000    0.000    0.000    0.000 libelefun.py:233(pi_fixed)
+       13    0.000    0.000    0.000    0.000 abc.py:148(__subclasscheck__)
+        3    0.000    0.000    0.000    0.000 {method 'argsort' of 'numpy.ndarray' objects}
+       19    0.000    0.000    0.000    0.000 integers.py:20(eval)
+        6    0.000    0.000    0.000    0.000 arrayprint.py:340(array2string)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:1743(sum)
+      149    0.000    0.000    0.000    0.000 numbers.py:1898(as_coeff_Mul)
+       60    0.000    0.000    0.000    0.000 power.py:870(<lambda>)
+        8    0.000    0.000    0.000    0.000 numeric.py:414(asarray)
+      243    0.000    0.000    0.000    0.000 {method 'random' of '_random.Random' objects}
+       44    0.000    0.000    0.000    0.000 numbers.py:1130(_as_mpf_op)
+      172    0.000    0.000    0.000    0.000 numbers.py:3263(__eq__)
+      137    0.000    0.000    0.000    0.000 numbers.py:2038(__int__)
+       60    0.000    0.000    0.000    0.000 logic.py:89(fuzzy_bool)
+       74    0.000    0.000    0.000    0.000 boolalg.py:318(__hash__)
+       14    0.000    0.000    0.000    0.000 {method 'conjugate' of 'numpy.generic' objects}
+      7/1    0.000    0.000    0.000    0.000 libelefun.py:211(bs_chudnovsky)
+      128    0.000    0.000    0.000    0.000 evalf.py:1268(<lambda>)
+        1    0.000    0.000    0.000    0.000 _methods.py:31(_sum)
+        1    0.000    0.000    0.000    0.000 hubbardU.py:1876(<dictcomp>)
+        2    0.000    0.000    0.000    0.000 hubbardU.py:664(getSOCopp)
+        5    0.000    0.000    0.000    0.000 index_tricks.py:665(fill_diagonal)
+       77    0.000    0.000    0.000    0.000 numbers.py:1571(_hashable_content)
+       89    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+       37    0.000    0.000    0.000    0.000 {method 'pop' of 'list' objects}
+       92    0.000    0.000    0.000    0.000 power.py:296(base)
+        1    0.000    0.000    0.000    0.000 function_base.py:9(linspace)
+        9    0.000    0.000    0.000    0.000 numbers.py:3260(__hash__)
+       11    0.000    0.000    0.000    0.000 {numpy.core.multiarray.copyto}
+       29    0.000    0.000    0.000    0.000 {_bisect.bisect}
+       29    0.000    0.000    0.000    0.000 generate.py:80(extend)
+       13    0.000    0.000    0.000    0.000 _abcoll.py:548(update)
+       62    0.000    0.000    0.000    0.000 numbers.py:1577(_eval_is_zero)
+       44    0.000    0.000    0.000    0.000 numbers.py:1160(_eval_is_zero)
+       13    0.000    0.000    0.000    0.000 _weakrefset.py:70(__contains__)
+       11    0.000    0.000    0.000    0.000 {numpy.core.multiarray.empty_like}
+       23    0.000    0.000    0.000    0.000 boolalg.py:406(<lambda>)
+       61    0.000    0.000    0.000    0.000 power.py:300(exp)
+       40    0.000    0.000    0.000    0.000 factor_.py:719(done)
+        6    0.000    0.000    0.000    0.000 {_functools.reduce}
+       78    0.000    0.000    0.000    0.000 {method 'bit_length' of 'int' objects}
+       50    0.000    0.000    0.000    0.000 numbers.py:634(_eval_is_finite)
+       51    0.000    0.000    0.000    0.000 boolalg.py:313(__nonzero__)
+        1    0.000    0.000    0.000    0.000 linalg.py:139(_commonType)
+        3    0.000    0.000    0.000    0.000 type_check.py:141(imag)
+        1    0.000    0.000    0.000    0.000 linalg.py:106(_makearray)
+        1    0.000    0.000    0.000    0.000 function.py:63(_coeff_isneg)
+        9    0.000    0.000    0.000    0.000 complexes.py:52(eval)
+        3    0.000    0.000    0.000    0.000 {method 'astype' of 'numpy.ndarray' objects}
+        9    0.000    0.000    0.000    0.000 complexes.py:148(eval)
+        1    0.000    0.000    0.000    0.000 type_check.py:237(iscomplexobj)
+        3    0.000    0.000    0.000    0.000 numeric.py:484(asanyarray)
+        2    0.000    0.000    0.000    0.000 linalg.py:124(_realType)
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.arange}
+        9    0.000    0.000    0.000    0.000 evalf.py:1266(<lambda>)
+        9    0.000    0.000    0.000    0.000 boolalg.py:376(__nonzero__)
+       14    0.000    0.000    0.000    0.000 logic.py:148(fuzzy_not)
+        4    0.000    0.000    0.000    0.000 {issubclass}
+        1    0.000    0.000    0.000    0.000 rsptt.py:890(dc_MLFT)
+        1    0.000    0.000    0.000    0.000 linalg.py:209(_assertNdSquareness)
+        9    0.000    0.000    0.000    0.000 numbers.py:3253(_as_mpf_val)
+        3    0.000    0.000    0.000    0.000 arrayprint.py:34(product)
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.result_type}
+        1    0.000    0.000    0.000    0.000 linalg.py:101(get_linalg_error_extobj)
+       16    0.000    0.000    0.000    0.000 {method 'iteritems' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 linalg.py:198(_assertRankAtLeast2)
+        2    0.000    0.000    0.000    0.000 numbers.py:1580(__neg__)
+       10    0.000    0.000    0.000    0.000 numbers.py:1574(_eval_is_positive)
+        2    0.000    0.000    0.000    0.000 linalg.py:111(isComplexType)
+        1    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'count' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {getattr}
+        1    0.000    0.000    0.000    0.000 {method '__array_prepare__' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 _iotools.py:31(_is_string_like)
+        1    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+

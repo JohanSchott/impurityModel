@@ -12,6 +12,7 @@ from py4rspt.unitarytransform import get_spherical_2_cubic_matrix
 from py4rspt.quantyt import thermal_average
 from py4rspt.constants import k_B
 from py4rspt.rsptt import dc_MLFT
+from removecreate import fortran
 
 def main():
     
@@ -77,12 +78,12 @@ def main():
     # Slater determinant truncation parameters
     # Removes Slater determinants with weights
     # smaller than this optimization parameter.
-    slaterWeightMin = 1e-8
+    slaterWeightMin = 1e-7
     # -----------------------
     # Printing parameters
-    nPrintExpValues = 10
-    nPrintSlaterWeights = 25
-    tolPrintOccupation = 0.1
+    nPrintExpValues = 30
+    nPrintSlaterWeights = 0
+    tolPrintOccupation = 1.1
     # -----------------------
     # Spectra parameters
     # Polarization vectors
@@ -93,7 +94,7 @@ def main():
     energyCut = 10*k_B*T
     w = np.linspace(-10,15,1000)
     delta = 0.2
-    krylovSize = 50
+    krylovSize = 5
     # -----------------------
     
     # Hamiltonian
@@ -368,6 +369,33 @@ def remove(i,state):
     else:
         return (),0
 
+def removeList(i,state):
+    '''
+    Update state by removing electron at orbital i.
+
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    state : list
+        Product state.
+        Elements are indices of occupied orbitals.
+    
+    Returns
+    -------
+    amp : int
+        Amplitude
+
+    ''' 
+    if i in state:
+        j = state.index(i)
+        state.remove(i)
+        amp = 1 if j%2==0 else -1
+        return amp
+    else:
+        state[:] = []
+        return 0
+
 def create(i,state):
     '''
     Create electron at orbital i in state.
@@ -400,6 +428,38 @@ def create(i,state):
         amp = 1 if ip%2==0 else -1
         stateNew = state[:ip] + (i,) + state[ip:]
         return stateNew,amp
+
+def createList(i,state):
+    '''
+    Update state by Creating electron at orbital i.
+
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    state : list
+        Product state.
+        Elements are indices of occupied orbitals.
+
+    Returns
+    -------
+    amp : int
+        Amplitude
+
+    ''' 
+    if i in state:
+        state[:] = []
+        return 0
+    else:
+    	ip = len(state)
+    	for j in range(len(state)):
+    		p = state[j]
+    		if i<p:
+    			ip=j
+    			break
+        amp = 1 if ip%2==0 else -1
+        state.insert(ip,i)
+        return amp
 
 def gauntC(k,l,m,lp,mp,prec=16):
     '''
@@ -564,10 +624,11 @@ def addOps(ops):
     opSum = {}
     for op in ops:
         for sOp,value in op.iteritems():
-            if sOp in opSum:
-                opSum[sOp] += value
-            else:
-                opSum[sOp] = value
+            if value != 0:
+              if sOp in opSum:
+                  opSum[sOp] += value
+              else:
+                  opSum[sOp] = value
     return opSum
 
 def get2p3dSlaterCondonUop(Fdd=[9,0,8,0,6], Fpp=[20,0,8],
@@ -1380,12 +1441,12 @@ def printExpValues(nBaths,es,psis,n=None):
     if n == None:
         n = len(es)
     print 'E0 = {:5.2f}'.format(es[0])
-    print ('i  E-E0 N(3d) N(egDn) N(egUp) N(t2gDn) '
+    print ('i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
            'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)')
     for i,(e,psi) in enumerate(zip(es-es[0],psis)):
         if i < n:
             oc = getEgT2gOccupation(nBaths,psi)
-            print ('{:d} {:5.2f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
+            print ('{:d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
                    ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
                 i,e,getTraceDensityMatrix(nBaths,psi),
                 oc[0],oc[1],oc[2],oc[3],
@@ -1431,7 +1492,7 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
             T=T))
 
 
-def applyOpTest(op,psi):
+def applyOp(op,psi,method='newTuple'):
     r'''
     Return :math:`|psi' \rangle = op |psi \rangle`. 
     
@@ -1448,94 +1509,192 @@ def applyOpTest(op,psi):
         format tuple : amplitude
         where each tuple describes a
         Fock state.
-   
+    method : str
+        Determine which way to calculate the result.
+         
     Returns
     ------- 
     psiNew : dict
         New state of the same format as psi. 
 
-    '''
-    psiNew = {}
-    for i,h in op.items():
-        assert h != 0
-        if len(i) == 4:
-            for s0,A0 in psi.items():
-                assert A0 != 0
-                # Remove electron
-                s1,A1 = remove(i[3],s0)
-                if A1 == 0:
-                    continue
-                # Remove electron
-                s2,A2 = remove(i[2],s1)
-                if A2 == 0:
-                    continue
-                # Create electron
-                s3,A3 = create(i[1],s2)
-                if A3 == 0:
-                    continue
-                # Create electron
-                s4,A4 = create(i[0],s3)
-                if A4 == 0:
-                    continue
-                # Add state to return variable
-                if s4 in psiNew:
-                    psiNew[s4] += h*A0*A1*A2*A3*A4
-                else:
-                    psiNew[s4] = h*A0*A1*A2*A3*A4
-        elif len(i) == 2:
-            for s0,A0 in psi.items():
-                assert A0 != 0
-                # Remove electron
-                s1,A1 = remove(i[1],s0)
-                if A1 == 0:
-                    continue
-                # Create electron
-                s2,A2 = create(i[0],s1)
-                if A2 == 0:
-                    continue
-                # Add state to return variable
-                if s2 in psiNew:
-                    psiNew[s2] += h*A0*A1*A2
-                else:
-                    psiNew[s2] = h*A0*A1*A2
-        else:
-            print 'Warning: Strange operator!'
-    return psiNew
 
-def applyOp(op,psi):
-    r'''
-    Return :math:`|psi' \rangle = op |psi \rangle`. 
-    
-    Parameters
-    ----------
-    op : dict
-        Operator of the format
-        tuple : amplitude,
-        where each tuple describes a 
-        (one or two particle) scattering
-        process.
-    psi : dict
-        Multi-configurational state of 
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
-   
-    Returns
-    ------- 
-    psiNew : dict
-        New state of the same format as psi. 
+    Note
+    ----
+    Different implementations exist.
+    They return the same result, but calculations vary a bit.
 
     '''
-    psiNew = {}
-    for i,h in op.items():
-        if len(i) == 4:
-            psiP = cd(i[0],cd(i[1],c(i[2],c(i[3],psi))))
-            addToFirst(psiNew,psiP,h)
-        elif len(i) == 2:
-            psiP = cd(i[0],c(i[1],psi))
-            addToFirst(psiNew,psiP,h)
-        else:
-            print 'Warning: Strange operator!'
+    if method == 'compact':
+        psiNew = {}
+        for i,h in op.items():
+            if len(i) == 4:
+                psiP = cd(i[0],cd(i[1],c(i[2],c(i[3],psi))))
+                addToFirst(psiNew,psiP,h)
+            elif len(i) == 2:
+                psiP = cd(i[0],c(i[1],psi))
+                addToFirst(psiNew,psiP,h)
+            else:
+                print 'Warning: Strange operator!'
+    elif method == 'newTuple':
+        psiNew = {}
+        for i,h in op.items():
+            assert h != 0
+            if len(i) == 4:
+                for s0,A0 in psi.items():
+                    assert A0 != 0
+                    # Remove electron
+                    s1,A1 = remove(i[3],s0)
+                    if A1 == 0:
+                        continue
+                    # Remove electron
+                    s2,A2 = remove(i[2],s1)
+                    if A2 == 0:
+                        continue
+                    # Create electron
+                    s3,A3 = create(i[1],s2)
+                    if A3 == 0:
+                        continue
+                    # Create electron
+                    s4,A4 = create(i[0],s3)
+                    if A4 == 0:
+                        continue
+                    # Add state to return variable
+                    if s4 in psiNew:
+                        psiNew[s4] += h*A0*A1*A2*A3*A4
+                    else:
+                        psiNew[s4] = h*A0*A1*A2*A3*A4
+            elif len(i) == 2:
+                for s0,A0 in psi.items():
+                    assert A0 != 0
+                    # Remove electron
+                    s1,A1 = remove(i[1],s0)
+                    if A1 == 0:
+                        continue
+                    # Create electron
+                    s2,A2 = create(i[0],s1)
+                    if A2 == 0:
+                        continue
+                    # Add state to return variable
+                    if s2 in psiNew:
+                        psiNew[s2] += h*A0*A1*A2
+                    else:
+                        psiNew[s2] = h*A0*A1*A2
+            else:
+                print 'Warning: Strange operator!'
+    elif method == 'oneList':
+        psiNew = {}
+        for i,h in op.items():
+            assert h != 0
+            if len(i) == 4:
+                for s0,A0 in psi.items():
+                    assert A0 != 0
+                    # Initialize state
+                    s = list(s0)
+                    amp = A0
+                    # Remove electron
+                    amp *= removeList(i[3],s)
+                    if amp == 0:
+                        continue
+                    # Remove electron
+                    amp *= removeList(i[2],s)
+                    if amp == 0:
+                        continue
+                    # Create electron
+                    amp *= createList(i[1],s)
+                    if amp == 0:
+                        continue
+                    # Create electron
+                    amp *= createList(i[0],s)
+                    if amp == 0:
+                        continue
+                    # Convert back to tuple
+                    s = tuple(s)
+                    # Add state to return variable
+                    if s in psiNew:
+                        psiNew[s] += h*amp
+                    else:
+                        psiNew[s] = h*amp
+            elif len(i) == 2:
+                for s0,A0 in psi.items():
+                    assert A0 != 0
+                    # Initialize state
+                    s = list(s0)
+                    amp = A0
+                    # Remove electron
+                    amp *= removeList(i[1],s)
+                    if amp == 0:
+                        continue
+                    # Create electron
+                    amp *= createList(i[0],s)
+                    if amp == 0:
+                        continue
+                    # Convert back to tuple
+                    s = tuple(s)
+                    # Add state to return variable
+                    if s in psiNew:
+                        psiNew[s] += h*amp
+                    else:
+                        psiNew[s] = h*amp
+            else:
+                print 'Warning: Strange operator!'
+    elif method == 'fortran':
+        psiNew = {}
+        for i,h in op.items():
+            assert h != 0
+            if len(i) == 4:
+                for s0,A0 in psi.items():
+                    assert A0 != 0
+                    # Initialize fortran variables
+                    fortran.s = s0
+                    fortran.amp = 1
+                    # Remove electron
+                    fortran.remove(i[3])
+                    if fortran.amp == 0:
+                        continue
+                    # Remove electron
+                    fortran.remove(i[2])
+                    if fortran.amp == 0:
+                        continue
+                    # Transfer back result to Python
+                    s2 = tuple(fortran.s)
+                    # Create electron
+                    s3,A3 = create(i[1],s2)
+                    if A3 == 0:
+                        continue
+                    # Create electron
+                    s4,A4 = create(i[0],s3)
+                    if A4 == 0:
+                        continue
+                    # Add state to return variable
+                    if s4 in psiNew:
+                        psiNew[s4] += h*A0*fortran.amp*A3*A4
+                    else:
+                        psiNew[s4] = h*A0*fortran.amp*A3*A4
+            elif len(i) == 2:
+                for s0,A0 in psi.items():
+                    assert A0 != 0
+                    # Initialize fortran variables
+                    fortran.s = s0
+                    fortran.amp = 1
+                    # Remove electron
+                    fortran.remove(i[1])
+                    if fortran.amp == 0:
+                        continue
+                    # Transfer back result to Python
+                    s1 = tuple(fortran.s)
+                    # Create electron
+                    s2,A2 = create(i[0],s1)
+                    if A2 == 0:
+                        continue
+                    # Add state to return variable
+                    if s2 in psiNew:
+                        psiNew[s2] += h*A0*fortran.amp*A2
+                    else:
+                        psiNew[s2] = h*A0*fortran.amp*A2
+            else:
+                print 'Warning: Strange operator!'
+    else:
+        print 'Warning: method not implemented.'
     return psiNew
     
 def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
@@ -1722,8 +1881,7 @@ def getHamiltonianMatrix(hOp,basis):
         if progress + 10 <= int(j*100./len(basis)): 
             progress = int(j*100./len(basis))
             print '{:d}% done'.format(progress)
-        #res = applyOp(hOp,{basis[j]:1})
-        res = applyOpTest(hOp,{basis[j]:1})
+        res = applyOp(hOp,{basis[j]:1})
         for k,v in res.items():
             if k in basisIndex:
                 h[basisIndex[k],j] = v
@@ -1878,8 +2036,7 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut):
     gs = np.zeros((len(tOps),len(esR),len(w)),dtype=np.complex)
     # Loop over transition operators
     for t,tOp in enumerate(tOps): 
-        #psisR = [applyOp(tOp,psi) for psi in psis[:len(esR)]]  
-        psisR = [applyOpTest(tOp,psi) for psi in psis[:len(esR)]]  
+        psisR = [applyOp(tOp,psi) for psi in psis[:len(esR)]]  
         normalizations = [sqrt(norm2(psi)) for psi in psisR]
         for i in range(len(psisR)):
             for state in psisR[i].keys(): 
@@ -1918,8 +2075,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
     beta = np.zeros(krylovSize-1,dtype=np.float)
     # Initialization 
     v[0] = psi
-    #wp[0] = applyOp(hOp,v[0])
-    wp[0] = applyOpTest(hOp,v[0])
+    wp[0] = applyOp(hOp,v[0])
     alpha[0] = inner(wp[0],v[0]).real
     w[0] = add(wp[0],v[0],-alpha[0])
     
@@ -1936,8 +2092,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
             # Pick normalized state v[j],
             # orthogonal to v[0],v[1],v[2],...,v[j-1]
             print 'Warning: beta==0, implementation missing!'
-        #wp[j] = applyOp(hOp,v[j])
-        wp[j] = applyOpTest(hOp,v[j])
+        wp[j] = applyOp(hOp,v[j])
         alpha[j] = inner(wp[j],v[j]).real
         w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
 
@@ -1956,6 +2111,6 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize):
 
 
 if __name__== "__main__":
-    main()
-    #cProfile.run('main()',sort='cumulative')
+    #main()
+    cProfile.run('main()',sort='cumulative')
 
