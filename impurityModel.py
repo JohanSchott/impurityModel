@@ -7,6 +7,8 @@ from collections import OrderedDict
 import itertools
 import matplotlib.pylab as plt
 import cProfile
+from bisect import bisect_left
+
 
 from py4rspt.unitarytransform import get_spherical_2_cubic_matrix 
 from py4rspt.quantyt import thermal_average
@@ -86,19 +88,20 @@ def main():
     tolPrintOccupation = 1.1
     # -----------------------
     # Spectra parameters
-    # Polarization vectors
-    epsilons = [[1,0,0],[0,1,0],[0,0,1]] 
-    # Temperature
+    # Temperature (Kelvin)
     T = 300
     # How much above lowest eigenenergy to consider 
     energyCut = 10*k_B*T
-    w = np.linspace(-10,15,1000)
+    w = np.linspace(-25,25,3000)
     delta = 0.2
-    krylovSize = 5
+    krylovSize = 30
     # Occupation restrictions 
     # Used when spectra is generated
     restrictions = {}
-    restrictions[tuple(c2i(nBaths,(l2,m,s)) for m in range(-l2,l2+1) for s in range(2))] = (n0imp[l2],n0imp[l2]+2)
+    restrictions[tuple(c2i(nBaths,(l2,m,s)) for m in range(-l2,l2+1) for s in range(2))] = (n0imp[l2]-1,n0imp[l2]+2)
+    # XAS polarization vectors
+    epsilons = [[1,0,0],[0,1,0],[0,0,1]] 
+
     # -----------------------
     
     # Hamiltonian
@@ -131,14 +134,13 @@ def main():
     printExpValues(nBaths,es,psis,n=nPrintExpValues) 
 
     
-    print 'Create spectra...'
+    print 'Create XAS spectra...'
     # Dipole transition operators
     tOps = []
     for epsilon in epsilons:
         tOps.append(getDipoleOperator(nBaths,epsilon))
     # Green's function 
     gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions)
-    
     # Sum over transition operators
     aTs = -np.sum(gs.imag,axis=0)
     # thermal average
@@ -153,10 +155,67 @@ def main():
     for i in range(np.shape(gs)[0]):
         a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
         tmp.append(a)
-    filename = 'output/spectra_krylovSize' + str(krylovSize) + '.dat'
+    filename = 'output/XAS_spectra_krylovSize' + str(krylovSize) + '.dat'
     np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
                header='E  sum  T1  T2  T3 ...')
+    print
 
+    
+    print 'Create 3d IPS spectra...'
+    # transition operators
+    tOps = []
+    for m in range(-l2,l2+1):
+        for s in range(2):
+            tOps.append({((c2i(nBaths,(l2,m,s)),'c'),):1})
+    # Green's function 
+    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions)
+    # Sum over transition operators
+    aTs = -np.sum(gs.imag,axis=0)
+    # thermal average
+    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
+    print '#spinOrbitals = {:d}'.format(np.shape(gs)[0])
+    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
+    print '#mesh points = {:d}'.format(np.shape(gs)[2])
+    # Save spectra to disk
+    print 'Save spectra to disk...'
+    tmp = [w,aAvg]
+    # Each transition operator seperatly
+    for i in range(np.shape(gs)[0]):
+        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+        tmp.append(a)
+    filename = 'output/IPS_spectra_krylovSize' + str(krylovSize) + '.dat'
+    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+               header='E  sum  T1  T2  T3 ...')
+    print
+    
+    print 'Create 3d PS spectra...'
+    # transition operators
+    tOps = []
+    for m in range(-l2,l2+1):
+        for s in range(2):
+            tOps.append({((c2i(nBaths,(l2,m,s)),'a'),):1})
+    # Green's function 
+    gs = getSpectra(hOp,tOps,psis,es,-w,-delta,krylovSize,slaterWeightMin,energyCut,restrictions)
+    gs *= -1
+    # Sum over transition operators
+    aTs = -np.sum(gs.imag,axis=0)
+    # thermal average
+    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
+    print '#spinOrbitals = {:d}'.format(np.shape(gs)[0])
+    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
+    print '#mesh points = {:d}'.format(np.shape(gs)[2])
+    # Save spectra to disk
+    print 'Save spectra to disk...'
+    tmp = [w,aAvg]
+    # Each transition operator seperatly
+    for i in range(np.shape(gs)[0]):
+        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+        tmp.append(a)
+    filename = 'output/PS_spectra_krylovSize' + str(krylovSize) + '.dat'
+    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+               header='E  sum  T1  T2  T3 ...')
+    print
+    
     # Print Slater determinants and weights 
     print 'Slater determinants and weights'
     weights = []
@@ -235,6 +294,33 @@ def main():
 
     print('Script finished.')
 
+def binary_search(a, x):
+    '''
+    Return index to the leftmost value exactly equal to x.
+    
+    If x is not in the list, return -1.
+
+    '''
+    i = bisect_left(a, x)
+    if i != len(a) and a[i] == x:
+        return i
+    else:
+        return -1
+
+def binary_search_bigger(a, x):
+    '''
+    Return the index to the leftmost value bigger than than x, 
+    if x is not in the list. 
+        
+    If x is in the list, return -1.
+    
+    '''
+    i = bisect_left(a, x)
+    if i == len(a) or a[i] != x:
+        return i
+    else:
+        return -1
+
 def inner(a,b):
     r'''
     Return :math:`\langle a | b \rangle`
@@ -278,7 +364,7 @@ def c(i,psi):
     r'''
     Return :math:`|psi' \rangle = c_i |psi \rangle`.
     
-    Acknowledgement: Written entirely by Petter Saterskog
+    Acknowledgement: Written mostly by Petter Saterskog
 
     Parameters
     ----------
@@ -295,22 +381,18 @@ def c(i,psi):
     '''
     ret={}
     for state,amp in psi.items():
-    	for j in range(len(state)):
-    		if i==state[j]:
-    			cstate=state[:j] + state[j+1:]
-    			camp=amp if j%2==0 else -amp
-    			# if cstate in ret:
-    			# 	ret[cstate]+=camp
-    			# else:
-    			ret[cstate]=camp
-    			break
+        j = binary_search(state,i)
+        if j != -1:
+            cstate = state[:j] + state[j+1:]
+            camp = amp if j%2==0 else -amp
+            ret[cstate] = camp
     return ret
 
 def cd(i,psi):
     r'''
     Return :math:`|psi' \rangle = c_i^\dagger |psi \rangle`.
-    
-    Acknowledgement: Written entirely by Petter Saterskog
+
+    Acknowledgement: Written mostly by Petter Saterskog
 
     Parameters
     ----------
@@ -327,22 +409,11 @@ def cd(i,psi):
     '''
     ret={}
     for state,amp in psi.items():		
-    	ip=len(state)
-    	for j in range(len(state)):
-    		p=state[j]
-    		if i==p:
-    			ip=-1
-    			break
-    		if i<p:
-    			ip=j
-    			break
-    	if ip!=-1:
-    		camp=amp if ip%2==0 else -amp
-    		cstate=state[:ip] + (i,) + state[ip:]
-    		# if cstate in ret:
-    		# 	ret[cstate]+=camp
-    		# else:
-    		ret[cstate]=camp
+        j = binary_search_bigger(state,i)
+        if j != -1:
+    		camp = amp if j%2==0 else -amp
+    		cstate = state[:j] + (i,) + state[j:]
+    		ret[cstate] = camp
     return ret
 
 def remove(i,state):
@@ -365,8 +436,8 @@ def remove(i,state):
         Amplitude
 
     ''' 
-    if i in state:
-        j = state.index(i)
+    j = binary_search(state,i)
+    if j != -1:
         stateNew = state[:j] + state[j+1:]
         amp = 1 if j%2==0 else -1
         return stateNew,amp
@@ -391,8 +462,8 @@ def removeList(i,state):
         Amplitude
 
     ''' 
-    if i in state:
-        j = state.index(i)
+    j = binary_search(state,i)
+    if j != -1:
         state.remove(i)
         amp = 1 if j%2==0 else -1
         return amp
@@ -420,18 +491,13 @@ def create(i,state):
         Amplitude
 
     ''' 
-    if i in state:
-        return (),0
+    j = binary_search_bigger(state,i)
+    if j != -1:
+        amp = 1 if j%2==0 else -1
+        cstate = state[:j] + (i,) + state[j:]
+        return cstate,amp
     else:
-    	ip = len(state)
-    	for j in range(len(state)):
-    		p = state[j]
-    		if i<p:
-    			ip=j
-    			break
-        amp = 1 if ip%2==0 else -1
-        stateNew = state[:ip] + (i,) + state[ip:]
-        return stateNew,amp
+        return (),0
 
 def createList(i,state):
     '''
@@ -451,19 +517,14 @@ def createList(i,state):
         Amplitude
 
     ''' 
-    if i in state:
+    j = binary_search_bigger(state,i)
+    if j != -1:
+        amp = 1 if j%2==0 else -1
+        state.insert(j,i)
+        return amp
+    else:
         state[:] = []
         return 0
-    else:
-    	ip = len(state)
-    	for j in range(len(state)):
-    		p = state[j]
-    		if i<p:
-    			ip=j
-    			break
-        amp = 1 if ip%2==0 else -1
-        state.insert(ip,i)
-        return amp
 
 def gauntC(k,l,m,lp,mp,prec=16):
     '''
@@ -1445,12 +1506,12 @@ def printExpValues(nBaths,es,psis,n=None):
     if n == None:
         n = len(es)
     print 'E0 = {:5.2f}'.format(es[0])
-    print ('i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
+    print ('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
            'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)')
     for i,(e,psi) in enumerate(zip(es-es[0],psis)):
         if i < n:
             oc = getEgT2gOccupation(nBaths,psi)
-            print ('{:d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
+            print ('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
                    ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
                 i,e,getTraceDensityMatrix(nBaths,psi),
                 oc[0],oc[1],oc[2],oc[3],
@@ -1963,7 +2024,7 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,res
             for state in psisR[i].keys(): 
                 psisR[i][state] /= normalizations[i] 
         for i,(e,psi) in enumerate(zip(esR,psisR)):
-            gs[t,i,:] = getGreen(e,psi,hOp,w,delta,krylovSize,slaterWeightMin,restrictions)
+            gs[t,i,:] = normalizations[i]**2*getGreen(e,psi,hOp,w,delta,krylovSize,slaterWeightMin,restrictions)
     return gs
 
 def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None):
@@ -2029,13 +2090,9 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None)
     for i in range(krylovSize-1,-1,-1):
         if i == krylovSize-1:
             g = 1./(omegaP - alpha[i]) 
-        elif i == 0:
-            g = 1./(omegaP-alpha[i]-beta[i]**2*g)
         else:
             g = 1./(omegaP-alpha[i]-beta[i]**2*g)
     return g
-
-
 
 if __name__== "__main__":
     main()
