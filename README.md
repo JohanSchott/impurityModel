@@ -4,6 +4,8 @@ Calculate many-body states of an impurity Anderson model and spectra (e.g. XPS, 
 
 Depends (at the moment) on the open-source code RSPt.
 
+Credits to Petter Säterskog for inspiration and for some of the (key) functionality.
+
 #### Documentation
 The documentation of this package is found in the directory `docs`.
 
