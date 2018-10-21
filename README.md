@@ -4,7 +4,16 @@ Calculate many-body states of an impurity Anderson model and spectra (e.g. XPS, 
 
 Depends (at the moment) on the open-source code RSPt.
 
+Examples scripts are stored in the `script` folder.
+
+For the Fortran module to work, compilation of the source code is necessary:
+```
+f2py -c -m removecreate removecreate.f90
+```
+
 Credits to Petter Säterskog for inspiration and for some of the (key) functionality.
+
+
 
 #### Documentation
 The documentation of this package is found in the directory `docs`.

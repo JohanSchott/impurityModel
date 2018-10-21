@@ -1,0 +1,121 @@
+Construct the Hamiltonian operator...
+Create basis...
+l= 1
+New partition occupations:
+nImp,nVal,nCon = 6,0,0
+l= 2
+New partition occupations:
+nImp,nVal,nCon = 8,10,0
+New partition occupations:
+nImp,nVal,nCon = 9,9,0
+New partition occupations:
+nImp,nVal,nCon = 10,8,0
+#basis states = 190
+Create Hamiltonian matrix...
+Filling the Hamiltonian...
+10% done
+20% done
+30% done
+40% done
+50% done
+60% done
+70% done
+80% done
+90% done
+<#Hamiltonian elements/column> = 5
+Diagonalize the Hamiltonian...
+190 eigenstates found!
+<E-E0> = 0.000
+<N(3d)> = 8.108
+<N(egDn)> = 1.065
+<N(egUp)> = 1.065
+<N(t2gDn)> = 2.989
+<N(t2gUp)> = 2.989
+<Lz(3d)> = -0.000
+<Sz(3d)> = -0.000
+<L^2(3d)> = 11.353
+<S^2(3d)> = 1.864
+E0 = -742.30
+  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)
+  0  0.000  8.11  1.998   0.132    2.991   2.987   -0.40  -0.93   11.35    1.86    12.00     2.00
+  1  0.000  8.11  1.065   1.065    2.989   2.989   -0.00  -0.00   11.35    1.86    12.00     2.00
+  2  0.000  8.11  0.132   1.998    2.987   2.991    0.40   0.93   11.35    1.86    12.00     2.00
+  3  0.799  8.08  1.536   1.535    2.504   2.503   -0.00  -0.00   11.52    1.89    11.98     1.98
+  4  0.799  8.08  1.536   1.536    2.504   2.503    0.00  -0.00   11.52    1.89    11.98     1.98
+  5  0.825  8.08  1.765   1.306    2.730   2.277    0.03  -0.46   11.53    1.90    12.00     2.00
+  6  0.825  8.08  1.535   1.536    2.503   2.504    0.00   0.00   11.53    1.90    12.00     2.00
+  7  0.825  8.08  1.306   1.765    2.277   2.730   -0.03   0.46   11.53    1.90    12.00     2.00
+  8  0.889  8.08  1.749   1.300    2.763   2.268   -0.10  -0.47   11.50    1.90    11.98     1.99
+  9  0.889  8.08  1.524   1.524    2.516   2.515    0.00  -0.00   11.50    1.90    11.98     1.99
+ 10  0.889  8.08  1.299   1.749    2.268   2.763    0.10   0.47   11.50    1.90    11.98     1.99
+ 11  0.911  8.08  1.528   1.528    2.511   2.512   -0.00   0.00   11.52    1.90    12.00     2.00
+ 12  1.316  8.06  1.808   1.808    2.223   2.223   -0.00  -0.00   11.24    1.91    11.54     1.99
+ 13  1.398  8.06  1.872   1.721    2.620   1.851    0.92  -0.46   11.15    1.92    11.46     2.00
+ 14  1.398  8.06  1.796   1.797    2.235   2.236    0.00   0.00   11.15    1.92    11.46     2.00
+ 15  1.398  8.06  1.721   1.872    1.851   2.620   -0.92   0.46   11.15    1.92    11.46     2.00
+ 16  1.480  8.08  1.655   1.655    2.388   2.387    0.00  -0.00   10.24    1.59    10.58     1.64
+ 17  1.480  8.08  1.655   1.655    2.387   2.387    0.00   0.00   10.24    1.59    10.58     1.64
+ 18  1.519  8.07  1.886   1.678    2.612   1.890    0.38  -0.47   10.96    1.91    11.26     2.00
+ 19  1.519  8.07  1.782   1.782    2.251   2.252   -0.00   0.00   10.96    1.91    11.26     2.00
+ 20  1.519  8.07  1.678   1.886    1.890   2.612   -0.38   0.47   10.96    1.91    11.26     2.00
+ 21  1.790  8.15  1.246   1.246    2.828   2.828   -0.00   0.00    9.52    0.47    10.25     0.38
+ 22  1.790  8.15  1.246   1.246    2.828   2.828   -0.00   0.00    9.52    0.47    10.25     0.38
+ 23  2.530  8.11  1.622   1.610    2.523   2.358   -0.47  -0.09    6.67    0.42     6.90     0.38
+ 24  2.530  8.11  1.616   1.616    2.440   2.440   -0.00  -0.00    6.67    0.42     6.90     0.38
+ 25  2.530  8.11  1.610   1.622    2.358   2.523    0.47   0.09    6.67    0.42     6.90     0.38
+ 26  2.711  8.20  1.277   1.277    2.822   2.822    0.00  -0.00   16.05    0.20    17.99     0.06
+ 27  2.831  8.10  1.750   1.750    2.301   2.300   -0.00  -0.00    3.24    1.86     2.95     1.99
+ 28  2.831  8.10  1.750   1.750    2.300   2.300    0.00  -0.00    3.24    1.86     2.95     1.99
+ 29  2.889  8.10  1.816   1.637    2.623   2.029   -0.34  -0.39    4.28    1.54     4.13     1.63
+Create XAS spectra...
+#polarization = 3
+#relevant eigenstates = 3
+#mesh points = 3000
+Save spectra to disk...
+
+Create 3d inverse photoemission and photoemission spectra...
+#spinOrbitals = 10
+#relevant eigenstates = 3
+#mesh points = 3000
+Save spectra to disk...
+
+Create core 2p x-ray photoemission spectra (XPS) ...
+#spinOrbitals = 6
+#relevant eigenstates = 3
+#mesh points = 3000
+Save spectra to disk...
+
+Slater determinants and weights
+Eigenstate 0
+Number of Slater determinants: 38
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Eigenstate 1
+Number of Slater determinants: 42
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Eigenstate 2
+Number of Slater determinants: 38
+Highest weights:
+[]
+Corresponding Slater determinantss:
+[]
+
+Density matrix (in cubic basis):
+Eigenstate 0
+#element=38
+
+Eigenstate 1
+#element=42
+
+Eigenstate 2
+#element=38
+
+Script finished.
+Application 17095798 resources: utime ~2941s, stime ~5s, Rss ~96092, inblocks ~78432, outblocks ~2353

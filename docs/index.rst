@@ -10,9 +10,11 @@ Welcome to impurityModel's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: hubbardU
+.. automodule:: finite
    :members:
 
+.. automodule:: spectra
+   :members:
 
 Indices and tables
 ==================

@@ -1,298 +1,89 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 from math import pi,sqrt
 import numpy as np
 from sympy.physics.wigner import gaunt
-from collections import OrderedDict
 import itertools
-import matplotlib.pylab as plt
-import cProfile
 from bisect import bisect_left
-
+from collections import OrderedDict
 
 from py4rspt.unitarytransform import get_spherical_2_cubic_matrix 
 from py4rspt.quantyt import thermal_average
 from py4rspt.constants import k_B
-from py4rspt.rsptt import dc_MLFT
-from removecreate import fortran
+#from removecreate import fortran
 
-def main():
-    
-    #printGaunt()
-    
-    # -----------------------
-    # System imformation  
-    l1,l2 = 1,2 # Angular momentum
-    # Number of bath sets
-    nBaths = OrderedDict()
-    nBaths[l1] = 0
-    nBaths[l2] = 1
-    # Number of valence bath sets
-    valBaths = OrderedDict()
-    valBaths[l1] = 0
-    valBaths[l2] = 1
-    # -----------------------
-    # Basis occupation information. 
-    # Angular momentum : initial impurity occupation 
-    n0imp = OrderedDict()
-    n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
-    n0imp[l2] = 8 # 8 for Ni+2
-    # Angular momentum : max devation of initial impurity occupation
-    dnTol = OrderedDict()
-    dnTol[l1] = 0
-    dnTol[l2] = 2
-    # Angular momentum : max number of electrons to leave 
-    # valence bath orbitals 
-    dnValBaths = OrderedDict()
-    dnValBaths[l1] = 0
-    dnValBaths[l2] = 2 
-    # Angular momentum : max number of electrons to enter 
-    # conduction bath orbitals 
-    dnConBaths = OrderedDict()
-    dnConBaths[l1] = 0
-    dnConBaths[l2] = 0
-    # -----------------------
-    # Hamiltonian parameters
-    # Slater-Condon parameters
-    Fdd=[7.5,0,9.9,0,6.6]
-    Fpp=[0,0,0]
-    Fpd=[8.9,0,6.8]
-    Gpd=[0,5,0,2.8] 
-    # SOC values
-    xi_2p = 11.629
-    xi_3d = 0.096
-    # Double counting parameter
-    chargeTransferCorrection = 1.5
-    # Onsite 3d energy parameters
-    eImp3d = -1.31796
-    deltaO = 0.60422
-    hz = 0.00001
-    # Bath energies and hoppings for 3d orbitals
-    eValEg = -4.4
-    eValT2g = -6.5
-    eConEg = 3
-    eConT2g = 2
-    vValEg = 1.883
-    vValT2g = 1.395
-    vConEg = 0.6
-    vConT2g = 0.4
-    # -----------------------
-    # Slater determinant truncation parameters
-    # Removes Slater determinants with weights
-    # smaller than this optimization parameter.
-    slaterWeightMin = 1e-7
-    # -----------------------
-    # Printing parameters
-    nPrintExpValues = 30
-    nPrintSlaterWeights = 0
-    tolPrintOccupation = 1.1
-    # -----------------------
-    # Spectra parameters
-    # Temperature (Kelvin)
-    T = 300
-    # How much above lowest eigenenergy to consider 
-    energyCut = 10*k_B*T
-    w = np.linspace(-25,25,3000)
-    delta = 0.2
-    krylovSize = 30
-    # Occupation restrictions 
-    # Used when spectra is generated
-    restrictions = {}
-    restrictions[tuple(c2i(nBaths,(l2,m,s)) for m in range(-l2,l2+1) for s in range(2))] = (n0imp[l2]-1,n0imp[l2]+2)
-    # XAS polarization vectors
-    epsilons = [[1,0,0],[0,1,0],[0,0,1]] 
+def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
+    '''
+    Return restricted basis of product states.
 
-    # -----------------------
+    '''
     
-    # Hamiltonian
-    print 'Construct the Hamiltonian operator...'
-    hOp = getHamiltonianOperator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
-                                 [xi_2p,xi_3d],
-                                 [n0imp,chargeTransferCorrection],
-                                 [eImp3d,deltaO],hz,
-                                 [vValEg,vValT2g,vConEg,vConT2g],
-                                 [eValEg,eValT2g,eConEg,eConT2g])
-    # Many body basis for the ground state
-    print 'Create basis...'    
-    basis = getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
-                     dnTol,n0imp)
-    print '#basis states = {:d}'.format(len(basis)) 
-
-    # Full diagonalization of restricted active space Hamiltonian
-    print 'Create Hamiltonian matrix...' 
-    h = getHamiltonianMatrix(hOp,basis)    
-    print '<#Hamiltonian elements/column> = {:d}'.format(
-        int(len(np.nonzero(h)[0])*1./len(basis)))     
-    print 'Diagonalize the Hamiltonian...'
-    es, vecs = np.linalg.eigh(h)
-    print '{:d} eigenstates found!'.format(len(es))
-    psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
-              if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
-            for vi in range(len(es))]
+    # Sanity check
+    for l in nBaths.keys():
+        assert valBaths[l] <= nBaths[l]
+        
+    # Angular momentum
+    l1,l2 = nBaths.keys()
     
-    printThermalExpValues(nBaths,es,psis)
-    printExpValues(nBaths,es,psis,n=nPrintExpValues) 
+    # For each partition, create all configurations
+    # given the occupation in that partition.
+    basisL = OrderedDict()
+    for l in nBaths.keys():
+        print 'l=',l
+        # Add configurations to this list
+        basisL[l] = []
+        # Loop over different partion occupations
+        for dnVal in range(dnValBaths[l]+1): 
+            for dnCon in range(dnConBaths[l]+1):
+                deltaNimp = dnVal - dnCon
+                if abs(deltaNimp) <= dnTol[l]:
+                    nImp = n0imp[l]+deltaNimp 
+                    nVal = 2*(2*l+1)*valBaths[l]-dnVal
+                    nCon = dnCon
+                    # Check for over occupation
+                    assert nVal <= 2*(2*l+1)*valBaths[l]  
+                    assert nCon <= 2*(2*l+1)*(nBaths[l]-valBaths[l]) 
+                    assert nImp <= 2*(2*l+1) 
 
-    
-    print 'Create XAS spectra...'
-    # Dipole transition operators
-    tOps = []
-    for epsilon in epsilons:
-        tOps.append(getDipoleOperator(nBaths,epsilon))
-    # Green's function 
-    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions)
-    # Sum over transition operators
-    aTs = -np.sum(gs.imag,axis=0)
-    # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
-    print '#polarization = {:d}'.format(np.shape(gs)[0])
-    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
-    print '#mesh points = {:d}'.format(np.shape(gs)[2])
-    # Save spectra to disk
-    print 'Save spectra to disk...'
-    tmp = [w,aAvg]
-    # Each transition operator seperatly
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-        tmp.append(a)
-    filename = 'output/XAS_spectra_krylovSize' + str(krylovSize) + '.dat'
-    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
-               header='E  sum  T1  T2  T3 ...')
-    print
+                    print 'New partition occupations:'
+                    #print 'nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
+                    #    nImp,dnVal,dnCon)
+                    print 'nImp,nVal,nCon = {:d},{:d},{:d}'.format(
+                        nImp,nVal,nCon)
+                    # Impurity electrons
+                    indices = range(c2i(nBaths,(l,-l,0)),
+                                    c2i(nBaths,(l,l,1))+1)
+                    basisImp = tuple(itertools.combinations(indices,nImp))
+                    # Valence bath electrons
+                    if valBaths[l] == 0:
+                        # One way of having zero electrons in zero spin-orbitals
+                        basisVal = ((),) 
+                    else:
+                        indices = range(c2i(nBaths,(l,-l,0,0)),
+                                        c2i(nBaths,(l,l,1,valBaths[l]-1))+1)
+                        basisVal = tuple(itertools.combinations(indices,nVal))
+                    # Conduction bath electrons
+                    if nBaths[l]-valBaths[l] == 0:
+                        # One way of having zero electrons in zero spin-orbitals
+                        basisCon = ((),) 
+                    else:
+                        indices = range(c2i(nBaths,(l,-l,0,valBaths[l])),
+                                        c2i(nBaths,(l,l,1,nBaths[l]-1))+1)
+                        basisCon = tuple(itertools.combinations(indices,nCon))
+                    # Concatenate partitions
+                    for bImp in basisImp:
+                        for bVal in basisVal:
+                            for bCon in basisCon:
+                                basisL[l].append(bImp+bVal+bCon)
+    basis = []
+    assert len(nBaths) == 2
+    # This is only valid for two impurity blocks
+    for b1 in basisL[l1]:
+        for b2 in basisL[l2]:
+            basis.append(tuple(sorted(b1+b2)))
+    basis = tuple(basis)
+    return basis
 
-    
-    print 'Create 3d IPS spectra...'
-    # transition operators
-    tOps = []
-    for m in range(-l2,l2+1):
-        for s in range(2):
-            tOps.append({((c2i(nBaths,(l2,m,s)),'c'),):1})
-    # Green's function 
-    gs = getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions)
-    # Sum over transition operators
-    aTs = -np.sum(gs.imag,axis=0)
-    # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
-    print '#spinOrbitals = {:d}'.format(np.shape(gs)[0])
-    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
-    print '#mesh points = {:d}'.format(np.shape(gs)[2])
-    # Save spectra to disk
-    print 'Save spectra to disk...'
-    tmp = [w,aAvg]
-    # Each transition operator seperatly
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-        tmp.append(a)
-    filename = 'output/IPS_spectra_krylovSize' + str(krylovSize) + '.dat'
-    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
-               header='E  sum  T1  T2  T3 ...')
-    print
-    
-    print 'Create 3d PS spectra...'
-    # transition operators
-    tOps = []
-    for m in range(-l2,l2+1):
-        for s in range(2):
-            tOps.append({((c2i(nBaths,(l2,m,s)),'a'),):1})
-    # Green's function 
-    gs = getSpectra(hOp,tOps,psis,es,-w,-delta,krylovSize,slaterWeightMin,energyCut,restrictions)
-    gs *= -1
-    # Sum over transition operators
-    aTs = -np.sum(gs.imag,axis=0)
-    # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
-    print '#spinOrbitals = {:d}'.format(np.shape(gs)[0])
-    print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
-    print '#mesh points = {:d}'.format(np.shape(gs)[2])
-    # Save spectra to disk
-    print 'Save spectra to disk...'
-    tmp = [w,aAvg]
-    # Each transition operator seperatly
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-        tmp.append(a)
-    filename = 'output/PS_spectra_krylovSize' + str(krylovSize) + '.dat'
-    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
-               header='E  sum  T1  T2  T3 ...')
-    print
-    
-    # Print Slater determinants and weights 
-    print 'Slater determinants and weights'
-    weights = []
-    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
-        print 'Eigenstate {:d}'.format(i)
-        print 'Number of Slater determinants: {:d}'.format(len(psi))
-        ws = np.array([ abs(a)**2 for s,a in psi.items() ])
-        s = np.array([ s for s,a in psi.items() ])
-        j = np.argsort(ws)
-        ws = ws[j[-1::-1]]
-        s = s[j[-1::-1]]
-        weights.append(ws)
-        print 'Highest weights:'
-        print ws[:nPrintSlaterWeights]
-        print 'Corresponding Slater determinantss:'
-        print s[:nPrintSlaterWeights]
-        print 
-    ## Plot Slater determinant weigths
-    #plt.figure()
-    #for i,psi in range(np.shape(gs)[1]):
-    #    plt.plot(weights[i],'-o',label=str(i))
-    #plt.legend()
-    #plt.show()
-
-    # Test to calculate density matrix 
-    print 'Density matrix (in cubic basis):'
-    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
-        print 'Eigenstate {:d}'.format(i)
-        n = getDensityMatrixCubic(nBaths,psi)
-        print '#element={:d}'.format(len(n))
-        for e,ne in n.items():
-            if abs(ne) > tolPrintOccupation: 
-                if e[0] == e[1]:
-                    print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
-                else:
-                    print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
-        print  
-
-    # Plot spectra
-    
-    ## Plot all spectra
-    #plt.figure()
-    #for t in range(np.shape(gs)[0]):
-    #    for i in range(np.shape(gs)[1]):
-    #        plt.plot(w,-gs[t,i,:].imag,
-    #                 label='t={:d},i={:d}'.format(t,i))
-    #plt.xlabel('w')
-    #plt.ylabel('intensity')
-    #plt.legend()
-    #plt.tight_layout()
-    #plt.show()
-    #
-    #
-    ## Plot spectra for each transition operator
-    #plt.figure()
-    #plt.plot(w,aAvg,'-k',label='sum')
-    #for i in range(np.shape(gs)[0]):
-    #    a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-    #    plt.plot(w,a,label='T_{:d}'.format(i))
-    #plt.xlabel('w')
-    #plt.ylabel('intensity')
-    #plt.legend()
-    #plt.tight_layout()
-    #plt.show()
-
-    ## Plot spectra for each eigenstate
-    #plt.figure()
-    #plt.plot(w,aAvg,'-k',label='avg')
-    #for i in range(np.shape(aTs)[0]):
-    #    plt.plot(w,aTs[i,:],label='eig_{:d}'.format(i))
-    #plt.xlabel('w')
-    #plt.ylabel('intensity')
-    #plt.legend()
-    #plt.tight_layout()
-    #plt.show()
-
-    print('Script finished.')
 
 def binary_search(a, x):
     '''
@@ -302,10 +93,7 @@ def binary_search(a, x):
 
     '''
     i = bisect_left(a, x)
-    if i != len(a) and a[i] == x:
-        return i
-    else:
-        return -1
+    return i if i != len(a) and a[i] == x else -1
 
 def binary_search_bigger(a, x):
     '''
@@ -316,10 +104,7 @@ def binary_search_bigger(a, x):
     
     '''
     i = bisect_left(a, x)
-    if i == len(a) or a[i] != x:
-        return i
-    else:
-        return -1
+    return i if i == len(a) or a[i] != x else -1
 
 def inner(a,b):
     r'''
@@ -1601,7 +1386,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
     psiNew = {}
     if method == 'compact':
         for process,h in op.items():
-            assert h != 0
+            #assert h != 0
             # Initialize state
             psiA = psi
             for i,action in process[-1::-1]:
@@ -1613,9 +1398,9 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
             addToFirst(psiNew,psiB,h)
     elif method == 'newTuple':
         for process,h in op.items():
-            assert h != 0
+            #assert h != 0
             for state,amp in psi.items():
-                assert amp != 0
+                #assert amp != 0
                 # Initialize state
                 sA = state
                 signTot = 1
@@ -1673,177 +1458,6 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
     # Remove product states with small weight
     psiNew = {state:amp for state,amp in psiNew.items() if abs(amp)**2 > slaterWeightMin}
     return psiNew
-    
-def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
-                           DCinfo,impurityInfo,hz,
-                           vHoppings,eBaths):
-    '''
-    Return the Hamiltonian, in operator form.
-    
-    Parameters
-    ----------
-    nBaths : dict
-        Number of bath sets for each angular momentum.
-    nBaths : dict
-        Number of valence bath sets for each angular momentum.
-    slaterCondon : list
-        List of Slater-Condon parameters.
-    SOCs : list
-        List of SOC parameters.
-    DCinfo : list
-        Contains information needed for the double counting energy.
-    impurityInfo : list
-        Contains information of 3d single particle energies.
-    hz : float
-        External magnetic field.  
-    vHoppings : list
-        Contains information about hybridization hoppings.
-    eBaths : list
-        Contains information about bath energies.
-
-    '''
-    
-    # Divide up input parameters to more concrete variables 
-    Fdd,Fpp,Fpd,Gpd = slaterCondon
-    xi_2p,xi_3d = SOCs
-    n0imp,chargeTransferCorrection = DCinfo
-    eImp3d,deltaO = impurityInfo
-    vValEg,vValT2g,vConEg,vConT2g = vHoppings
-    eValEg,eValT2g,eConEg,eConT2g = eBaths
-    
-    # Angular momentum
-    l1,l2 = nBaths.keys()
-     
-    # Calculate U operator  
-    uOperator = get2p3dSlaterCondonUop(Fdd=Fdd,Fpp=Fpp,
-                                         Fpd=Fpd,Gpd=Gpd)
-    # Add SOC 
-    SOC2pOperator = getSOCop(xi_2p,l=l1)
-    SOC3dOperator = getSOCop(xi_3d,l=l2)
-    
-    # Double counting (DC) correction
-    # MLFT DC 
-    dc = dc_MLFT(n3d_i=n0imp[l2],c=chargeTransferCorrection,Fdd=Fdd,
-                 n2p_i=n0imp[l1],Fpd=Fpd,Gpd=Gpd)
-    eDCOperator = {}
-    for il,l in enumerate([2,1]):
-        for m in range(-l,l+1):
-            for s in range(2):
-                eDCOperator[(((l,m,s),'c'),((l,m,s),'a'))] = -dc[il]
-    
-    # Calculate impurity 3d Hamiltonian
-    # (Either by reading matrix or parameterize it)
-    eImpEg = eImp3d + 3./5*deltaO
-    eImpT2g = eImp3d - 2./5*deltaO  
-    hImp3d = np.zeros((2*l2+1,2*l2+1))
-    np.fill_diagonal(hImp3d,(eImpEg,eImpEg,eImpT2g,eImpT2g,eImpT2g)) 
-    # Convert to spherical harmonics basis
-    u = get_spherical_2_cubic_matrix(spinpol=False,l=l2)
-    hImp3d = np.dot(u,np.dot(hImp3d,np.conj(u.T)))
-    # Convert from matrix to operator form
-    # Also add spin
-    hImp3dOperator = {}
-    for i,mi in enumerate(range(-l2,l2+1)):
-        for j,mj in enumerate(range(-l2,l2+1)):
-            if hImp3d[i,j] != 0:
-                for s in range(2):
-                    hImp3dOperator[(((l2,mi,s),'c'),((l2,mj,s),'a'))] = hImp3d[i,j]
-    
-    # Magnetic field
-    hHzOperator = {}
-    for m in range(-l2,l2+1):
-        for s in range(2):
-            hHzOperator[(((l2,m,s),'c'),((l2,m,s),'a'))] = hz*1/2. if s==1 else -hz*1/2.        
-    
-    # Bath (3d) on-site energies and hoppings
-    # Calculate hopping terms between bath and (3d) impurity
-    # either by reading matrix or parameterize it
-    vVal3d = np.zeros((2*l2+1,2*l2+1))
-    vCon3d = np.zeros((2*l2+1,2*l2+1))
-    eBathVal3d = np.zeros((2*l2+1,2*l2+1))
-    eBathCon3d = np.zeros((2*l2+1,2*l2+1))
-    np.fill_diagonal(vVal3d,(vValEg,vValEg,vValT2g,vValT2g,vValT2g))
-    np.fill_diagonal(vCon3d,(vConEg,vConEg,vConT2g,vConT2g,vConT2g))
-    np.fill_diagonal(eBathVal3d,(eValEg,eValEg,eValT2g,eValT2g,eValT2g))
-    np.fill_diagonal(eBathCon3d,(eConEg,eConEg,eConT2g,eConT2g,eConT2g))
-    # Convert to spherical harmonics basis
-    vVal3d = np.dot(u,np.dot(vVal3d,np.conj(u.T)))
-    vCon3d = np.dot(u,np.dot(vCon3d,np.conj(u.T)))
-    eBathVal3d = np.dot(u,np.dot(eBathVal3d,np.conj(u.T)))
-    eBathCon3d = np.dot(u,np.dot(eBathCon3d,np.conj(u.T)))
-    # Convert from matrix to operator form
-    # Also add spin
-    hHoppOperator = {}
-    eBath3dOperator = {}
-    for bathSet in range(nBaths[l2]):
-        for i,mi in enumerate(range(-l2,l2+1)):
-            for j,mj in enumerate(range(-l2,l2+1)):
-                if bathSet in range(valBaths[l2]):
-                    vHopp = vVal3d[i,j]
-                    eBath = eBathVal3d[i,j]
-                else:
-                    vHopp = vCon3d[i,j]
-                    eBath = eBathCon3d[i,j]
-                if vHopp != 0:
-                    for s in range(2):
-                        hHoppOperator[(((l2,mi,s),'c'),((l2,mj,s,bathSet),'a'))] = vHopp
-                        hHoppOperator[(((l2,mj,s,bathSet),'c'),((l2,mi,s),'a'))] = vHopp.conjugate()
-                if eBath != 0:
-                    for s in range(2):
-                        eBath3dOperator[(((l2,mi,s,bathSet),'c'),((l2,mj,s,bathSet),'a'))] = eBath
-    
-    # Add Hamiltonian terms to one operator 
-    hOperator = addOps([uOperator,
-                        hImp3dOperator,
-                        hHzOperator,
-                        SOC2pOperator,
-                        SOC3dOperator,
-                        eDCOperator,
-                        hHoppOperator,
-                        eBath3dOperator])
-    # Convert spin-orbital indices to a single index
-    hOp = {}
-    for process,value in hOperator.items():
-        hOp[tuple((c2i(nBaths,spinOrb),action) for spinOrb,action in process)] = value
-    return hOp
-
-def getDipoleOperator(nBaths,n):
-    r'''
-    Return dipole transition operator :math:`\hat{T}`.
-    
-    Transition between states of different angular momentum,
-    defined by the keys in the nBaths dictionary.
-    
-    Parameters
-    ----------
-    nBaths : dict
-        angular momentum: number of bath sets
-    n : list
-        polarization vector n = [nx,ny,nz]
-
-    '''
-    tOp = {}
-    nDict = {-1:(n[0]+1j*n[1])/sqrt(2),0:n[2],1:(-n[0]+1j*n[1])/sqrt(2)}
-    # Angular momentum
-    l1,l2 = nBaths.keys()
-    for m in range(-l2,l2+1):
-        for mp in range(-l1,l1+1):
-            for s in range(2):
-                if abs(m-mp) <= 1:
-                    # See Robert Eder's lecture notes:
-                    # "Multiplets in Transition Metal Ions"
-                    # in Julich school.
-                    # tij = d*n*c1(l=2,m;l=1,mp),
-                    # d - radial integral
-                    # n - polarization vector
-                    # c - Gaunt coefficient
-                    tij = gauntC(k=1,l=l2,m=m,lp=l1,mp=mp,prec=16)
-                    tij *= nDict[m-mp]
-                    if tij != 0:
-                        i = c2i(nBaths,(l2,m,s))
-                        j = c2i(nBaths,(l1,mp,s)) 
-                        tOp[((i,'c'),(j,'a'))] = tij                      
-    return tOp
 
 def getHamiltonianMatrix(hOp,basis):
     '''
@@ -1862,74 +1476,6 @@ def getHamiltonianMatrix(hOp,basis):
             if k in basisIndex:
                 h[basisIndex[k],j] = v
     return h
-
-def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
-    
-    # Sanity check
-    for l in nBaths.keys():
-        assert valBaths[l] <= nBaths[l]
-        
-    # Angular momentum
-    l1,l2 = nBaths.keys()
-    
-    # For each partition, create all configurations
-    # given the occupation in that partition.
-    basisL = OrderedDict()
-    for l in nBaths.keys():
-        print 'l=',l
-        # Add configurations to this list
-        basisL[l] = []
-        # Loop over different partion occupations
-        for dnVal in range(dnValBaths[l]+1): 
-            for dnCon in range(dnConBaths[l]+1):
-                deltaNimp = dnVal - dnCon
-                if abs(deltaNimp) <= dnTol[l]:
-                    nImp = n0imp[l]+deltaNimp 
-                    nVal = 2*(2*l+1)*valBaths[l]-dnVal
-                    nCon = dnCon
-                    # Check for over occupation
-                    assert nVal <= 2*(2*l+1)*valBaths[l]  
-                    assert nCon <= 2*(2*l+1)*(nBaths[l]-valBaths[l]) 
-                    assert nImp <= 2*(2*l+1) 
-
-                    print 'New partition occupations:'
-                    #print 'nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
-                    #    nImp,dnVal,dnCon)
-                    print 'nImp,nVal,nCon = {:d},{:d},{:d}'.format(
-                        nImp,nVal,nCon)
-                    # Impurity electrons
-                    indices = range(c2i(nBaths,(l,-l,0)),
-                                    c2i(nBaths,(l,l,1))+1)
-                    basisImp = tuple(itertools.combinations(indices,nImp))
-                    # Valence bath electrons
-                    if valBaths[l] == 0:
-                        # One way of having zero electrons in zero spin-orbitals
-                        basisVal = ((),) 
-                    else:
-                        indices = range(c2i(nBaths,(l,-l,0,0)),
-                                        c2i(nBaths,(l,l,1,valBaths[l]-1))+1)
-                        basisVal = tuple(itertools.combinations(indices,nVal))
-                    # Conduction bath electrons
-                    if nBaths[l]-valBaths[l] == 0:
-                        # One way of having zero electrons in zero spin-orbitals
-                        basisCon = ((),) 
-                    else:
-                        indices = range(c2i(nBaths,(l,-l,0,valBaths[l])),
-                                        c2i(nBaths,(l,l,1,nBaths[l]-1))+1)
-                        basisCon = tuple(itertools.combinations(indices,nCon))
-                    # Concatenate partitions
-                    for bImp in basisImp:
-                        for bVal in basisVal:
-                            for bCon in basisCon:
-                                basisL[l].append(bImp+bVal+bCon)
-    basis = []
-    assert len(nBaths) == 2
-    # This is only valid for two impurity blocks
-    for b1 in basisL[l1]:
-        for b2 in basisL[l2]:
-            basis.append(tuple(sorted(b1+b2)))
-    basis = tuple(basis)
-    return basis
 
 def add(psi1,psi2,mul=1):
     r"""
@@ -1971,130 +1517,4 @@ def norm2(psi):
 
     '''
     return sum(abs(a)**2 for a in psi.values())
-
-def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions=None):
-    r'''
-    Return Green's function for states with low enough energy.
-    
-    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate: 
-
-    :math:`g(w+1j*delta) = 
-    = \langle psi| tOp^\dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp 
-    |psi \rangle`,
-
-    where :math:`e = \langle psi| hOp |psi \rangle` 
-    
-    Lanczos algorithm is used.
-     
-    Parameters
-    ----------
-    hOp : dict
-        Operator
-    tOps : list
-        List of dict operators
-    psis : list
-        List of Multi state dictionaries
-    es : list
-        Total energies
-    w : list 
-        Real axis energy mesh
-    delta : float
-        Deviation from real axis
-    krylovSize : int
-        Size of the Krylov space
-    slaterWeightMin : float
-        Restrict the number of product states by
-        looking at |amplitudes|^2. 
-    energyCut : float
-        Restrict the number of considered states
-    restrictions : dict
-        Restriction the occupation of generated 
-        product states.
-    
-    '''
-    # Relevant eigen energies  
-    esR = [e for e in es if e-es[0] < energyCut]
-    # Green's functions
-    gs = np.zeros((len(tOps),len(esR),len(w)),dtype=np.complex)
-    # Loop over transition operators
-    for t,tOp in enumerate(tOps): 
-        psisR = [applyOp(tOp,psi,slaterWeightMin,restrictions) for psi in psis[:len(esR)]]  
-        normalizations = [sqrt(norm2(psi)) for psi in psisR]
-        for i in range(len(psisR)):
-            for state in psisR[i].keys(): 
-                psisR[i][state] /= normalizations[i] 
-        for i,(e,psi) in enumerate(zip(esR,psisR)):
-            gs[t,i,:] = normalizations[i]**2*getGreen(e,psi,hOp,w,delta,krylovSize,slaterWeightMin,restrictions)
-    return gs
-
-def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None):
-    r'''
-    return Green's function 
-    :math:`\langle psi|((omega+1j*delta+e)\hat{1} - hOp)^{-1} |psi \rangle`.
-    
-    Parameters
-    ----------
-    e : float
-        Total energy
-    psi : dict
-        Multi state
-    hOp : dict
-        Operator
-    omega : list 
-        Real axis energy mesh
-    delta : float
-        Deviation from real axis
-    krylovSize : int
-        Size of the Krylov space
-    slaterWeightMin : float
-        Restrict the number of product states by
-        looking at |amplitudes|^2. 
-    restrictions : dict
-        Restriction the occupation of generated 
-        product states.
-
-    '''
-    # Allocations
-    g = np.zeros(len(omega),dtype=np.complex)
-    v = list(np.zeros(krylovSize))
-    w = list(np.zeros(krylovSize))
-    wp = list(np.zeros(krylovSize))
-    alpha = np.zeros(krylovSize,dtype=np.float)
-    beta = np.zeros(krylovSize-1,dtype=np.float)
-    # Initialization 
-    v[0] = psi
-    wp[0] = applyOp(hOp,v[0],slaterWeightMin,restrictions)
-    alpha[0] = inner(wp[0],v[0]).real
-    w[0] = add(wp[0],v[0],-alpha[0])
-    
-    # Approximate position of spectrum
-    #print 'alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e)
-
-    # Construct Krylov states, 
-    # and elements alpha and beta
-    for j in range(1,krylovSize):
-        beta[j-1] = sqrt(norm2(w[j-1]))
-        if beta[j-1] != 0:
-            v[j] = {s:1./beta[j-1]*a for s,a in w[j-1].items()}
-        else:
-            # Pick normalized state v[j],
-            # orthogonal to v[0],v[1],v[2],...,v[j-1]
-            print 'Warning: beta==0, implementation missing!'
-        wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions)
-        alpha[j] = inner(wp[j],v[j]).real
-        w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
-
-    # Construct Green's function from
-    # continued fraction
-    omegaP = omega+1j*delta+e
-    for i in range(krylovSize-1,-1,-1):
-        if i == krylovSize-1:
-            g = 1./(omegaP - alpha[i]) 
-        else:
-            g = 1./(omegaP-alpha[i]-beta[i]**2*g)
-    return g
-
-if __name__== "__main__":
-    main()
-    #cProfile.run('main()',sort='cumulative')
 
