@@ -6,11 +6,32 @@ from sympy.physics.wigner import gaunt
 import itertools
 from bisect import bisect_left
 from collections import OrderedDict
+from mpi4py import MPI
 
 from py4rspt.unitarytransform import get_spherical_2_cubic_matrix 
 from py4rspt.quantyt import thermal_average
 from py4rspt.constants import k_B
 #from removecreate import fortran
+
+# MPI variables
+comm = MPI.COMM_WORLD
+rank = comm.rank
+ranks = comm.size
+
+def getJobs(rank,ranks,n):
+    '''
+    Return a tuple of jobs for each rank
+
+    Note: This is a MPI help function.
+
+    '''
+    jobs = []
+    nj = n//ranks
+    rest = n%ranks
+    jobs += range(nj*rank,nj*rank + nj)
+    if rank < rest:
+        jobs.append(n-rest+rank)
+    return tuple(jobs)
 
 def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
     '''
@@ -29,7 +50,7 @@ def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
     # given the occupation in that partition.
     basisL = OrderedDict()
     for l in nBaths.keys():
-        print 'l=',l
+        if rank == 0: print 'l=',l
         # Add configurations to this list
         basisL[l] = []
         # Loop over different partion occupations
@@ -45,10 +66,10 @@ def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
                     assert nCon <= 2*(2*l+1)*(nBaths[l]-valBaths[l]) 
                     assert nImp <= 2*(2*l+1) 
 
-                    print 'New partition occupations:'
-                    #print 'nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
+                    if rank == 0: print 'New partition occupations:'
+                    #if rank == 0: print 'nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
                     #    nImp,dnVal,dnCon)
-                    print 'nImp,nVal,nCon = {:d},{:d},{:d}'.format(
+                    if rank == 0: print 'nImp,nVal,nCon = {:d},{:d},{:d}'.format(
                         nImp,nVal,nCon)
                     # Impurity electrons
                     indices = range(c2i(nBaths,(l,-l,0)),
@@ -384,13 +405,13 @@ def printGaunt(l=2,lp=2):
     '''
     # Print Gauent coefficients
     for k in range(l+lp+1):
-        print 'k={:d}'.format(k)
+        if rank == 0: print 'k={:d}'.format(k)
         for m in range(-l,l+1):
             s = ''
             for mp in range(-lp,lp+1):
                 s += ' {:3.2f}'.format(gauntC(k,l,m,lp,mp))
-            print s
-        print
+            if rank == 0: print s
+        if rank == 0: print
 
 def getNoSpinUop(l1,l2,l3,l4,R):
     '''
@@ -1290,11 +1311,12 @@ def printExpValues(nBaths,es,psis,n=None):
     '''
     if n == None:
         n = len(es)
-    print 'E0 = {:5.2f}'.format(es[0])
-    print ('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
-           'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)')
+    if rank == 0: 
+        print 'E0 = {:5.2f}'.format(es[0])
+        print ('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
+               'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)')
     for i,(e,psi) in enumerate(zip(es-es[0],psis)):
-        if i < n:
+        if rank == 0 and i < n:
             oc = getEgT2gOccupation(nBaths,psi)
             print ('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
                    ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
@@ -1316,34 +1338,29 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
     mask = e < cutOff*k_B*T
     e = e[mask]
     psis = np.array(psis)[mask]
-    print '<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T))
-    print '<N(3d)> = {:4.3f}'.format(thermal_average(
-            e,
-            [getTraceDensityMatrix(nBaths,psi) for psi in psis],
-            T=T))
     occs = thermal_average(
         e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]),
         T=T)
-    print '<N(egDn)> = {:4.3f}'.format(occs[0])
-    print '<N(egUp)> = {:4.3f}'.format(occs[1])
-    print '<N(t2gDn)> = {:4.3f}'.format(occs[2])
-    print '<N(t2gUp)> = {:4.3f}'.format(occs[3])
-    print '<Lz(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getLz3d(nBaths,psi) for psi in psis],
-            T=T))
-    print '<Sz(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getSz3d(nBaths,psi) for psi in psis],
-            T=T))
-    print '<L^2(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getLsqr3d(nBaths,psi) for psi in psis],
-            T=T))
-    print '<S^2(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getSsqr3d(nBaths,psi) for psi in psis],
-            T=T))
+    if rank == 0: 
+        print '<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T))
+        print '<N(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getTraceDensityMatrix(nBaths,psi) for psi in psis],T=T))
+        print '<N(egDn)> = {:4.3f}'.format(occs[0])
+        print '<N(egUp)> = {:4.3f}'.format(occs[1])
+        print '<N(t2gDn)> = {:4.3f}'.format(occs[2])
+        print '<N(t2gUp)> = {:4.3f}'.format(occs[3])
+        print '<Lz(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getLz3d(nBaths,psi) for psi in psis],T=T))
+        print '<Sz(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getSz3d(nBaths,psi) for psi in psis],T=T))
+        print '<L^2(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getLsqr3d(nBaths,psi) for psi in psis],T=T))
+        print '<S^2(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getSsqr3d(nBaths,psi) for psi in psis],T=T))
 
 
 def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
-    r'''
+    r"""
     Return :math:`|psi' \rangle = op |psi \rangle`. 
     
     Parameters
@@ -1366,7 +1383,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
         Restrict the number of product states by
         looking at |amplitudes|^2. 
     restrictions : dict
-        Restriction the occupation of generated 
+        Restriction the occupation of generated
         product states.
     method : str
         Determine which way to calculate the result.
@@ -1382,20 +1399,32 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
     Different implementations exist.
     They return the same result, but calculations vary a bit.
 
-    '''
+    """
     psiNew = {}
+    # Unique dict for each rank
+    psiRank = {}
+    # Number of operators, which is equal to the number of MPI jobs
+    n = len(op)
+    # Keys and values of the operators
+    processes = op.keys()
+    hs = op.values()
     if method == 'compact':
-        for process,h in op.items():
-            #assert h != 0
+        # Loop over the job tasks, unique for each rank
+        for job in getJobs(rank,ranks,n):
+            #assert hs[job] != 0
             # Initialize state
             psiA = psi
-            for i,action in process[-1::-1]:
+            for i,action in processes[job][-1::-1]:
                 if action == 'a':
                     psiB = c(i,psiA)     
                 elif action == 'c':
                     psiB = cd(i,psiA)     
                 psiA = psiB
-            addToFirst(psiNew,psiB,h)
+            addToFirst(psiRank,psiB,hs[job])
+        # Share all the dictonaries among the ranks
+        for r in range(ranks):
+            psiTmp = comm.bcast(psiRank, root=r)
+            addToFirst(psiNew,psiTmp)
     elif method == 'newTuple':
         for process,h in op.items():
             #assert h != 0
@@ -1442,6 +1471,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
                         psiNew[s] = h*amp*signTot
     else:
         print 'Warning: method not implemented.'
+    # Remove product states not fullfilling the occupation restrictions
     if restrictions != None:
         psiTmp = {}
         for state,amp in psiNew.items():
@@ -1465,10 +1495,11 @@ def getHamiltonianMatrix(hOp,basis):
     '''
     basisIndex = {basis[i]:i for i in range(len(basis))}
     h = np.zeros((len(basis),len(basis)),dtype=np.complex)
-    print 'Filling the Hamiltonian...'
+
+    if rank == 0: print 'Filling the Hamiltonian...'
     progress = 0
     for j in range(len(basis)):
-        if progress + 10 <= int(j*100./len(basis)): 
+        if rank == 0 and progress + 10 <= int(j*100./len(basis)): 
             progress = int(j*100./len(basis))
             print '{:d}% done'.format(progress)
         res = applyOp(hOp,{basis[j]:1})

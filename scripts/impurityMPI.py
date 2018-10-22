@@ -44,12 +44,12 @@ def main():
     # Angular momentum : max devation of initial impurity occupation
     dnTol = OrderedDict()
     dnTol[l1] = 0
-    dnTol[l2] = 2
+    dnTol[l2] = 1
     # Angular momentum : max number of electrons to leave 
     # valence bath orbitals 
     dnValBaths = OrderedDict()
     dnValBaths[l1] = 0
-    dnValBaths[l2] = 2 
+    dnValBaths[l2] = 1 
     # Angular momentum : max number of electrons to enter 
     # conduction bath orbitals 
     dnConBaths = OrderedDict()
@@ -98,7 +98,7 @@ def main():
     energyCut = 10*k_B*T
     w = np.linspace(-25,25,3000)
     delta = 0.2
-    krylovSize = 80
+    krylovSize = 5
     # Occupation restrictions 
     # Used when spectra is generated
     restrictions = {}
@@ -135,37 +135,37 @@ def main():
               if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
             for vi in range(len(es))]
     
-    finite.printThermalExpValues(nBaths,es,psis)
-    finite.printExpValues(nBaths,es,psis,n=nPrintExpValues) 
+    #finite.printThermalExpValues(nBaths,es,psis)
+    #finite.printExpValues(nBaths,es,psis,n=nPrintExpValues) 
 
     
-    if rank == 0: print 'Create XAS spectra...'
-    # Dipole transition operators
-    tOps = spectra.getDipoleOperators(nBaths,epsilons)
-    # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
-                            energyCut,restrictions)
-    # Sum over transition operators
-    aTs = -np.sum(gs.imag,axis=0)
-    # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
-    if rank == 0: print '#polarization = {:d}'.format(np.shape(gs)[0])
-    if rank == 0: print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
-    if rank == 0: print '#mesh points = {:d}'.format(np.shape(gs)[2])
-    # Save spectra to disk
-    if rank == 0: print 'Save spectra to disk...'
-    tmp = [w,aAvg]
-    # Each transition operator seperatly
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-        tmp.append(a)
-    filename = ('XAS_krylovSize' + str(krylovSize) 
-                + '_CTC' + str(chargeTransferCorrection) 
-                +  '.dat')
-    if rank == 0:
-        np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
-                   header='E  sum  T1  T2  T3 ...')
-        print
+    #if rank == 0: print 'Create XAS spectra...'
+    ## Dipole transition operators
+    #tOps = spectra.getDipoleOperators(nBaths,epsilons)
+    ## Green's function 
+    #gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
+    #                        energyCut,restrictions)
+    ## Sum over transition operators
+    #aTs = -np.sum(gs.imag,axis=0)
+    ## thermal average
+    #aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
+    #if rank == 0: print '#polarization = {:d}'.format(np.shape(gs)[0])
+    #if rank == 0: print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
+    #if rank == 0: print '#mesh points = {:d}'.format(np.shape(gs)[2])
+    ## Save spectra to disk
+    #if rank == 0: print 'Save spectra to disk...'
+    #tmp = [w,aAvg]
+    ## Each transition operator seperatly
+    #for i in range(np.shape(gs)[0]):
+    #    a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+    #    tmp.append(a)
+    #filename = ('XAS_krylovSize' + str(krylovSize) 
+    #            + '_CTC' + str(chargeTransferCorrection) 
+    #            +  '.dat')
+    #if rank == 0:
+    #    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+    #               header='E  sum  T1  T2  T3 ...')
+    #    print
 
     if rank == 0: print 'Create 3d inverse photoemission and photoemission spectra...'
     # Transition operators
@@ -201,34 +201,34 @@ def main():
                    header='E  sum  T1  T2  T3 ...')
         print
     
-    if rank == 0: print 'Create core 2p x-ray photoemission spectra (XPS) ...'
-    # Transition operators
-    tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
-    # Photoemission Green's function 
-    gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                            slaterWeightMin,energyCut,restrictions)
-    gs *= -1
-    # Sum over transition operators
-    aTs = -np.sum(gs.imag,axis=0)
-    # thermal average
-    aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
-    if rank == 0: print '#spinOrbitals = {:d}'.format(np.shape(gs)[0])
-    if rank == 0: print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
-    if rank == 0: print '#mesh points = {:d}'.format(np.shape(gs)[2])
-    # Save spectra to disk
-    if rank == 0: print 'Save spectra to disk...'
-    tmp = [w,aAvg]
-    # Each transition operator seperatly
-    for i in range(np.shape(gs)[0]):
-        a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
-        tmp.append(a)
-    filename = ('XPS_spectra_krylovSize' + str(krylovSize) 
-                + '_CTC' + str(chargeTransferCorrection) 
-                +  '.dat')
-    if rank == 0:
-        np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
-                   header='E  sum  T1  T2  T3 ...')
-        print
+    #if rank == 0: print 'Create core 2p x-ray photoemission spectra (XPS) ...'
+    ## Transition operators
+    #tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
+    ## Photoemission Green's function 
+    #gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
+    #                        slaterWeightMin,energyCut,restrictions)
+    #gs *= -1
+    ## Sum over transition operators
+    #aTs = -np.sum(gs.imag,axis=0)
+    ## thermal average
+    #aAvg = thermal_average(es[:np.shape(aTs)[0]],aTs,T=T)
+    #if rank == 0: print '#spinOrbitals = {:d}'.format(np.shape(gs)[0])
+    #if rank == 0: print '#relevant eigenstates = {:d}'.format(np.shape(gs)[1])
+    #if rank == 0: print '#mesh points = {:d}'.format(np.shape(gs)[2])
+    ## Save spectra to disk
+    #if rank == 0: print 'Save spectra to disk...'
+    #tmp = [w,aAvg]
+    ## Each transition operator seperatly
+    #for i in range(np.shape(gs)[0]):
+    #    a = thermal_average(es[:np.shape(gs)[1]],-np.imag(gs[i,:,:]))
+    #    tmp.append(a)
+    #filename = ('XPS_spectra_krylovSize' + str(krylovSize) 
+    #            + '_CTC' + str(chargeTransferCorrection) 
+    #            +  '.dat')
+    #if rank == 0:
+    #    np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+    #               header='E  sum  T1  T2  T3 ...')
+    #    print
     
     # Print Slater determinants and weights 
     if rank == 0: print 'Slater determinants and weights'
