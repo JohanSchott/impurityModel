@@ -3,6 +3,7 @@
 # Script for solving many-body impurity problem.
 
 import numpy as np
+import scipy.sparse.linalg
 from collections import OrderedDict
 from mpi4py import MPI
 
@@ -81,13 +82,17 @@ def main():
     vConEg = 0.6
     vConT2g = 0.4
     # -----------------------
+    # Ground state diagonalization mode
+    groundDiagMode = 'Lanczos'  # 'Lanczos' or 'full'
+    # Maximum number of eigenstates to consider
+    nPsiMax = 5
+    eigenValueTol = 1e-9
     # Slater determinant truncation parameters
     # Removes Slater determinants with weights
     # smaller than this optimization parameter.
     slaterWeightMin = 1e-7
     # -----------------------
     # Printing parameters
-    nPrintExpValues = 30
     nPrintSlaterWeights = 0
     tolPrintOccupation = 1.1
     # -----------------------
@@ -129,15 +134,26 @@ def main():
     if rank == 0: print '<#Hamiltonian elements/column> = {:d}'.format(
         int(len(np.nonzero(h)[0])*1./len(basis)))     
     if rank == 0: print 'Diagonalize the Hamiltonian...'
-    es, vecs = np.linalg.eigh(h)
-    if rank == 0: print '{:d} eigenstates found!'.format(len(es))
+    if groundDiagMode == 'full':
+        es, vecs = np.linalg.eigh(h)
+        es = es[:nPsiMax]
+        vecs = vecs[:,:nPsiMax]
+    elif groundDiagMode == 'Lanczos':
+        es, vecs = scipy.sparse.linalg.eigsh(h,k=nPsiMax,which='SA',tol=eigenValueTol)
+        # Sort the eigenvalues and eigenvectors in ascending order.
+        indices = np.argsort(es)
+        es = np.array([es[i] for i in indices])
+        vecs = np.array([vecs[:,i] for i in indices]).T
+    else:
+        print('Wrong diagonalization mode')
+    if rank == 0: print 'Proceed with {:d} eigenstates!'.format(len(es))
     psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
               if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
             for vi in range(len(es))]
     
+    # Calculate static expectation values
     finite.printThermalExpValues(nBaths,es,psis)
-    finite.printExpValues(nBaths,es,psis,n=nPrintExpValues) 
-
+    finite.printExpValues(nBaths,es,psis,n=nPsiMax) 
     
     if rank == 0: print 'Create XAS spectra...'
     # Dipole transition operators
@@ -233,7 +249,7 @@ def main():
     # Print Slater determinants and weights 
     if rank == 0: print 'Slater determinants and weights'
     weights = []
-    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
+    for i,psi in enumerate(psis[:nPsiMax]):
         if rank == 0: print 'Eigenstate {:d}'.format(i)
         if rank == 0: print 'Number of Slater determinants: {:d}'.format(len(psi))
         ws = np.array([ abs(a)**2 for s,a in psi.items() ])
@@ -247,29 +263,22 @@ def main():
         if rank == 0: print 'Corresponding Slater determinantss:'
         if rank == 0: print s[:nPrintSlaterWeights]
         if rank == 0: print 
-    ## Plot Slater determinant weigths
-    #plt.figure()
-    #for i,psi in range(np.shape(gs)[1]):
-    #    plt.plot(weights[i],'-o',label=str(i))
-    #plt.legend()
-    #plt.show()
 
     # Test to calculate density matrix 
     if rank == 0: print 'Density matrix (in cubic basis):'
-    for i,psi in enumerate(psis[:np.shape(gs)[1]]):
+    for i,psi in enumerate(psis[:nPsiMax]):
         if rank == 0: print 'Eigenstate {:d}'.format(i)
         n = finite.getDensityMatrixCubic(nBaths,psi)
         if rank == 0: print '#element={:d}'.format(len(n))
         for e,ne in n.items():
-            if abs(ne) > tolPrintOccupation: 
+            if rank == 0 and abs(ne) > tolPrintOccupation: 
                 if e[0] == e[1]:
-                    if rank == 0: print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
+                    print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
                 else:
-                    if rank == 0: print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
+                    print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
         if rank == 0: print  
 
-    # Plot spectra
-    
+    ## Plot spectra
     ## Plot all spectra
     #plt.figure()
     #for t in range(np.shape(gs)[0]):

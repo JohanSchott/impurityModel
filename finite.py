@@ -1359,9 +1359,13 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
             e,[getSsqr3d(nBaths,psi) for psi in psis],T=T))
 
 
-def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
+def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
+            opResult=None,method='newTuple'):
     r"""
     Return :math:`|psi' \rangle = op |psi \rangle`. 
+
+    If h is not None, it is updated to contain information of how the 
+    operator op acted on the product states in psi.
     
     Parameters
     ----------
@@ -1375,16 +1379,19 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
         ((i,'c'),(j,'a'))  <-> c_i^dagger c_j
         ((i,'c'),(j,'c'),(k,'a'),(l,'a')) <-> c_i^dagger c_j^dagger c_k c_l
     psi : dict
-        Multi-configurational state of 
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state of format tuple : amplitude
+        where each tuple describes a Fock state.
     slaterWeightMin : float
         Restrict the number of product states by
         looking at |amplitudes|^2. 
     restrictions : dict
         Restriction the occupation of generated
         product states.
+    opResult : dict
+        In and output argument.
+        If present, the results of the operator op acting on each
+        product state in the state psi is added and stored in this 
+        variable.     
     method : str
         Determine which way to calculate the result.
          
@@ -1401,35 +1408,14 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
 
     """
     psiNew = {}
-    # Unique dict for each rank
-    psiRank = {}
     # Number of operators, which is equal to the number of MPI jobs
-    n = len(op)
-    # Keys and values of the operators
-    processes = op.keys()
-    hs = op.values()
-    if method == 'compact':
-        # Loop over the job tasks, unique for each rank
-        for job in getJobs(rank,ranks,n):
-            #assert hs[job] != 0
-            # Initialize state
-            psiA = psi
-            for i,action in processes[job][-1::-1]:
-                if action == 'a':
-                    psiB = c(i,psiA)     
-                elif action == 'c':
-                    psiB = cd(i,psiA)     
-                psiA = psiB
-            addToFirst(psiRank,psiB,hs[job])
-        # Share all the dictonaries among the ranks
-        for r in range(ranks):
-            psiTmp = comm.bcast(psiRank, root=r)
-            addToFirst(psiNew,psiTmp)
-    elif method == 'newTuple':
-        for process,h in op.items():
-            #assert h != 0
-            for state,amp in psi.items():
-                #assert amp != 0
+    n = len(psi)
+    # Keys and values of psi
+    if method == 'newTuple' and opResult is None:
+        for state,amp in psi.items():
+            #assert amp != 0
+            for process,h in op.items():
+                #assert h != 0
                 # Initialize state
                 sA = state
                 signTot = 1
@@ -1444,36 +1430,51 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
                     signTot *= sign
                 else:
                     if sB in psiNew:
-                        psiNew[sB] += h*amp*signTot
+                        psiNew[sB] += amp*h*signTot
                     else:
-                        psiNew[sB] = h*amp*signTot
-    elif method == 'oneList':
-        for process,h in op.items():
-            assert h != 0
-            for state,amp in psi.items():
-                assert amp != 0
-                # Initialize state
-                s = list(state)
-                signTot = 1
-                for i,action in process[-1::-1]:
-                    if action == 'a':
-                        signTot *= removeList(i,s)
-                    elif action == 'c':
-                        signTot *= createList(i,s)
-                    if signTot == 0:
-                        break
-                else:
-                    # Convert back to tuple
-                    s = tuple(s)
-                    if s in psiNew:
-                        psiNew[s] += h*amp*signTot
+                        psiNew[sB] = amp*h*signTot
+    elif method == 'newTuple':
+        # Profiling variable
+        #opResultLen = len(opResult)
+        for state,amp in psi.items():
+            #assert amp != 0
+            if state in opResult:
+                addToFirst(psiNew,opResult[state],amp)
+            else:
+                # Create new element in opResult
+                # Store H|PS> for product states |PS> not yet in opResult
+                opResult[state] = {}
+                for process,h in op.items():
+                    #assert h != 0
+                    # Initialize state
+                    sA = state
+                    signTot = 1
+                    for i,action in process[-1::-1]:
+                        if action == 'a':
+                            sB,sign = remove(i,sA)
+                        elif action == 'c':
+                            sB,sign = create(i,sA)
+                        if sign == 0:
+                            break
+                        sA = sB
+                        signTot *= sign
                     else:
-                        psiNew[s] = h*amp*signTot
+                        if sB in opResult[state]:
+                            opResult[state][sB] += h*signTot
+                        else:
+                            opResult[state][sB] = h*signTot
+                        if sB in psiNew:
+                            psiNew[sB] += amp*h*signTot
+                        else:
+                            psiNew[sB] = amp*h*signTot
     else:
         print 'Warning: method not implemented.'
+    # Profiling
+    #if rank == 0 and opResult != None: 
+    #    print 'len(opResult): new={:d}, old={:d}, old/new={:5.2f}'.format(
+    #        len(opResult),opResultLen,opResultLen*1./len(opResult))
     # Remove product states not fullfilling the occupation restrictions
     if restrictions != None:
-        psiTmp = {}
         for state,amp in psiNew.items():
             for restriction,occupations in restrictions.items():
                 n = 0
@@ -1481,31 +1482,51 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,method='compact'):
                     if i in state:
                         n += 1
                 if n < occupations[0] or occupations[1] < n:
+                    psiNew.pop(state)
                     break
-            else:
-                psiTmp[state] = amp
-        psiNew = psiTmp
     # Remove product states with small weight
-    psiNew = {state:amp for state,amp in psiNew.items() if abs(amp)**2 > slaterWeightMin}
+    for state,amp in psiNew.items():
+        if abs(amp)**2 < slaterWeightMin:
+            psiNew.pop(state)
     return psiNew
 
-def getHamiltonianMatrix(hOp,basis):
+def getHamiltonianMatrix(hOp,basis,mode='MPI'):
     '''
     return matrix Hamiltonian. 
     '''
     basisIndex = {basis[i]:i for i in range(len(basis))}
     h = np.zeros((len(basis),len(basis)),dtype=np.complex)
-
     if rank == 0: print 'Filling the Hamiltonian...'
     progress = 0
-    for j in range(len(basis)):
-        if rank == 0 and progress + 10 <= int(j*100./len(basis)): 
-            progress = int(j*100./len(basis))
-            print '{:d}% done'.format(progress)
-        res = applyOp(hOp,{basis[j]:1})
-        for k,v in res.items():
-            if k in basisIndex:
-                h[basisIndex[k],j] = v
+    if mode == 'serial':
+        for j in range(len(basis)):
+            if rank == 0 and progress + 10 <= int(j*100./len(basis)): 
+                progress = int(j*100./len(basis))
+                print '{:d}% done'.format(progress)
+            res = applyOp(hOp,{basis[j]:1})
+            for k,v in res.items():
+                if k in basisIndex:
+                    h[basisIndex[k],j] = v
+    elif mode == 'MPI':
+        # Number of basis states
+        n = len(basis)
+        hRank = {}
+        jobs = getJobs(rank,ranks,n)
+        for j in jobs:
+            hRank[j] = {}
+            if rank == 0 and progress + 10 <= int(j*100./len(jobs)): 
+                progress = int(j*100./len(jobs))
+                print '{:d}% done'.format(progress)
+            res = applyOp(hOp,{basis[j]:1})
+            for k,v in res.items():
+                if k in basisIndex:
+                    hRank[j][basisIndex[k]] = v
+        # Broadcast Hamiltonian dicts 
+        for r in range(ranks):
+            hTmp = comm.bcast(hRank, root=r)
+            for j,hj in hTmp.items():
+                for i,hij in hj.items():
+                    h[i,j] = hij 
     return h
 
 def add(psi1,psi2,mul=1):

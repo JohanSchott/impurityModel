@@ -2,8 +2,14 @@
 
 from math import sqrt
 import numpy as np
+from mpi4py import MPI
 
-from finite import gauntC,applyOp,c2i,norm2,inner,add
+from finite import gauntC,applyOp,c2i,norm2,inner,add,getJobs
+
+# MPI variables
+comm = MPI.COMM_WORLD
+rank = comm.rank
+ranks = comm.size
     
 def getDipoleOperators(nBaths,ns):
     r'''
@@ -101,7 +107,8 @@ def getPhotoEmissionOperators(nBaths,l=2):
             tOpsPS.append({((c2i(nBaths,(l,m,s)),'a'),):1})
     return tOpsPS
 
-def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,restrictions=None):
+def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
+               energyCut,restrictions=None):
     r'''
     Return Green's function for states with low enough energy.
     
@@ -141,22 +148,62 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,energyCut,res
         product states.
     
     '''
+    
+    ## Relevant eigen energies  
+    #esR = [e for e in es if e-es[0] < energyCut]
+    ## Green's functions
+    #gs = np.zeros((len(tOps),len(esR),len(w)),dtype=np.complex)
+    ## Hamiltonian dict of the form  |PS> : {H|PS>} 
+    #h = {}
+    ## Loop over eigen states
+    #for i in range(len(esR)):
+    #    psi =  psis[i]
+    #    e = esR[i]
+    #    # Loop over transition operators
+    #    for t,tOp in enumerate(tOps): 
+    #        psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
+    #        normalization = sqrt(norm2(psiR))
+    #        for state in psiR.keys(): 
+    #            psiR[state] /= normalization
+    #        gs[t,i,:] = normalization**2*getGreen(e,psiR,hOp,w,delta,
+    #                                              krylovSize,
+    #                                              slaterWeightMin,
+    #                                              restrictions,h)
+    #return gs
+    
     # Relevant eigen energies  
     esR = [e for e in es if e-es[0] < energyCut]
+    n = len(esR)
     # Green's functions
-    gs = np.zeros((len(tOps),len(esR),len(w)),dtype=np.complex)
-    # Loop over transition operators
-    for t,tOp in enumerate(tOps): 
-        psisR = [applyOp(tOp,psi,slaterWeightMin,restrictions) for psi in psis[:len(esR)]]  
-        normalizations = [sqrt(norm2(psi)) for psi in psisR]
-        for i in range(len(psisR)):
-            for state in psisR[i].keys(): 
-                psisR[i][state] /= normalizations[i] 
-        for i,(e,psi) in enumerate(zip(esR,psisR)):
-            gs[t,i,:] = normalizations[i]**2*getGreen(e,psi,hOp,w,delta,krylovSize,slaterWeightMin,restrictions)
+    gs = np.zeros((len(tOps),n,len(w)),dtype=np.complex)
+    g = {}
+    # Hamiltonian dict of the form  |PS> : {H|PS>} 
+    h = {}
+    # Loop over eigen states, unique for each MPI rank
+    for i in getJobs(rank,ranks,n):
+        psi =  psis[i]
+        e = esR[i]
+        # Initialize Green's functions
+        g[i] = np.zeros((len(tOps),len(w)),dtype=np.complex)
+        # Loop over transition operators
+        for t,tOp in enumerate(tOps): 
+            psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
+            normalization = sqrt(norm2(psiR))
+            for state in psiR.keys(): 
+                psiR[state] /= normalization
+            g[i][t,:] = normalization**2*getGreen(e,psiR,hOp,w,delta,
+                                                  krylovSize,
+                                                  slaterWeightMin,
+                                                  restrictions,h)
+    # Distribute the Green's functions among the ranks
+    for r in range(ranks):
+        gTmp = comm.bcast(g, root=r)
+        for i,gValue in gTmp.items():
+            gs[:,i,:] = gValue
     return gs
 
-def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None):
+def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
+             restrictions=None,h=None):
     r'''
     return Green's function 
     :math:`\langle psi|((omega+1j*delta+e)\hat{1} - hOp)^{-1} |psi \rangle`.
@@ -181,10 +228,16 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None)
     restrictions : dict
         Restriction the occupation of generated 
         product states.
+    h : dict
+        In and output argument.
+        If present, the results of the operator hOp acting on each
+        product state in the state psi is added and stored in this 
+        variable. Format: |PS> : H|PS>,
+        where |PS> is a product state and H|PS> is stored as a dictionary.
 
     '''
 
-    #print 'Start getGreen'
+    print 'Start getGreen'
 
     # Allocations
     g = np.zeros(len(omega),dtype=np.complex)
@@ -194,8 +247,10 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None)
     alpha = np.zeros(krylovSize,dtype=np.float)
     beta = np.zeros(krylovSize-1,dtype=np.float)
     # Initialization 
+    if h is None:
+        h = {}
     v[0] = psi
-    wp[0] = applyOp(hOp,v[0],slaterWeightMin,restrictions)
+    wp[0] = applyOp(hOp,v[0],slaterWeightMin,restrictions,h)
     alpha[0] = inner(wp[0],v[0]).real
     w[0] = add(wp[0],v[0],-alpha[0])
     
@@ -214,7 +269,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,restrictions=None)
             # orthogonal to v[0],v[1],v[2],...,v[j-1]
             print 'Warning: beta==0, implementation missing!'
         #print 'len(v[',j,'] =',len(v[j])
-        wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions)
+        wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions,h)
         alpha[j] = inner(wp[j],v[j]).real
         w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
 
