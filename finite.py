@@ -6,12 +6,14 @@ from sympy.physics.wigner import gaunt
 import itertools
 from bisect import bisect_left
 from collections import OrderedDict
+import scipy.sparse
 from mpi4py import MPI
 
-from py4rspt.unitarytransform import get_spherical_2_cubic_matrix 
-from py4rspt.quantyt import thermal_average
-from py4rspt.constants import k_B
 #from removecreate import fortran
+
+# Boltzmann constant. Unit: eV/K. E = k_B * T, 
+# energy in eV and temperature in Kelvin.
+k_B = 8.61701580807947e-05    
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -32,6 +34,154 @@ def getJobs(rank,ranks,n):
     if rank < rest:
         jobs.append(n-rest+rank)
     return tuple(jobs)
+
+def dc_MLFT(n3d_i,c,Fdd,n2p_i=None,Fpd=None,Gpd=None):
+    r"""
+    Return double counting (DC) in multiplet ligand field theory.
+    
+    Parameters
+    ----------
+    n3d_i : int
+        Nominal (integer) 3d occupation.
+    c : float
+        Many-body correction to the charge transfer energy.
+    n2p_i : int
+        Nominal (integer) 2p occupation.
+    Fdd : list
+        Slater integrals {F_{dd}^k}, k \in [0,1,2,3,4] 
+    Fpd : list
+        Slater integrals {F_{pd}^k}, k \in [0,1,2] 
+    Gpd : list
+        Slater integrals {G_{pd}^k}, k \in [0,1,2,3] 
+    
+    Notes
+    -----
+    The `c` parameter is related to the charge-transfer 
+    energy :math:`\Delta_{CT}` by:
+
+    .. math:: \Delta_{CT} = (e_d-e_b) + c.
+
+    """
+    if not int(n3d_i) == n3d_i:
+        raise ValueError('3d occupation should be an integer')
+    if n2p_i != None and int(n2p_i) != n2p_i:
+        raise ValueError('2p occupation should be an integer')
+
+    # Average repulsion energy defines Udd and Upd
+    Udd = Fdd[0] - 14.0/441*(Fdd[2] + Fdd[4])
+    if n2p_i==None and Fpd==None and Gpd==None:
+        return Udd*n3d_i - c
+    if n2p_i==6 and Fpd!=None and Gpd!=None:
+        Upd = Fpd[0] - (1/15.)*Gpd[1] - (3/70.)*Gpd[3]
+        return [Udd*n3d_i+Upd*n2p_i-c,Upd*(n3d_i+1)-c]
+    else:
+        raise ValueError('double counting input wrong.')
+
+def get_spherical_2_cubic_matrix(spinpol=False,l=2):
+    r"""
+    Return unitary ndarray for transforming from spherical 
+    to cubic harmonics.
+
+    Parameters
+    ----------
+    spinpol : boolean
+        If transformation involves spin.
+    l : integer
+        Angular momentum number. p: l=1, d: l=2.
+    
+    Returns
+    -------
+    u : (M,M) ndarray
+        The unitary matrix from spherical to cubic harmonics.
+
+    Notes
+    -----
+    Element :math:`u_{i,j}` represents the contribution of spherical 
+    harmonics :math:`i` to the cubic harmonic :math:`j`:
+
+    .. math:: \lvert l_j \rangle  = \sum_{i=0}^4 u_{d,(i,j)} \lvert Y_{d,i} \rangle.
+
+    """
+    if l == 1:
+        u = np.zeros((3,3),dtype=np.complex)
+        u[0,0] = 1j/np.sqrt(2)
+        u[2,0] = 1j/np.sqrt(2)
+        u[0,1] = 1/np.sqrt(2)
+        u[2,1] = -1/np.sqrt(2)
+        u[1,2] = 1
+    elif l == 2:
+        u = np.zeros((5,5),dtype=np.complex)
+        u[2,0] = 1
+        u[[0,-1],1] = 1/np.sqrt(2)
+        u[1,2] = -1j/np.sqrt(2)
+        u[-2,2] = -1j/np.sqrt(2)
+        u[1,3] = 1/np.sqrt(2)
+        u[-2,3] = -1/np.sqrt(2)
+        u[0,4] = 1j/np.sqrt(2)
+        u[-1,4] = -1j/np.sqrt(2)
+    if spinpol:
+        n,m = np.shape(u)
+        U = np.zeros((2*n,2*m),dtype=np.complex)
+        U[0:n,0:m] = u
+        U[n:,m:] = u
+        u = U
+    return u
+
+def thermal_average(energies,observable,T=300):
+    '''
+    Returns thermally averaged observables.
+
+    Assumes all relevant states are included. 
+    Thus, no not check e.g. if the Boltzmann weight 
+    of the last state is small.
+
+    Parameters
+    ----------
+    energies - list(N)
+        energies[i] is the energy of state i.
+    observables - list(N,...)
+        observables[i,...] are observables for state i.
+    T : float
+        Temperature
+    tol : float
+        Tolerance for smallest weight for the last energy.
+
+    '''
+    if len(energies) != np.shape(observable)[0]:
+        raise ValueError("Passed array is not of the right shape")
+    z = 0
+    e_average = 0
+    o_average = 0
+    weights = np.zeros_like(energies)
+    shift = np.min(energies)
+    for j,(e,o) in enumerate(zip(energies,observable)):
+        weight = np.exp(-(e-shift)/(k_B*T))
+        z += weight
+        e_average += weight*e
+        o_average += weight*o
+        weights[j] = weight
+    e_average /= z
+    o_average /= z
+    weights /= z
+    return o_average
+
+def daggerOp(op):
+    '''
+    return op^dagger
+    '''
+    opDagger = {}
+    for process,value in op.items():
+        processNew = []
+        for e in process[-1::-1]:
+            if e[1] == 'a':
+                processNew.append((e[0],'c'))
+            elif e[1] == 'c':
+                processNew.append((e[0],'a'))
+            else:
+                print 'Operator type unknown'
+        processNew = tuple(processNew)
+        opDagger[processNew] = value.conjugate()
+    return opDagger
 
 def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
     '''
@@ -1312,7 +1462,7 @@ def printExpValues(nBaths,es,psis,n=None):
     if n == None:
         n = len(es)
     if rank == 0: 
-        print 'E0 = {:5.2f}'.format(es[0])
+        print 'E0 = {:7.4f}'.format(es[0])
         print ('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
                'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)')
     for i,(e,psi) in enumerate(zip(es-es[0],psis)):
@@ -1490,26 +1640,27 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
             psiNew.pop(state)
     return psiNew
 
-def getHamiltonianMatrix(hOp,basis,mode='MPI'):
+def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
     '''
     return matrix Hamiltonian. 
     '''
-    basisIndex = {basis[i]:i for i in range(len(basis))}
-    h = np.zeros((len(basis),len(basis)),dtype=np.complex)
+    # Number of basis states
+    n = len(basis)
+    basisIndex = {basis[i]:i for i in range(n)}
     if rank == 0: print 'Filling the Hamiltonian...'
     progress = 0
-    if mode == 'serial':
-        for j in range(len(basis)):
-            if rank == 0 and progress + 10 <= int(j*100./len(basis)): 
-                progress = int(j*100./len(basis))
+    if mode == 'dense_serial':
+        h = np.zeros((n,n),dtype=np.complex)
+        for j in range(n):
+            if rank == 0 and progress + 10 <= int(j*100./n): 
+                progress = int(j*100./n)
                 print '{:d}% done'.format(progress)
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
                 if k in basisIndex:
                     h[basisIndex[k],j] = v
-    elif mode == 'MPI':
-        # Number of basis states
-        n = len(basis)
+    elif mode == 'dense_MPI':
+        h = np.zeros((n,n),dtype=np.complex)
         hRank = {}
         jobs = getJobs(rank,ranks,n)
         for j in jobs:
@@ -1526,7 +1677,81 @@ def getHamiltonianMatrix(hOp,basis,mode='MPI'):
             hTmp = comm.bcast(hRank, root=r)
             for j,hj in hTmp.items():
                 for i,hij in hj.items():
-                    h[i,j] = hij 
+                    h[i,j] = hij     
+    elif mode == 'sparse_serial':
+        data = []
+        row = []
+        col = []
+        for j in range(n):
+            if rank == 0 and progress + 10 <= int(j*100./n): 
+                progress = int(j*100./n)
+                print '{:d}% done'.format(progress)
+            res = applyOp(hOp,{basis[j]:1})
+            for k,v in res.items():
+                if k in basisIndex:
+                    data.append(v)
+                    col.append(j)
+                    row.append(basisIndex[k])
+        h = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
+    elif mode == 'sparse_MPI':
+        h = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
+        data = []
+        row = []
+        col = []
+        jobs = getJobs(rank,ranks,n)
+        for j in jobs:
+            if rank == 0 and progress + 10 <= int(j*100./len(jobs)): 
+                progress = int(j*100./len(jobs))
+                print '{:d}% done'.format(progress)
+            res = applyOp(hOp,{basis[j]:1})
+            for k,v in res.items():
+                if k in basisIndex:
+                    data.append(v)
+                    col.append(j)
+                    row.append(basisIndex[k])
+        hSparse = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
+        # Broadcast sparse Hamiltonians
+        for r in range(ranks):
+            h += comm.bcast(hSparse, root=r)
+    return h
+
+def expandBasisAndHamiltonian(hBig,hOp,basis0,restrictions):
+    '''
+    return Hamiltonian.
+    
+    Parameters
+    ----------
+    hBig : dict
+        Elements of the form |PS> : {H|PS>},
+        where |PS> is a product state.
+        New product states might be added to this variable.
+    hOp : dict
+        The Hamiltonian. With elements of the form process : h_value
+    basis0 : list
+        List of product states.
+        These product states are used to generate more basis states.
+    restrictions : dict
+        Restriction the occupation of generated product states.
+
+    Returns
+    -------
+    h : dict
+        The Hamiltonian acting on the relevant product states.
+    
+    '''
+    # Copy basis0, to avoid changing it when the basis grows
+    basis = list(basis0) 
+    # Return Hamiltonian
+    h = {}
+    i = 0
+    while len(h) < len(basis) :
+        if basis[i] not in h:
+            res = applyOp(hOp,{basis[i]:1},restrictions=restrictions,opResult=hBig)
+            h[basis[i]] = res
+            for ps in res.keys():
+                if ps not in basis:
+                    basis.append(ps)
+        i += 1
     return h
 
 def add(psi1,psi2,mul=1):
