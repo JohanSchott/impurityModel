@@ -4,7 +4,6 @@
 
 import numpy as np
 import scipy.sparse.linalg
-import h5py
 from collections import OrderedDict
 from mpi4py import MPI
 
@@ -92,6 +91,8 @@ def main():
     # Printing parameters
     nPrintSlaterWeights = 3
     tolPrintOccupation = 0.5
+    # To print spectra to HDF5 format (or to .npz format).
+    printH5 = False  # True or False
     # -----------------------
     # Spectra parameters
     # Temperature (Kelvin)
@@ -194,33 +195,37 @@ def main():
     # Save some information to disk
     if rank == 0:
         # Most of the input parameters. Dictonaries can be stored in this file format.
-        np.savez('data',l1=l1,l2=l2,nBaths=nBaths,valBaths=valBaths,
-                 n0imp=n0imp,dnTol=dnTol,
-                 dnValBaths=dnValBaths,dnConBaths=dnConBaths,
-                 Fdd=Fdd,Fpp=Fpp,Fpd=Fpd,Gpd=Gpd,
-                 xi_2p=xi_2p,xi_3d=xi_3d,
-                 chargeTransferCorrection=chargeTransferCorrection,
-                 eImp3d=eImp3d,deltaO=deltaO,
-                 hField=hField,
-                 eBath=[eValEg,eValT2g,eConEg,eConT2g],
-                 vBath=[vValEg,vValT2g,vConEg,vConT2g],
-                 groundDiagMode=groundDiagMode,
-                 nPsiMax=nPsiMax,
-                 eigenValueTol=eigenValueTol,
-                 slaterWeightMin=slaterWeightMin,
-                 T=T,energyCut=energyCut,delta=delta,
-                 krylovSize=krylovSize,restrictions=restrictions,
-                 epsilons=epsilons,
-                 epsilonsRIXSin=epsilonsRIXSin,epsilonsRIXSout=epsilonsRIXSout,
-                 deltaRIXS=deltaRIXS,
-                 hOp=hOp) 
-        # Save some of the arrays. This file format does not support dictonaries.
-        h5f = h5py.File('spectra.h5','w')
-        h5f.create_dataset('E',data=es)
-        h5f.create_dataset('w',data=w)
-        h5f.create_dataset('wIn',data=wIn)
-        h5f.create_dataset('wLoss',data=wLoss)
-   
+        np.savez_compressed('data',l1=l1,l2=l2,nBaths=nBaths,valBaths=valBaths,
+                            n0imp=n0imp,dnTol=dnTol,
+                            dnValBaths=dnValBaths,dnConBaths=dnConBaths,
+                            Fdd=Fdd,Fpp=Fpp,Fpd=Fpd,Gpd=Gpd,
+                            xi_2p=xi_2p,xi_3d=xi_3d,
+                            chargeTransferCorrection=chargeTransferCorrection,
+                            eImp3d=eImp3d,deltaO=deltaO,
+                            hField=hField,
+                            eBath=[eValEg,eValT2g,eConEg,eConT2g],
+                            vBath=[vValEg,vValT2g,vConEg,vConT2g],
+                            groundDiagMode=groundDiagMode,
+                            nPsiMax=nPsiMax,
+                            eigenValueTol=eigenValueTol,
+                            slaterWeightMin=slaterWeightMin,
+                            T=T,energyCut=energyCut,delta=delta,
+                            krylovSize=krylovSize,restrictions=restrictions,
+                            epsilons=epsilons,
+                            epsilonsRIXSin=epsilonsRIXSin,epsilonsRIXSout=epsilonsRIXSout,
+                            deltaRIXS=deltaRIXS,
+                            hOp=hOp) 
+        # Save some of the arrays.
+        if printH5:  
+            import h5py
+            # This file format does not support dictonaries.
+            h5f = h5py.File('spectra.h5','w')
+            h5f.create_dataset('E',data=es)
+            h5f.create_dataset('w',data=w)
+            h5f.create_dataset('wIn',data=wIn)
+            h5f.create_dataset('wLoss',data=wLoss)
+        else: 
+            np.savez_compressed('spectraEnergies',E=es,w=w,wIn=wIn,wLoss=wLoss)
     
     if rank == 0: print 'Create XAS spectra...'
     # Dipole transition operators
@@ -235,8 +240,11 @@ def main():
     # thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
-        h5f.create_dataset('XAS',data=-gs.imag)
-        h5f.create_dataset('XASthermal',data=a)
+        if printH5:
+            h5f.create_dataset('XAS',data=-gs.imag)
+            h5f.create_dataset('XASthermal',data=a)
+        else:
+            np.savez_compressed('spectraXAS',XAS=-gs.imag,XASthermal=a)
     # Sum over transition operators
     aSum = np.sum(a,axis=0)
     # Save spectra to disk
@@ -268,8 +276,11 @@ def main():
     # Thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
-        h5f.create_dataset('RIXS',data=-gs.imag)
-        h5f.create_dataset('RIXSthermal',data=a)
+        if printH5:
+            h5f.create_dataset('RIXS',data=-gs.imag)
+            h5f.create_dataset('RIXSthermal',data=a)
+        else:
+            np.savez_compressed('spectraRIXS',RIXS=-gs.imag,RIXSthermal=a)
     # Sum over transition operators
     aSum = np.sum(a,axis=(0,1))
     # Save spectra to disk
@@ -305,8 +316,11 @@ def main():
     # thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
-        h5f.create_dataset('PS',data=-gs.imag)
-        h5f.create_dataset('PSthermal',data=a)
+        if printH5:
+            h5f.create_dataset('PS',data=-gs.imag)
+            h5f.create_dataset('PSthermal',data=a)
+        else:
+            np.savez_compressed('spectraPS',PS=-gs.imag,PSthermal=a)
     # Sum over transition operators
     aSum = np.sum(a,axis=0)
     # Save spectra to disk
@@ -334,8 +348,11 @@ def main():
     # thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
-        h5f.create_dataset('XPS',data=-gs.imag)
-        h5f.create_dataset('XPSthermal',data=a)
+        if printH5:
+            h5f.create_dataset('XPS',data=-gs.imag)
+            h5f.create_dataset('XPSthermal',data=a)
+        else:
+            np.savez_compressed('spectraXPS',XPS=-gs.imag,XPSthermal=a)
     # Sum over transition operators
     aSum = np.sum(a,axis=0)
     # Save spectra to disk
@@ -350,8 +367,7 @@ def main():
         print
    
     
-
-    if rank == 0: h5f.close()
+    if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)
     
 def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
