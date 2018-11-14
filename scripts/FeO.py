@@ -21,7 +21,7 @@ def main():
     #if rank == 0: printGaunt()
     
     # -----------------------
-    # System imformation  
+    # System information  
     l1,l2 = 1,2 # Angular momentum
     # Number of bath sets
     nBaths = OrderedDict()
@@ -92,7 +92,7 @@ def main():
     nPrintSlaterWeights = 3
     tolPrintOccupation = 0.5
     # To print spectra to HDF5 format (or to .npz format).
-    printH5 = False  # True or False
+    printH5 = True  # True or False
     # -----------------------
     # Spectra parameters
     # Temperature (Kelvin)
@@ -110,9 +110,9 @@ def main():
     epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
     # RIXS parameters
     # Polarization vectors, of in and outgoing photon.
-    epsilonsRIXSin = [[0,0,1]] # [[1,0,0],[0,1,0],[0,0,1]]  # [[0,0,1]]
-    epsilonsRIXSout = [[0,0,1]] # [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    wIn = np.linspace(-10,20,200)
+    epsilonsRIXSin = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]] 
+    epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]]# [[0,0,1]] 
+    wIn = np.linspace(-10,15,100)
     wLoss = np.linspace(-2,12,7000)
     deltaRIXS = 0.025
     # -----------------------
@@ -248,13 +248,12 @@ def main():
     # Sum over transition operators
     aSum = np.sum(a,axis=0)
     # Save spectra to disk
-    if rank == 0: print 'Save spectra to disk...'
-    tmp = [w,aSum]
-    # Each transition operator seperatly
-    for i in range(np.shape(a)[0]): tmp.append(a[i,:])
     if rank == 0:
-        filename = 'XAS.dat'
-        np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+        tmp = [w,aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print 'Save spectra to disk...'
+        np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
         print
     
@@ -284,16 +283,15 @@ def main():
     # Sum over transition operators
     aSum = np.sum(a,axis=(0,1))
     # Save spectra to disk
-    tmp = np.zeros((len(wLoss)+1,len(wIn)+1))
-    tmp[0,0] = float('nan')
-    tmp[0,1:] = wIn
-    tmp[1:,0] = wLoss
-    tmp[1:,1:] = aSum.T
     if rank == 0: 
         print 'Save spectra to disk...'
-        filename = 'RIXS.dat'
-        np.savetxt(filename,tmp,fmt='%8.4f',
-                   header='I[wLoss,wIn], with wLoss on first column and wIn on first row.')
+        # I[wLoss,wIn], with wLoss on first column and wIn on first row.
+        tmp = np.zeros((len(wLoss)+1,len(wIn)+1),dtype=np.float32)
+        tmp[0,0] = len(wIn)
+        tmp[0,1:] = wIn
+        tmp[1:,0] = wLoss
+        tmp[1:,1:] = aSum.T
+        tmp.tofile('RIXS.bin')
         print
     
 
@@ -324,13 +322,12 @@ def main():
     # Sum over transition operators
     aSum = np.sum(a,axis=0)
     # Save spectra to disk
-    if rank == 0: print 'Save spectra to disk...'
-    tmp = [w,aSum]
-    # Each transition operator seperatly
-    for i in range(np.shape(a)[0]): tmp.append(a[i,:])
     if rank == 0:
-        filename = 'PS.dat'
-        np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+        tmp = [w,aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print 'Save spectra to disk...'
+        np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
         print
     
@@ -356,13 +353,12 @@ def main():
     # Sum over transition operators
     aSum = np.sum(a,axis=0)
     # Save spectra to disk
-    if rank == 0: print 'Save spectra to disk...'
-    tmp = [w,aSum]
-    # Each transition operator seperatly
-    for i in range(np.shape(a)[0]): tmp.append(a[i,:])
     if rank == 0:
-        filename = 'XPS.dat'
-        np.savetxt(filename,np.array(tmp).T,fmt='%8.4f',
+        tmp = [w,aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print 'Save spectra to disk...'
+        np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
         print
    

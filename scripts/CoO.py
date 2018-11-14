@@ -21,7 +21,7 @@ def main():
     #if rank == 0: printGaunt()
     
     # -----------------------
-    # System imformation  
+    # System information  
     l1,l2 = 1,2 # Angular momentum
     # Number of bath sets
     nBaths = OrderedDict()
@@ -36,7 +36,7 @@ def main():
     # Angular momentum : initial impurity occupation 
     n0imp = OrderedDict()
     n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
-    n0imp[l2] = 8 # 8 for Ni+2
+    n0imp[l2] = 7 # 8 for Ni+2
     # Angular momentum : max devation of initial impurity occupation
     dnTol = OrderedDict()
     dnTol[l1] = 0
@@ -54,34 +54,34 @@ def main():
     # -----------------------
     # Hamiltonian parameters
     # Slater-Condon parameters
-    Fdd=[7.5,0,9.9,0,6.6]
+    Fdd=[7.0,0,9.6,0,6.4]
     Fpp=[0,0,0]
-    Fpd=[8.9,0,6.8]
-    Gpd=[0,5,0,2.8] 
+    Fpd=[8.0,0,6.4]
+    Gpd=[0,4.6,0,2.6] 
     # SOC values
-    xi_2p = 11.629
-    xi_3d = 0.096
+    xi_2p = 9.859
+    xi_3d = 0.079
     # Double counting parameter
     chargeTransferCorrection = 1.5
     # Onsite 3d energy parameters
-    eImp3d = -1.31796
-    deltaO = 0.60422
+    eImp3d = -0.802
+    deltaO = 0.612
     # Magnetic field
-    hField = [0,0,0.100] # 0.120*np.array([1,1,2])/np.sqrt(6) # [0,0,0.00001]
+    hField = [0,0,0.0001] # 0.120*np.array([1,1,2])/np.sqrt(6) # [0,0,0.00001]
     # Bath energies and hoppings for 3d orbitals
-    eValEg = -4.4
+    eValEg = -4.5
     eValT2g = -6.5
     eConEg = 3
     eConT2g = 2
-    vValEg = 1.883
-    vValT2g = 1.395
+    vValEg = 1.919
+    vValT2g = 1.412
     vConEg = 0.6
     vConT2g = 0.4
     # -----------------------
     # Ground state diagonalization mode
     groundDiagMode = 'Lanczos'  # 'Lanczos' or 'full'
     # Maximum number of eigenstates to consider
-    nPsiMax = 3
+    nPsiMax = 13
     eigenValueTol = 1e-9
     # Slater determinant truncation parameters
     # Removes Slater determinants with weights
@@ -107,12 +107,12 @@ def main():
     restrictions = {}
     restrictions[tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))] = (n0imp[l]-1,n0imp[l]+3)
     # XAS polarization vectors. 
-    epsilons = [[0,0,1]]  # [[1,0,0],[0,1,0],[0,0,1]] 
+    epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
     # RIXS parameters
     # Polarization vectors, of in and outgoing photon.
-    epsilonsRIXSin = [[0,0,1]] # [[1,0,0],[0,1,0],[0,0,1]]  # [[0,0,1]]
-    epsilonsRIXSout = [[0,0,1]] # [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    wIn = np.linspace(-10,20,200)
+    epsilonsRIXSin = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]] 
+    epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]]# [[0,0,1]] 
+    wIn = np.linspace(-10,15,100)
     wLoss = np.linspace(-2,12,7000)
     deltaRIXS = 0.025
     # -----------------------
