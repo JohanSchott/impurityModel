@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from math import pi,sqrt
 import numpy as np
@@ -178,7 +178,7 @@ def daggerOp(op):
             elif e[1] == 'c':
                 processNew.append((e[0],'a'))
             else:
-                print 'Operator type unknown'
+                print('Operator type unknown')
         processNew = tuple(processNew)
         opDagger[processNew] = value.conjugate()
     return opDagger
@@ -200,7 +200,7 @@ def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
     # given the occupation in that partition.
     basisL = OrderedDict()
     for l in nBaths.keys():
-        if rank == 0: print 'l=',l
+        if rank == 0: print('l=',l)
         # Add configurations to this list
         basisL[l] = []
         # Loop over different partion occupations
@@ -216,11 +216,11 @@ def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
                     assert nCon <= 2*(2*l+1)*(nBaths[l]-valBaths[l]) 
                     assert nImp <= 2*(2*l+1) 
 
-                    if rank == 0: print 'New partition occupations:'
-                    #if rank == 0: print 'nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
-                    #    nImp,dnVal,dnCon)
-                    if rank == 0: print 'nImp,nVal,nCon = {:d},{:d},{:d}'.format(
-                        nImp,nVal,nCon)
+                    if rank == 0: print('New partition occupations:')
+                    #if rank == 0: print('nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
+                    #    nImp,dnVal,dnCon))
+                    if rank == 0: print('nImp,nVal,nCon = {:d},{:d},{:d}'.format(
+                        nImp,nVal,nCon))
                     # Impurity electrons
                     indices = range(c2i(nBaths,(l,-l,0)),
                                     c2i(nBaths,(l,l,1))+1)
@@ -367,9 +367,9 @@ def cd(i,psi):
     for state,amp in psi.items():		
         j = binary_search_bigger(state,i)
         if j != -1:
-    		camp = amp if j%2==0 else -amp
-    		cstate = state[:j] + (i,) + state[j:]
-    		ret[cstate] = camp
+            camp = amp if j%2==0 else -amp
+            cstate = state[:j] + (i,) + state[j:]
+            ret[cstate] = camp
     return ret
 
 def remove(i,state):
@@ -555,13 +555,13 @@ def printGaunt(l=2,lp=2):
     '''
     # Print Gauent coefficients
     for k in range(l+lp+1):
-        if rank == 0: print 'k={:d}'.format(k)
+        if rank == 0: print('k={:d}'.format(k))
         for m in range(-l,l+1):
             s = ''
             for mp in range(-lp,lp+1):
                 s += ' {:3.2f}'.format(gauntC(k,l,m,lp,mp))
-            if rank == 0: print s
-        if rank == 0: print
+            if rank == 0: print(s)
+        if rank == 0: print('')
 
 def getNoSpinUop(l1,l2,l3,l4,R):
     '''
@@ -644,7 +644,7 @@ def addOps(ops):
     '''
     opSum = {}
     for op in ops:
-        for sOp,value in op.iteritems():
+        for sOp,value in op.items():
             if value != 0:
               if sOp in opSum:
                   opSum[sOp] += value
@@ -833,7 +833,7 @@ def getSsqr3dWithBath(nBaths,psi,tol=1e-8):
     psi3 = applySminus3dWithBath(nBaths,psi)
     S2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if S2.imag > tol:
-        print 'Warning: <S^2> complex valued!'
+        print('Warning: <S^2> complex valued!')
     return S2.real    
 
 def getSsqr3d(nBaths,psi,tol=1e-8):
@@ -853,7 +853,7 @@ def getSsqr3d(nBaths,psi,tol=1e-8):
     psi3 = applySminus3d(nBaths,psi)
     S2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if S2.imag > tol:
-        print 'Warning: <S^2> complex valued!'
+        print('Warning: <S^2> complex valued!')
     return S2.real    
 
 def getLsqr3dWithBath(nBaths,psi,tol=1e-8):
@@ -873,7 +873,7 @@ def getLsqr3dWithBath(nBaths,psi,tol=1e-8):
     psi3 = applyLminus3dWithBath(nBaths,psi)
     L2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if L2.imag > tol:
-        print 'Warning: <L^2> complex valued!'
+        print('Warning: <L^2> complex valued!')
     return L2.real    
 
 def getLsqr3d(nBaths,psi,tol=1e-8):
@@ -893,7 +893,7 @@ def getLsqr3d(nBaths,psi,tol=1e-8):
     psi3 = applyLminus3d(nBaths,psi)
     L2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if L2.imag > tol:
-        print 'Warning: <L^2> complex valued!'
+        print('Warning: <L^2> complex valued!')
     return L2.real    
 
 def getTraceDensityMatrix(nBaths,psi,l=2):
@@ -1052,7 +1052,7 @@ def getEgT2gOccupation(nBaths,psi):
         if abs(occs[i].imag) < 1e-12:
             occs[i] = occs[i].real
         else:
-            print 'Warning: Complex occupation'
+            print('Warning: Complex occupation')
     return occs
 
 def applySz3dWithBath(nBaths,psi):
@@ -1462,19 +1462,19 @@ def printExpValues(nBaths,es,psis,n=None):
     if n == None:
         n = len(es)
     if rank == 0: 
-        print 'E0 = {:7.4f}'.format(es[0])
-        print ('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
-               'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)')
+        print('E0 = {:7.4f}'.format(es[0]))
+        print(('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
+               'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)'))
     for i,(e,psi) in enumerate(zip(es-es[0],psis)):
         if rank == 0 and i < n:
             oc = getEgT2gOccupation(nBaths,psi)
-            print ('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
+            print(('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
                    ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
                 i,e,getTraceDensityMatrix(nBaths,psi),
                 oc[0],oc[1],oc[2],oc[3],
                 getLz3d(nBaths,psi),getSz3d(nBaths,psi),
                 getLsqr3d(nBaths,psi),getSsqr3d(nBaths,psi),
-                getLsqr3dWithBath(nBaths,psi),getSsqr3dWithBath(nBaths,psi))
+                getLsqr3dWithBath(nBaths,psi),getSsqr3dWithBath(nBaths,psi)))
 
 def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
     '''
@@ -1492,21 +1492,21 @@ def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
         e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]),
         T=T)
     if rank == 0: 
-        print '<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T))
-        print '<N(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getTraceDensityMatrix(nBaths,psi) for psi in psis],T=T))
-        print '<N(egDn)> = {:4.3f}'.format(occs[0])
-        print '<N(egUp)> = {:4.3f}'.format(occs[1])
-        print '<N(t2gDn)> = {:4.3f}'.format(occs[2])
-        print '<N(t2gUp)> = {:4.3f}'.format(occs[3])
-        print '<Lz(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getLz3d(nBaths,psi) for psi in psis],T=T))
-        print '<Sz(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getSz3d(nBaths,psi) for psi in psis],T=T))
-        print '<L^2(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getLsqr3d(nBaths,psi) for psi in psis],T=T))
-        print '<S^2(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getSsqr3d(nBaths,psi) for psi in psis],T=T))
+        print('<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T)))
+        print('<N(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getTraceDensityMatrix(nBaths,psi) for psi in psis],T=T)))
+        print('<N(egDn)> = {:4.3f}'.format(occs[0]))
+        print('<N(egUp)> = {:4.3f}'.format(occs[1]))
+        print('<N(t2gDn)> = {:4.3f}'.format(occs[2]))
+        print('<N(t2gUp)> = {:4.3f}'.format(occs[3]))
+        print('<Lz(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getLz3d(nBaths,psi) for psi in psis],T=T)))
+        print('<Sz(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getSz3d(nBaths,psi) for psi in psis],T=T)))
+        print('<L^2(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getLsqr3d(nBaths,psi) for psi in psis],T=T)))
+        print('<S^2(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getSsqr3d(nBaths,psi) for psi in psis],T=T)))
 
 
 def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
@@ -1618,14 +1618,14 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
                         else:
                             psiNew[sB] = amp*h*signTot
     else:
-        print 'Warning: method not implemented.'
+        print('Warning: method not implemented.')
     # Profiling
     #if rank == 0 and opResult != None: 
-    #    print 'len(opResult): new={:d}, old={:d}, old/new={:5.2f}'.format(
-    #        len(opResult),opResultLen,opResultLen*1./len(opResult))
+    #    print('len(opResult): new={:d}, old={:d}, old/new={:5.2f}'.format(
+    #        len(opResult),opResultLen,opResultLen*1./len(opResult)))
     # Remove product states not fullfilling the occupation restrictions
     if restrictions != None:
-        for state,amp in psiNew.items():
+        for state,amp in list(psiNew.items()):
             for restriction,occupations in restrictions.items():
                 n = 0
                 for i in restriction:
@@ -1635,7 +1635,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
                     psiNew.pop(state)
                     break
     # Remove product states with small weight
-    for state,amp in psiNew.items():
+    for state,amp in list(psiNew.items()):
         if abs(amp)**2 < slaterWeightMin:
             psiNew.pop(state)
     return psiNew
@@ -1647,14 +1647,14 @@ def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
     # Number of basis states
     n = len(basis)
     basisIndex = {basis[i]:i for i in range(n)}
-    if rank == 0: print 'Filling the Hamiltonian...'
+    if rank == 0: print('Filling the Hamiltonian...')
     progress = 0
     if mode == 'dense_serial':
         h = np.zeros((n,n),dtype=np.complex)
         for j in range(n):
             if rank == 0 and progress + 10 <= int(j*100./n): 
                 progress = int(j*100./n)
-                print '{:d}% done'.format(progress)
+                print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
                 if k in basisIndex:
@@ -1667,7 +1667,7 @@ def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
             hRank[j] = {}
             if rank == 0 and progress + 10 <= int(j*100./len(jobs)): 
                 progress = int(j*100./len(jobs))
-                print '{:d}% done'.format(progress)
+                print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
                 if k in basisIndex:
@@ -1685,7 +1685,7 @@ def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
         for j in range(n):
             if rank == 0 and progress + 10 <= int(j*100./n): 
                 progress = int(j*100./n)
-                print '{:d}% done'.format(progress)
+                print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
                 if k in basisIndex:
@@ -1702,7 +1702,7 @@ def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
         for j in jobs:
             if rank == 0 and progress + 10 <= int(j*100./len(jobs)): 
                 progress = int(j*100./len(jobs))
-                print '{:d}% done'.format(progress)
+                print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
                 if k in basisIndex:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # Script for solving many-body impurity problem.
 
@@ -119,7 +119,7 @@ def main():
 
     
     # Hamiltonian
-    if rank == 0: print 'Construct the Hamiltonian operator...'
+    if rank == 0: print('Construct the Hamiltonian operator...')
     hOp = getHamiltonianOperator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
                                  [xi_2p,xi_3d],
                                  [n0imp,chargeTransferCorrection],
@@ -127,17 +127,17 @@ def main():
                                  [vValEg,vValT2g,vConEg,vConT2g],
                                  [eValEg,eValT2g,eConEg,eConT2g])
     # Many body basis for the ground state
-    if rank == 0: print 'Create basis...'    
+    if rank == 0: print('Create basis...')
     basis = finite.getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
                             dnTol,n0imp)
-    if rank == 0: print '#basis states = {:d}'.format(len(basis)) 
+    if rank == 0: print('#basis states = {:d}'.format(len(basis))) 
 
     # Diagonalization of restricted active space Hamiltonian
-    if rank == 0: print 'Create Hamiltonian matrix...' 
+    if rank == 0: print('Create Hamiltonian matrix...')
     h = finite.getHamiltonianMatrix(hOp,basis)    
-    if rank == 0: print '<#Hamiltonian elements/column> = {:d}'.format(
-        int(len(np.nonzero(h)[0])*1./len(basis)))     
-    if rank == 0: print 'Diagonalize the Hamiltonian...'
+    if rank == 0: print('<#Hamiltonian elements/column> = {:d}'.format(
+        int(len(np.nonzero(h)[0])*1./len(basis)))) 
+    if rank == 0: print('Diagonalize the Hamiltonian...')
     if groundDiagMode == 'full':
         es, vecs = np.linalg.eigh(h.todense())
         es = es[:nPsiMax]
@@ -150,7 +150,7 @@ def main():
         vecs = np.array([vecs[:,i] for i in indices]).T
     else:
         print('Wrong diagonalization mode')
-    if rank == 0: print 'Proceed with {:d} eigenstates!'.format(len(es))
+    if rank == 0: print('Proceed with {:d} eigenstates!'.format(len(es)))
     psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
               if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
             for vi in range(len(es))]
@@ -160,11 +160,11 @@ def main():
     finite.printExpValues(nBaths,es,psis,n=nPsiMax) 
     
     # Print Slater determinants and weights 
-    if rank == 0: print 'Slater determinants/product states and correspoinding weights'
+    if rank == 0: print('Slater determinants/product states and correspoinding weights')
     weights = []
     for i,psi in enumerate(psis[:nPsiMax]):
-        if rank == 0: print 'Eigenstate {:d}.'.format(i)
-        if rank == 0: print 'Consists of {:d} product states.'.format(len(psi))
+        if rank == 0: print('Eigenstate {:d}.'.format(i))
+        if rank == 0: print('Consists of {:d} product states.'.format(len(psi)))
         ws = np.array([ abs(a)**2 for a in psi.values() ])
         s = np.array([ ps for ps in psi.keys() ])
         j = np.argsort(ws)
@@ -172,25 +172,25 @@ def main():
         s = s[j[-1::-1]]
         weights.append(ws)
         if rank == 0 and nPrintSlaterWeights > 0: 
-            print 'Highest (product state) weights:'
-            print ws[:nPrintSlaterWeights]
-            print 'Corresponding product states:'
-            print s[:nPrintSlaterWeights]
-            print 
+            print('Highest (product state) weights:')
+            print(ws[:nPrintSlaterWeights])
+            print('Corresponding product states:')
+            print(s[:nPrintSlaterWeights])
+            print('') 
 
     # Calculate density matrix 
-    if rank == 0: print 'Density matrix (in cubic basis):'
+    if rank == 0: print('Density matrix (in cubic basis):')
     for i,psi in enumerate(psis[:nPsiMax]):
-        if rank == 0: print 'Eigenstate {:d}'.format(i)
+        if rank == 0: print('Eigenstate {:d}'.format(i))
         n = finite.getDensityMatrixCubic(nBaths,psi)
-        if rank == 0: print '#element={:d}'.format(len(n))
+        if rank == 0: print('#element={:d}'.format(len(n)))
         for e,ne in n.items():
             if rank == 0 and abs(ne) > tolPrintOccupation: 
                 if e[0] == e[1]:
-                    print 'Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne) 
+                    print('Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne))
                 else:
-                    print 'Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne) 
-        if rank == 0: print  
+                    print('Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne)) 
+        if rank == 0: print('') 
 
     # Save some information to disk
     if rank == 0:
@@ -227,16 +227,16 @@ def main():
         else: 
             np.savez_compressed('spectraEnergies',E=es,w=w,wIn=wIn,wLoss=wLoss)
     
-    if rank == 0: print 'Create XAS spectra...'
+    if rank == 0: print('Create XAS spectra...')
     # Dipole transition operators
     tOps = spectra.getDipoleOperators(nBaths,epsilons)
     # Green's function 
     gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
                             energyCut,restrictions)
     if rank == 0: 
-        print '#relevant eigenstates = {:d}'.format(np.shape(gs)[0])
-        print '#polarizations = {:d}'.format(np.shape(gs)[1])
-        print '#mesh points = {:d}'.format(np.shape(gs)[2])
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#polarizations = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
@@ -252,13 +252,13 @@ def main():
         tmp = [w,aSum]
         # Each transition operator seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
-        print 'Save spectra to disk...'
+        print('Save spectra to disk...')
         np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-        print
+        print('')
     
     
-    if rank == 0: print 'Create RIXS spectra...'
+    if rank == 0: print('Create RIXS spectra...')
     # Dipole 2p -> 3d transition operators
     tOpsIn = spectra.getDipoleOperators(nBaths,epsilonsRIXSin)
     # Dipole 3d -> 2p transition operators
@@ -267,11 +267,11 @@ def main():
     gs = spectra.getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIn,wLoss,delta,deltaRIXS,
                             krylovSize,slaterWeightMin,energyCut,restrictions)
     if rank == 0: 
-        print '#relevant eigenstates = {:d}'.format(np.shape(gs)[0])
-        print '#in-polarizations = {:d}'.format(np.shape(gs)[1])
-        print '#out-polarizations = {:d}'.format(np.shape(gs)[2])
-        print '#mesh points of input energy = {:d}'.format(np.shape(gs)[3])
-        print '#mesh points of energy loss = {:d}'.format(np.shape(gs)[4])
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#in-polarizations = {:d}'.format(np.shape(gs)[1]))
+        print('#out-polarizations = {:d}'.format(np.shape(gs)[2]))
+        print('#mesh points of input energy = {:d}'.format(np.shape(gs)[3]))
+        print('#mesh points of energy loss = {:d}'.format(np.shape(gs)[4]))
     # Thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
@@ -284,7 +284,7 @@ def main():
     aSum = np.sum(a,axis=(0,1))
     # Save spectra to disk
     if rank == 0: 
-        print 'Save spectra to disk...'
+        print('Save spectra to disk...')
         # I[wLoss,wIn], with wLoss on first column and wIn on first row.
         tmp = np.zeros((len(wLoss)+1,len(wIn)+1),dtype=np.float32)
         tmp[0,0] = len(wIn)
@@ -292,25 +292,25 @@ def main():
         tmp[1:,0] = wLoss
         tmp[1:,1:] = aSum.T
         tmp.tofile('RIXS.bin')
-        print
+        print('')
     
 
-    if rank == 0: print 'Create 3d inverse photoemission and photoemission spectra...'
+    if rank == 0: print('Create 3d inverse photoemission and photoemission spectra...')
     # Transition operators
     tOpsIPS = spectra.getInversePhotoEmissionOperators(nBaths,l=2)
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=2)
-    if rank == 0: print "Inverse photoemission Green's function.." 
+    if rank == 0: print("Inverse photoemission Green's function..")
     gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta,krylovSize,
                                slaterWeightMin,energyCut,restrictions)
-    if rank == 0: print "Photoemission Green's function.." 
+    if rank == 0: print("Photoemission Green's function..")
     gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
                               slaterWeightMin,energyCut,restrictions)
     gsPS *= -1
     gs = gsPS + gsIPS
     if rank == 0: 
-        print '#relevant eigenstates = {:d}'.format(np.shape(gs)[0])
-        print '#spin orbitals = {:d}'.format(np.shape(gs)[1])
-        print '#mesh points = {:d}'.format(np.shape(gs)[2])
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
@@ -326,12 +326,12 @@ def main():
         tmp = [w,aSum]
         # Each transition operator seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
-        print 'Save spectra to disk...'
+        print('Save spectra to disk...')
         np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-        print
+        print('')
     
-    if rank == 0: print 'Create core 2p x-ray photoemission spectra (XPS) ...'
+    if rank == 0: print('Create core 2p x-ray photoemission spectra (XPS) ...')
     # Transition operators
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
     # Photoemission Green's function 
@@ -339,9 +339,9 @@ def main():
                             slaterWeightMin,energyCut,restrictions)
     gs *= -1
     if rank == 0: 
-        print '#relevant eigenstates = {:d}'.format(np.shape(gs)[0])
-        print '#spin orbitals = {:d}'.format(np.shape(gs)[1])
-        print '#mesh points = {:d}'.format(np.shape(gs)[2])
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # thermal average
     a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
@@ -357,10 +357,10 @@ def main():
         tmp = [w,aSum]
         # Each transition operator seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
-        print 'Save spectra to disk...'
+        print('Save spectra to disk...')
         np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-        print
+        print('')
    
     
     if rank == 0 and printH5: h5f.close()

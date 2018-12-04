@@ -101,13 +101,14 @@ if 'xps' in locals():
 
 if 'xas' in locals() and 'rixs' in locals():
     print 'XAS and fluorescence yield spectrum'
+    scaleFY = 1./(pi*np.shape(rixs)[0])
     fig = plt.figure()
     # Sum over polarizations
     plt.plot(w,np.sum(xas,axis=0),'-k',label='XAS')
-    plt.plot(wIn,(wLoss[1]-wLoss[0])*np.sum(rixs,axis=(0,1,3))/pi,'-r',label='FY')
+    plt.plot(wIn,(wLoss[1]-wLoss[0])*np.sum(rixs,axis=(0,1,3))*scaleFY,'-r',label='FY')
     mask = wLoss < 0.2 
     y = np.sum(rixs[:,:,:,mask],axis=(0,1,3))
-    plt.plot(wIn,(wLoss[1]-wLoss[0])*y/pi,'-b',label='quasi-elastic FY')
+    plt.plot(wIn,(wLoss[1]-wLoss[0])*y*scaleFY,'-b',label='quasi-elastic FY')
     plt.legend()
     plt.xlabel(r'$\omega_{in}$')
     plt.ylabel('Intensity')
@@ -148,7 +149,7 @@ if 'rixs' in locals():
 
 if 'rixs' in locals():
     print 'RIXS map'
-    print 'Plot logarithm of RIXS intensity for better visibility.'
+    print 'Plot log10 of RIXS intensity for better visibility.'
     print 'In-coming photon mesh resolution: {:5.3f} eV'.format(wIn[1]-wIn[0])
     print 'Energy loss mesh resolution: {:5.3f} eV'.format(wLoss[1]-wLoss[0])
     plotCutOff = 0.001
@@ -158,11 +159,11 @@ if 'rixs' in locals():
     tmp = np.sum(rixs,axis=(0,1)).T
     mask = tmp < plotCutOff
     tmp[mask] = np.nan
-    cs = plt.contourf(wIn,wLoss,np.log(tmp),cmap=plt.get_cmap('Blues'))  
+    cs = plt.contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('Blues'))  
     #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('Blues')) 
     # Make a colorbar for the ContourSet returned by the contourf call.
     cbar = fig.colorbar(cs)
-    cbar.ax.set_ylabel('RIXS intensity')
+    cbar.ax.set_ylabel('log RIXS intensity')
     # Add the contour line levels to the colorbar
     #cbar.add_lines(cs2)
     #for e in wIn:
@@ -180,11 +181,11 @@ if 'rixs' in locals():
         tmp = np.copy(rixs[0,0,:,:].T)
         mask = tmp < plotCutOff
         tmp[mask] = np.nan
-        cs = axes.contourf(wIn,wLoss,np.log(tmp),cmap=plt.get_cmap('Blues')) 
+        cs = axes.contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('Blues')) 
         #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('Blues')) 
         # Make a colorbar for the ContourSet returned by the contourf call.
         cbar = fig.colorbar(cs, ax=axes)
-        cbar.ax.set_ylabel('RIXS intensity')
+        cbar.ax.set_ylabel('log RIXS intensity')
         # Add the contour line levels to the colorbar
         #cbar.add_lines(cs2)
         #for e in wIn:
@@ -198,11 +199,11 @@ if 'rixs' in locals():
                 tmp = np.copy(rixs[i,j,:,:].T)
                 mask = tmp < plotCutOff
                 tmp[mask] = np.nan
-                cs = axes[i,j].contourf(wIn,wLoss,np.log(tmp),cmap=plt.get_cmap('Blues')) 
+                cs = axes[i,j].contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('Blues')) 
                 #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('Blues')) 
                 # Make a colorbar for the ContourSet returned by the contourf call.
                 cbar = fig.colorbar(cs, ax=axes[i,j])
-                cbar.ax.set_ylabel('RIXS intensity')
+                cbar.ax.set_ylabel('log RIXS intensity')
                 # Add the contour line levels to the colorbar
                 #cbar.add_lines(cs2)
                 #for e in wIn:

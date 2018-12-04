@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from math import sqrt
 import numpy as np
@@ -165,7 +165,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
 
     '''
 
-    #print 'Start getGreen'
+    #print('Start getGreen')
 
     # Allocations
     g = np.zeros(len(omega),dtype=np.complex)
@@ -179,32 +179,32 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         w = list(np.zeros(krylovSize))
         wp = list(np.zeros(krylovSize))
         v[0] = psi
-        #print 'len(hBig) = ',len(hBig),', len(v[0]) = ',len(v[0])
+        #print('len(hBig) = ',len(hBig),', len(v[0]) = ',len(v[0]))
         wp[0] = applyOp(hOp,v[0],slaterWeightMin,restrictions,hBig)
-        #print '#len(hBig) = ',len(hBig),', len(wp[0]) = ',len(wp[0])
+        #print('#len(hBig) = ',len(hBig),', len(wp[0]) = ',len(wp[0]))
         alpha[0] = inner(wp[0],v[0]).real
         w[0] = add(wp[0],v[0],-alpha[0])
-        #print 'len(w[0]) = ',len(w[0])
+        #print('len(w[0]) = ',len(w[0]))
         
         # Approximate position of spectrum
-        #print 'alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e)
+        #print('alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e))
     
         # Construct Krylov states, 
         # and elements alpha and beta
         for j in range(1,krylovSize):
             beta[j-1] = sqrt(norm2(w[j-1]))
-            #print 'beta[',j-1,'] = ',beta[j-1]
+            #print('beta[',j-1,'] = ',beta[j-1])
             if beta[j-1] != 0:
                 v[j] = {s:1./beta[j-1]*a for s,a in w[j-1].items()}
             else:
                 # Pick normalized state v[j],
                 # orthogonal to v[0],v[1],v[2],...,v[j-1]
-                print 'Warning: beta==0, implementation missing!'
-            #print 'len(v[',j,'] =',len(v[j])
+                print('Warning: beta==0, implementation missing!')
+            #print('len(v[',j,'] =',len(v[j]))
             wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions,hBig)
             alpha[j] = inner(wp[j],v[j]).real
             w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
-            #print 'len(hBig) = ',len(hBig),', len(w[j]) = ',len(w[j])
+            #print('len(hBig) = ',len(hBig),', len(w[j]) = ',len(w[j]))
     elif mode == 'numpy':
         # Hamiltonian in dict format.
         # Possibly new product state keys are added to hBig.
@@ -429,8 +429,8 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                 nTMP = len(hExcited)
                 h = expandBasisAndHamiltonian(hExcited,hOp,psi1.keys(),restrictions)
                 if rank == 0:
-                    print 'len(psi1),len(h),len(hExcited),#elements added to hExcited'
-                    print len(psi1),len(h),len(hExcited),len(hExcited)-nTMP
+                    print('len(psi1),len(h),len(hExcited),#elements added to hExcited')
+                    print(len(psi1),len(h),len(hExcited),len(hExcited)-nTMP)
                 index = {ps:i for i,ps in enumerate(h.keys())} 
                 basis = {i:ps for i,ps in enumerate(h.keys())} 
                 n = len(h)
@@ -449,7 +449,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                         cols.append(index[psJ])
                 # store Hamiltonian in sparse matrix form
                 h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
-                if rank == 0: print 'Loop over in-coming photon energies...'
+                if rank == 0: print('Loop over in-coming photon energies...')
                 for iwIn,wIn in enumerate(wIns):
                     # A = (wIn+1j*delta1+e)*\hat{1} - hOp.
                     a = scipy.sparse.csr_matrix(([wIn+1j*delta1+e]*n,(range(n),range(n))),
@@ -461,10 +461,10 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     # require a Hermitian matrix.
                     x,info = scipy.sparse.linalg.bicgstab(a,y)
                     if info > 0 :
-                        print 'convergence to tolerance not achieved'
-                        print '#iterations = ',info
+                        print('convergence to tolerance not achieved')
+                        print('#iterations = ',info)
                     elif info < 0 :
-                        print 'illegal input or breakdown in conjugate gradient'
+                        print('illegal input or breakdown in conjugate gradient')
                     # Convert multi state from vector to dict format
                     psi2 = {}
                     for i,amp in enumerate(x):
@@ -480,7 +480,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                         for state in psi3.keys(): 
                             psi3[state] /= normalization
                         # Remove product states with small weight
-                        for state,amp in psi3.items():
+                        for state,amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
                         # Calculate Green's function
@@ -500,8 +500,8 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                 nTMP = len(hExcited)
                 h = expandBasisAndHamiltonian(hExcited,hOp,psi1.keys(),restrictions)
                 if rank == 0: 
-                    print 'len(psi1),len(h),len(hExcited),#elements added to hExcited'
-                    print len(psi1),len(h),len(hExcited),len(hExcited)-nTMP
+                    print('len(psi1),len(h),len(hExcited),#elements added to hExcited')
+                    print(len(psi1),len(h),len(hExcited),len(hExcited)-nTMP)
                 index = {ps:i for i,ps in enumerate(h.keys())} 
                 basis = {i:ps for i,ps in enumerate(h.keys())} 
                 n = len(h)
@@ -522,7 +522,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                 h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
                 # Rank dependent variable
                 g = {}
-                if rank == 0: print 'Loop over in-coming photon energies...'
+                if rank == 0: print('Loop over in-coming photon energies...')
                 # Loop over in-coming photon energies, unique for each MPI rank
                 for iwIn in getJobs(rank,ranks,len(wIns)):
                     wIn = wIns[iwIn]
@@ -538,10 +538,10 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     # require a Hermitian matrix.
                     x,info = scipy.sparse.linalg.bicgstab(a,y)
                     if info > 0 :
-                        print 'convergence to tolerance not achieved'
-                        print '#iterations = ',info
+                        print('convergence to tolerance not achieved')
+                        print('#iterations = ',info)
                     elif info < 0 :
-                        print 'illegal input or breakdown in conjugate gradient'
+                        print('illegal input or breakdown in conjugate gradient')
                     # Convert multi state from vector to dict format
                     psi2 = {}
                     for i,amp in enumerate(x):
@@ -557,7 +557,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                         for state in psi3.keys(): 
                             psi3[state] /= normalization
                         # Remove product states with small weight
-                        for state,amp in psi3.items():
+                        for state,amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
                         # Calculate Green's function
