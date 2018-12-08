@@ -5,6 +5,7 @@
 import numpy as np
 import scipy.sparse.linalg
 from collections import OrderedDict
+import sys,os
 from mpi4py import MPI
 
 from finite import c2i,k_B
@@ -112,9 +113,21 @@ def main():
     # Polarization vectors, of in and outgoing photon.
     epsilonsRIXSin = [[1,0,0],[0,1,0],[0,0,1]]  # [[0,0,1]]
     epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    wIn = np.linspace(-10,20,200)
-    wLoss = np.linspace(-2,12,7000)
-    deltaRIXS = 0.025
+    wIn = np.linspace(-10,20,100)
+    wLoss = np.linspace(-2,12,4000)
+    deltaRIXS = 0.050
+    # NIXS parameters
+    qsNIXS = [2*np.array([1,1,1])/np.sqrt(3),7*np.array([1,1,1])/np.sqrt(3)]
+    deltaNIXS = 0.100
+    # Angular momentum of final and initial orbitals in the NIXS excitation process.
+    liNIXS,ljNIXS = 2,2
+    # File name of file containing radial mesh and radial part of final 
+    # and initial orbitals in the NIXS excitation process.
+    radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Ni3d.dat'
+    data = np.loadtxt(radialFileName)
+    radialMesh = data[:,0]
+    RiNIXS = data[:,1]
+    RjNIXS = np.copy(RiNIXS)
     # -----------------------
 
     
@@ -214,6 +227,7 @@ def main():
                             epsilons=epsilons,
                             epsilonsRIXSin=epsilonsRIXSin,epsilonsRIXSout=epsilonsRIXSout,
                             deltaRIXS=deltaRIXS,
+                            deltaNIXS=deltaNIXS,
                             hOp=hOp) 
         # Save some of the arrays.
         if printH5:  
@@ -224,9 +238,117 @@ def main():
             h5f.create_dataset('w',data=w)
             h5f.create_dataset('wIn',data=wIn)
             h5f.create_dataset('wLoss',data=wLoss)
+            h5f.create_dataset('qsNIXS',data=qsNIXS)
+            h5f.create_dataset('r',data=radialMesh)
+            h5f.create_dataset('RiNIXS',data=RiNIXS)
+            h5f.create_dataset('RjNIXS',data=RjNIXS)
         else: 
-            np.savez_compressed('spectraEnergies',E=es,w=w,wIn=wIn,wLoss=wLoss)
+            np.savez_compressed('spectraInfo',E=es,w=w,wIn=wIn,wLoss=wLoss,
+                                qsNIXS=qsNIXS,r=radialMesh,RiNIXS=RiNIXS,
+                                RjNIXS=RjNIXS)
+
+
+    if rank == 0: print('Create 3d inverse photoemission and photoemission spectra...')
+    # Transition operators
+    tOpsIPS = spectra.getInversePhotoEmissionOperators(nBaths,l=2)
+    tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=2)
+    if rank == 0: print("Inverse photoemission Green's function..")
+    gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta,krylovSize,
+                               slaterWeightMin,energyCut,restrictions)
+    if rank == 0: print("Photoemission Green's function..")
+    gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
+                              slaterWeightMin,energyCut,restrictions)
+    gsPS *= -1
+    gs = gsPS + gsIPS
+    if rank == 0: 
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # thermal average
+    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    if rank == 0: 
+        if printH5:
+            h5f.create_dataset('PS',data=-gs.imag)
+            h5f.create_dataset('PSthermal',data=a)
+        else:
+            np.savez_compressed('spectraPS',PS=-gs.imag,PSthermal=a)
+    # Sum over transition operators
+    aSum = np.sum(a,axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [w,aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print('Save spectra to disk...')
+        np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+        print('')
     
+
+    if rank == 0: print('Create core 2p x-ray photoemission spectra (XPS) ...')
+    # Transition operators
+    tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
+    # Photoemission Green's function 
+    gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
+                            slaterWeightMin,energyCut,restrictions)
+    gs *= -1
+    if rank == 0: 
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # thermal average
+    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    if rank == 0: 
+        if printH5:
+            h5f.create_dataset('XPS',data=-gs.imag)
+            h5f.create_dataset('XPSthermal',data=a)
+        else:
+            np.savez_compressed('spectraXPS',XPS=-gs.imag,XPSthermal=a)
+    # Sum over transition operators
+    aSum = np.sum(a,axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [w,aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print('Save spectra to disk...')
+        np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+        print('')
+   
+
+    if rank == 0: print('Create NIXS spectra...')    
+    # Transition operator: exp(iq*r) 
+    tOps = spectra.getNIXSOperators(nBaths,qsNIXS,liNIXS,ljNIXS,
+                                    RiNIXS,RjNIXS,radialMesh)
+    # Green's function 
+    gs = spectra.getSpectra(hOp,tOps,psis,es,wLoss,deltaNIXS,krylovSize,slaterWeightMin,
+                            energyCut,restrictions)
+    if rank == 0: 
+        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#q-points = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # thermal average
+    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    if rank == 0: 
+        if printH5:
+            h5f.create_dataset('NIXS',data=-gs.imag)
+            h5f.create_dataset('NIXSthermal',data=a)
+        else:
+            np.savez_compressed('spectraNIXS',NIXS=-gs.imag,NIXSthermal=a)
+    # Sum over q-points
+    aSum = np.sum(a,axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [wLoss,aSum]
+        # Each q-point seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print('Save spectra to disk...')
+        np.savetxt('NIXS.dat',np.array(tmp).T,fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+        print('')
+
+
     if rank == 0: print('Create XAS spectra...')
     # Dipole transition operators
     tOps = spectra.getDipoleOperators(nBaths,epsilons)
@@ -294,74 +416,6 @@ def main():
         tmp.tofile('RIXS.bin')
         print('')
     
-
-    if rank == 0: print('Create 3d inverse photoemission and photoemission spectra...')
-    # Transition operators
-    tOpsIPS = spectra.getInversePhotoEmissionOperators(nBaths,l=2)
-    tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=2)
-    if rank == 0: print("Inverse photoemission Green's function..")
-    gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta,krylovSize,
-                               slaterWeightMin,energyCut,restrictions)
-    if rank == 0: print("Photoemission Green's function..")
-    gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                              slaterWeightMin,energyCut,restrictions)
-    gsPS *= -1
-    gs = gsPS + gsIPS
-    if rank == 0: 
-        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
-        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
-        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
-    # thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
-        if printH5:
-            h5f.create_dataset('PS',data=-gs.imag)
-            h5f.create_dataset('PSthermal',data=a)
-        else:
-            np.savez_compressed('spectraPS',PS=-gs.imag,PSthermal=a)
-    # Sum over transition operators
-    aSum = np.sum(a,axis=0)
-    # Save spectra to disk
-    if rank == 0:
-        tmp = [w,aSum]
-        # Each transition operator seperatly
-        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
-        print('Save spectra to disk...')
-        np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
-                   header='E  sum  T1  T2  T3 ...')
-        print('')
-    
-    if rank == 0: print('Create core 2p x-ray photoemission spectra (XPS) ...')
-    # Transition operators
-    tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
-    # Photoemission Green's function 
-    gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                            slaterWeightMin,energyCut,restrictions)
-    gs *= -1
-    if rank == 0: 
-        print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
-        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
-        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
-    # thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
-        if printH5:
-            h5f.create_dataset('XPS',data=-gs.imag)
-            h5f.create_dataset('XPSthermal',data=a)
-        else:
-            np.savez_compressed('spectraXPS',XPS=-gs.imag,XPSthermal=a)
-    # Sum over transition operators
-    aSum = np.sum(a,axis=0)
-    # Save spectra to disk
-    if rank == 0:
-        tmp = [w,aSum]
-        # Each transition operator seperatly
-        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
-        print('Save spectra to disk...')
-        np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
-                   header='E  sum  T1  T2  T3 ...')
-        print('')
-   
     
     if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)

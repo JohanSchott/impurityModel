@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # Python plot script of RIXS spectra
 import matplotlib.pylab as plt

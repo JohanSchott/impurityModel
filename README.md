@@ -1,6 +1,6 @@
 # Impurity model
  
-Calculate many-body states of an impurity Anderson model and a few spectra, e.g. resonant inelastic x-ray scattering (RIXS), x-ray photo emission spectroscopy (XPS), photoemission spectroscopy (PS), and x-ray absorption spectroscopy (XAS).
+Calculate many-body states of an impurity Anderson model and a few spectra, e.g. resonant inelastic x-ray scattering (RIXS), non-resonant inelastic x-ray scattering (NIXS), x-ray photo emission spectroscopy (XPS), photoemission spectroscopy (PS), and x-ray absorption spectroscopy (XAS).
 
 Examples scripts are stored in the `scripts` folder.
 

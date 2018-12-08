@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # Python plot script of RIXS spectra
 import matplotlib.pylab as plt
@@ -26,10 +26,10 @@ else:
 
 # Read input data
 if readH5:
-    print 'Read data from file: ',filename
+    print('Read data from file: ',filename)
     import h5py
     h5f = h5py.File(filename,'r')
-    print h5f.keys()
+    print(list(h5f.keys()))
     # Load energy meshes
     if 'w' in h5f:
         w = np.array(h5f['w'])
@@ -37,46 +37,64 @@ if readH5:
         wIn = np.array(h5f['wIn'])
     if 'wLoss' in h5f:
         wLoss = np.array(h5f['wLoss'])
+    # Load momentum vector information
+    if 'qsNIXS' in h5f:
+        qs = np.array(h5f['qsNIXS'])
+    # Load radial mesh information
+    if 'r' in h5f and 'RiNIXS' in h5f and 'RjNIXS' in h5f:
+        r = np.array(h5f['r'])
+        Ri = np.array(h5f['RiNIXS'])
+        Rj = np.array(h5f['RjNIXS'])
     # Load thermally averaged spectra
     if 'PSthermal' in h5f:
         ps = np.array(h5f['PSthermal'])
-        print np.shape(ps)
+        print(np.shape(ps))
     if 'XPSthermal' in h5f:
         xps = np.array(h5f['XPSthermal'])
-        print np.shape(xps)
+        print(np.shape(xps))
     if 'XASthermal' in h5f:
         xas = np.array(h5f['XASthermal'])
-        print np.shape(xas)
+        print(np.shape(xas))
     if 'RIXSthermal' in h5f:
         rixs = np.array(h5f['RIXSthermal'])
-        print np.shape(rixs)
+        print(np.shape(rixs))
+    if 'NIXSthermal' in h5f:
+        nixs = np.array(h5f['NIXSthermal'])
+        print(np.shape(nixs))
     h5f.close()
 else:
-    print 'Read data from several .npz files.'
-    # Load energy meshes
-    if os.path.isfile('spectraEnergies.npz'):
-        data = np.load('spectraEnergies.npz')
+    print('Read data from several .npz files.')
+    # Load energy meshes, and momentum and radial information
+    if os.path.isfile('spectraInfo.npz'):
+        data = np.load('spectraInfo.npz')
         w = data['w']
         wIn = data['wIn']
         wLoss = data['wLoss']
+        qs = data['qsNIXS']
+        r = data['r']
+        Ri = data['RiNIXS']
+        Rj = data['RjNIXS']
     # Load thermally averaged spectra
     if os.path.isfile('spectraPS.npz'):
         ps = np.load('spectraPS.npz')['PSthermal']
-        print np.shape(ps)
+        print(np.shape(ps))
     if os.path.isfile('spectraXPS.npz'):
         xps = np.load('spectraXPS.npz')['XPSthermal']
-        print np.shape(xps)
+        print(np.shape(xps))
     if os.path.isfile('spectraXAS.npz'):
         xas = np.load('spectraXAS.npz')['XASthermal']
-        print np.shape(xas)
+        print(np.shape(xas))
     if os.path.isfile('spectraRIXS.npz'):
         rixs = np.load('spectraRIXS.npz')['RIXSthermal']
-        print np.shape(rixs)
+        print(np.shape(rixs))
+    if os.path.isfile('spectraNIXS.npz'):
+        nixs = np.load('spectraNIXS.npz')['NIXSthermal']
+        print(np.shape(nixs))
 
-print 'Plot spectra...'    
+print('Plot spectra...')
 
 if 'ps' in locals():
-    print 'Photo-emission spectroscopy (PS) spectrum'
+    print('Photo-emission spectroscopy (PS) spectrum')
     fig = plt.figure()
     # Sum over spin-orbitals
     plt.plot(w,np.sum(ps,axis=0),'-k',label='photo-emission')
@@ -88,7 +106,7 @@ if 'ps' in locals():
     plt.show()
 
 if 'xps' in locals():
-    print 'X-ray photo-emission spectroscopy (XPS) spectrum'
+    print('X-ray photo-emission spectroscopy (XPS) spectrum')
     fig = plt.figure()
     # Sum over spin-orbitals
     plt.plot(w,np.sum(xps,axis=0),'-k',label='XPS')
@@ -99,16 +117,19 @@ if 'xps' in locals():
     #plt.ylim([0,0.25])
     plt.show()
 
-if 'xas' in locals() and 'rixs' in locals():
-    print 'XAS and fluorescence yield spectrum'
-    scaleFY = 1./(pi*np.shape(rixs)[0])
+if 'xas' in locals():
+    print('XAS spectrum')
     fig = plt.figure()
     # Sum over polarizations
     plt.plot(w,np.sum(xas,axis=0),'-k',label='XAS')
-    plt.plot(wIn,(wLoss[1]-wLoss[0])*np.sum(rixs,axis=(0,1,3))*scaleFY,'-r',label='FY')
-    mask = wLoss < 0.2 
-    y = np.sum(rixs[:,:,:,mask],axis=(0,1,3))
-    plt.plot(wIn,(wLoss[1]-wLoss[0])*y*scaleFY,'-b',label='quasi-elastic FY')
+    if 'rixs' in locals():
+        scaleFY = 1./(pi*np.shape(rixs)[0])
+        print('Fluorescence yield spectrum')
+        plt.plot(wIn,(wLoss[1]-wLoss[0])*np.sum(rixs,axis=(0,1,3))*scaleFY,
+                 '-r',label='FY')
+        mask = wLoss < 0.2 
+        y = np.sum(rixs[:,:,:,mask],axis=(0,1,3))
+        plt.plot(wIn,(wLoss[1]-wLoss[0])*y*scaleFY,'-b',label='quasi-elastic FY')
     plt.legend()
     plt.xlabel(r'$\omega_{in}$')
     plt.ylabel('Intensity')
@@ -116,15 +137,29 @@ if 'xas' in locals() and 'rixs' in locals():
     #plt.ylim([0,0.25])
     plt.show()
 
+if 'nixs' in locals():
+    print('NIXS spectrum')
+    fig = plt.figure()
+    if 'qs' in locals():
+        labels = ['|q|={:3.1f}'.format(np.linalg.norm(q)) + r' A$^{-1}$' for q in qs]
+    else:
+        labels = [str(i) for i in range(len(nixs))]
+    for i in range(len(nixs)):
+        plt.plot(wLoss,nixs[i,:],label=labels[i])
+    plt.legend()
+    plt.xlabel(r'$\omega_{loss}$')
+    plt.ylabel('Intensity')
+    plt.show()
+
 if 'rixs' in locals():
-    print 'Energy loss spectra'
+    print('Energy loss spectra')
     fig,axes = plt.subplots(nrows=2,sharex=True)
     # L3-edge energies. 
     # Adjust these energies to the current material.
     es = np.arange(-7,2,1) 
     plotOffset = 1.5
-    print 'Chosen L3 energies: ',es
-    print 'Chosen plotOffset: ',plotOffset
+    print('Chosen L3 energies: ',es)
+    print('Chosen plotOffset: ',plotOffset)
     for n,e in enumerate(es[-1::-1]):
         i = np.argmin(np.abs(wIn-e))
         axes[0].plot(wLoss,plotOffset*(len(es)-1-n) + np.sum(rixs,axis=(0,1))[i,:],
@@ -133,8 +168,8 @@ if 'rixs' in locals():
     # Adjust these energies to the current material.
     es = np.arange(11,16,1)
     plotOffset = 1
-    print 'Chosen L2 energies: ',es
-    print 'Chosen plotOffset: ',plotOffset
+    print('Chosen L2 energies: ',es)
+    print('Chosen plotOffset: ',plotOffset)
     for n,e in enumerate(es[-1::-1]):
         i = np.argmin(np.abs(wIn-e))
         axes[1].plot(wLoss,plotOffset*(len(es)-1-n) + np.sum(rixs,axis=(0,1))[i,:],
@@ -148,10 +183,10 @@ if 'rixs' in locals():
 
 
 if 'rixs' in locals():
-    print 'RIXS map'
-    print 'Plot log10 of RIXS intensity for better visibility.'
-    print 'In-coming photon mesh resolution: {:5.3f} eV'.format(wIn[1]-wIn[0])
-    print 'Energy loss mesh resolution: {:5.3f} eV'.format(wLoss[1]-wLoss[0])
+    print('RIXS map')
+    print('Plot log10 of RIXS intensity for better visibility.')
+    print('In-coming photon mesh resolution: {:5.3f} eV'.format(wIn[1]-wIn[0]))
+    print('Energy loss mesh resolution: {:5.3f} eV'.format(wLoss[1]-wLoss[0]))
     plotCutOff = 0.001
 
     # Sum over in and out-going polarizations
