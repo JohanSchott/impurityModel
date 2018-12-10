@@ -9,14 +9,18 @@ Credits to Petter Saterskog for inspiration and for some of the (key) functional
 
 
 ### Get started
+- Python 3.x is needed with libraries mpi4py, numpy and scipy are needed. 
+The Python library h5py is recommended but not necessary. 
+If needed, download Python 3.x (with libraries) at e.g.: `https://www.anaconda.com/download`. 
+
 - Add the absolute path of the main directory (`impurityModel`) to the `PYTHONPATH` environment variable, such that the Python module in this directory can be found.
 
 - Add the absolute path of the sub directories `impurityModel/scripts` and `impurityModel/plotScripts` to the `PATH` environment variable, such that the Python scripts in these directories can be found.
 
 - Create a directory somewhere and execute one of the scripts in the `impurityModel/scripts` folder. E.g. type:
-  ```
-  mpirun -n 5 impurityMPI.py 
-  ```
+```
+mpirun -n 2 NiO.py 
+```
 
 #### Output files
 Input parameters used are saved and stored in `.npz` format.
