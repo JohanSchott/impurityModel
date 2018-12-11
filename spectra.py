@@ -127,12 +127,14 @@ def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
         To include also the monopole scattering, set kmin = 0.
 
     '''
-    if kmin == 0:
-        print('Monopole contribution included in the expansion')
-    elif kmin > 0:
-        print('Monopole contribution not included in the expansion')
+    if rank == 0:
+        if kmin == 0: 
+            print('Monopole contribution included in the expansion')
+        elif kmin > 0: 
+            print('Monopole contribution not included in the expansion')
     tOps = []
     for q in qs:
+        if rank == 0: print('q =',q)
         tOps.append(getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin))
     return tOps
 
@@ -186,7 +188,7 @@ def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
     for k in range(kmin,abs(li+lj)+1):
         if (li+lj+k) % 2 == 0:
             Rintegral = np.trapz(np.conj(Ri)*spherical_jn(k,qNorm*r)*Rj*r**2,r)
-            print('Rintegral(k=',k,') =',Rintegral) 
+            if rank == 0: print('Rintegral(k=',k,') =',Rintegral) 
             for mi in range(-li,li+1):
                 for mj in range(-lj,lj+1):
                     m = mi-mj
@@ -278,14 +280,18 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         variable. Format: |PS> : H|PS>,
         where |PS> is a product state and H|PS> is stored as a dictionary.
     mode : str
-        'dict' or 'numpy'. Determines which algorithm to use.
+        'dict' or 'numpy'. 
+        Determines which algorithm to use.
+        'numpy' is default. It is the fastest option.
+        It also can handle the situation where len(h) < krylovSize,
+        but the 'dict' algorithm can not.
 
     '''
 
-    #print('Start getGreen')
-
     # Allocations
     g = np.zeros(len(omega),dtype=np.complex)
+    # In the exceptional case of an empty state psi, return zero.
+    if len(psi) == 0: return g
     alpha = np.zeros(krylovSize,dtype=np.float)
     beta = np.zeros(krylovSize-1,dtype=np.float)
     # Initialization 
@@ -330,6 +336,8 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         basis = {i:ps for i,ps in enumerate(h.keys())} 
         # Number of basis states
         n = len(h)
+        # Unnecessary and (impossible) to find more than n Krylov basis vectors.
+        krylovSize = min(krylovSize,n) 
         # Express Hamiltonian in matrix form
         hValues, rows, cols = [],[],[]
         for psJ,res in h.items():
@@ -364,7 +372,6 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
             wp[j,:] = h.dot(v[j,:])
             alpha[j] = np.dot(np.conj(wp[j,:]),v[j,:]).real
             w[j,:] = wp[j,:] - alpha[j]*v[j,:] - beta[j-1]*v[j-1,:]
-
     # Construct Green's function from
     # continued fraction
     omegaP = omega+1j*delta+e
@@ -575,7 +582,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     # Find x by solving: a*x = y            
                     # Biconjugate gradient stabilized method.
                     # Pure conjugate gradient does not apply since 
-                    # require a Hermitian matrix.
+                    # it requires a Hermitian matrix.
                     x,info = scipy.sparse.linalg.bicgstab(a,y)
                     if info > 0 :
                         print('convergence to tolerance not achieved')
@@ -652,7 +659,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     # Find x by solving: a*x = y            
                     # Biconjugate gradient stabilized method.
                     # Pure conjugate gradient does not apply since 
-                    # require a Hermitian matrix.
+                    # it requires a Hermitian matrix.
                     x,info = scipy.sparse.linalg.bicgstab(a,y)
                     if info > 0 :
                         print('convergence to tolerance not achieved')
