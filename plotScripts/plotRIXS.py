@@ -20,7 +20,7 @@ else:
 
 x = np.fromfile(filename,dtype=np.float32)
 ncols = int(x[0])
-x = x.reshape((len(x)/(ncols+1),ncols+1))
+x = x.reshape((int(len(x)/(ncols+1)),ncols+1))
 wLoss = x[1:,0]
 wIn = x[0,1:]
 rixs = x[1:,1:]

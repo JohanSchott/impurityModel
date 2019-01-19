@@ -1514,7 +1514,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
     r"""
     Return :math:`|psi' \rangle = op |psi \rangle`. 
 
-    If h is not None, it is updated to contain information of how the 
+    If opResult is not None, it is updated to contain information of how the 
     operator op acted on the product states in psi.
     
     Parameters
@@ -1529,7 +1529,8 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
         ((i,'c'),(j,'a'))  <-> c_i^dagger c_j
         ((i,'c'),(j,'c'),(k,'a'),(l,'a')) <-> c_i^dagger c_j^dagger c_k c_l
     psi : dict
-        Multi-configurational state of format tuple : amplitude
+        Multi-configurational state of format
+        tuple : amplitude
         where each tuple describes a Fock state.
     slaterWeightMin : float
         Restrict the number of product states by

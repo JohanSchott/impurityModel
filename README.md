@@ -4,29 +4,39 @@ Calculate many-body states of an impurity Anderson model and a few spectra, e.g.
 
 Examples scripts are stored in the `scripts` folder.
 
-
-Credits to Petter Saterskog for inspiration and for some of the (key) functionality.
-
+Credits to Petter Saterskog for inspiration and for some of the key functionality.
 
 ### Get started
-- Python 3.x is needed with libraries mpi4py, numpy and scipy are needed. 
-The Python library h5py is recommended but not necessary. 
-If needed, download Python 3.x (with libraries) at e.g.: `https://www.anaconda.com/download`. 
+- Python 3.x is needed with libraries `mpi4py`, `numpy`, `sympy`, and `scipy`. 
+The Python library `h5py` is recommended but not necessary. 
+For help in installing Python 3.x and/or Python libraries, please see e.g. 
+[https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
 
-- Add the absolute path of the main directory (`impurityModel`) to the `PYTHONPATH` environment variable, such that the Python module in this directory can be found.
+- Add the absolute path of the main directory (`impurityModel`) to the `PYTHONPATH` environment variable, such that the Python module in this directory can be found. For example, if the path to the `impurityModel` folder is `path/to/folder/impurityModel`, put the following command in the `~/.bashrc` file:
+```bash
+export PYTHONPATH=$PYTHONPATH:path/to/folder/impurityModel
+```
 
-- Add the absolute path of the sub directories `impurityModel/scripts` and `impurityModel/plotScripts` to the `PATH` environment variable, such that the Python scripts in these directories can be found.
+- Optionally, for convienience add the absolute path of the sub directories `impurityModel/scripts` and `impurityModel/plotScripts` to the `PATH` environment variable. This enables the Python scripts to be found, without having to specify the absolute path to the scripts. If this is desired, add the following to the `~/.bashrc`:
+```bash
+export PATH=$PATH:path/to/folder/impurityModel/scripts
+export PATH=$PATH:path/to/folder/impurityModel/plotScripts
+```
 
 - Create a directory somewhere and execute one of the scripts in the `impurityModel/scripts` folder. E.g. type:
+```bash
+NiO.py 
 ```
-mpirun -n 2 NiO.py 
+or for usage of more than one MPI process, type e.g.:
+```bash
+mpirun -n 3 NiO.py 
 ```
 
 #### Output files
 Input parameters used are saved and stored in `.npz` format.
 Spectra are stored in either one `.h5` file or in many `.npz` files.
 Some small size spectra are also stored in `.dat` and `.bin` format, for easy and fast plotting with e.g. gnuplot.
-For plotting all generated spectra, type:
+For plotting all generated spectra (using matplotlib), type:
 ```
 plotSpectra.py
 ```
