@@ -16,6 +16,9 @@ Welcome to impurityModel's documentation!
 .. automodule:: spectra
    :members:
 
+.. automodule:: average
+   :members:
+
 Indices and tables
 ==================
 

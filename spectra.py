@@ -269,7 +269,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         Size of the Krylov space
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at |amplitudes|^2. 
+        looking at `|amplitudes|^2`. 
     restrictions : dict
         Restriction the occupation of generated 
         product states.
@@ -277,8 +277,8 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         In and output argument.
         If present, the results of the operator hOp acting on each
         product state in the state psi is added and stored in this 
-        variable. Format: |PS> : H|PS>,
-        where |PS> is a product state and H|PS> is stored as a dictionary.
+        variable. Format: `|PS> : H|PS>`,
+        where `|PS>` is a product state and `H|PS>` is stored as a dictionary.
     mode : str
         'dict' or 'numpy'. 
         Determines which algorithm to use.
@@ -384,7 +384,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
 
 def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut,
                restrictions=None,slaterWeightMin=1e-7):
-    r'''
+    r"""
     Return Green's function for states with low enough energy.
     
     For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate: 
@@ -421,9 +421,9 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut,
         product states.
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at |amplitudes|^2. 
+        looking at `|amplitudes|^2`. 
     
-    '''
+    """
     
     # Relevant eigen energies  
     esR = [e for e in es if e-es[0] < energyCut]
@@ -464,7 +464,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     
     For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate: 
 
-    :math:`g(w+1j*delta) = 
+    :math:`g(w+1j*delta) 
     = \langle psi| ROp^\dagger ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} ROp 
     |psi \rangle`,
 
@@ -473,18 +473,19 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     :math:`Rop = tOpOut ((wIns+1j*delta1+e)*\hat{1} - hOp)^{-1} tOpIn`.
 
     Calculations are performed according to:
-    1) Calculate state |psi1> = tOpIn |psi>
-    2) Calculate state |psi2> = ((wIns+1j*delta1+e)*\hat{1} - hOp)^{-1}|psi1> 
-        This is done by introducing operator A = (wIns+1j*delta1+e)*\hat{1} - hOp.
-        By applying A from the left on |psi2> = A^{-1}|psi1> gives 
-        the inverse problem: A|psi2> = |psi1>.
-        This equation can be solved by guessing |psi2> and iteratively 
+
+    1) Calculate state `|psi1> = tOpIn |psi>`.
+    2) Calculate state `|psi2> = ((wIns+1j*delta1+e)*\hat{1} - hOp)^{-1}|psi1>` 
+        This is done by introducing operator `A = (wIns+1j*delta1+e)*\hat{1} - hOp`.
+        By applying A from the left on `|psi2> = A^{-1}|psi1>` gives 
+        the inverse problem: `A|psi2> = |psi1>`.
+        This equation can be solved by guessing `|psi2>` and iteratively 
         improving it.
-    3) Calculate state |psi3> = tOpOut |psi2>
-    4) Calculate normalization = sqrt(<psi3|psi3>)
-    5) Normalize psi3 according to: psi3 /= normalization
+    3) Calculate state `|psi3> = tOpOut |psi2>`
+    4) Calculate `normalization = sqrt(<psi3|psi3>)`
+    5) Normalize psi3 according to: `psi3 /= normalization`
     6) Now the Green's function is given by:
-        :math:`g(wLoss+1j*delta2) = 
+        :math:`g(wLoss+1j*delta2)  
         = normalization^2 * \langle psi3| ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} |psi3 \rangle`,
         which can efficiently be evaluation using Lanczos.    
      
@@ -520,7 +521,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
         product states.
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at |amplitudes|^2. 
+        looking at `|amplitudes|^2`. 
     hGround : dict
         Optional. The Hamiltonian for product states with no core hole.
         If present, it will be updated by this function.

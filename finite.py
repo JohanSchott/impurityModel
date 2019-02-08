@@ -1544,7 +1544,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
         where each tuple describes a Fock state.
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at |amplitudes|^2. 
+        looking at `|amplitudes|^2`. 
     restrictions : dict
         Restriction the occupation of generated
         product states.
@@ -1731,14 +1731,14 @@ def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
     return h
 
 def expandBasisAndHamiltonian(hBig,hOp,basis0,restrictions):
-    '''
-    return Hamiltonian.
-    
+    """
+    Return Hamiltonian.
+
     Parameters
     ----------
     hBig : dict
-        Elements of the form |PS> : {H|PS>},
-        where |PS> is a product state.
+        Elements of the form `|PS> : {H|PS>}`,
+        where `|PS>` is a product state.
         New product states might be added to this variable.
     hOp : dict
         The Hamiltonian. With elements of the form process : h_value
@@ -1747,13 +1747,13 @@ def expandBasisAndHamiltonian(hBig,hOp,basis0,restrictions):
         These product states are used to generate more basis states.
     restrictions : dict
         Restriction the occupation of generated product states.
-
+      
     Returns
     -------
     h : dict
         The Hamiltonian acting on the relevant product states.
-    
-    '''
+     
+    """
     # Copy basis0, to avoid changing it when the basis grows
     basis = list(basis0) 
     # Return Hamiltonian
