@@ -10,10 +10,7 @@ import scipy.sparse
 from mpi4py import MPI
 
 #from removecreate import fortran
-
-# Boltzmann constant. Unit: eV/K. E = k_B * T, 
-# energy in eV and temperature in Kelvin.
-k_B = 8.61701580807947e-05    
+from average import k_B,thermal_average
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -34,6 +31,108 @@ def getJobs(rank,ranks,n):
     if rank < rest:
         jobs.append(n-rest+rank)
     return tuple(jobs)
+
+def eigensystem(hOp,basis,nPsiMax,groundDiagMode='Lanczos',eigenValueTol=1e-9,
+                slaterWeightMin=1e-7):
+    '''
+    Return eigen-energies and eigenstates.
+    
+    Parameters
+    ----------
+    hOp : dict
+        The Hamiltonain operator to diagonalize.
+        Format:
+        All keywords are tuples, each with ordered instructions 
+        where to add or remove electrons.
+        All values are floats, each indicating the strength of 
+        the corresponding process.
+    basis : tuple
+        All product states including in the basis
+    nPsiMax : int
+        Number of eigenvalues to find
+    groundDiagMode : str
+        'Lanczos' or 'full' diagonalization
+    eigenValueTol : float
+        The precision of the returned eigenvalues 
+    slaterWeightMin : float
+        Minimum product state weight to be kept. 
+
+    '''
+    if rank == 0: print('Create Hamiltonian matrix...')
+    h = getHamiltonianMatrix(hOp,basis)    
+    if rank == 0: print('<#Hamiltonian elements/column> = {:d}'.format(
+        int(len(np.nonzero(h)[0])*1./len(basis)))) 
+    if rank == 0: print('Diagonalize the Hamiltonian...')
+    if groundDiagMode == 'full':
+        es, vecs = np.linalg.eigh(h.todense())
+        es = es[:nPsiMax]
+        vecs = vecs[:,:nPsiMax]
+    elif groundDiagMode == 'Lanczos':
+        es, vecs = scipy.sparse.linalg.eigsh(h,k=nPsiMax,which='SA',tol=eigenValueTol)
+        # Sort the eigenvalues and eigenvectors in ascending order.
+        indices = np.argsort(es)
+        es = np.array([es[i] for i in indices])
+        vecs = np.array([vecs[:,i] for i in indices]).T
+    else:
+        print('Wrong diagonalization mode')
+    if rank == 0: print('Proceed with {:d} eigenstates!'.format(len(es)))
+    psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
+              if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
+            for vi in range(len(es))]
+    return es,psis
+
+def printExpValues(nBaths,es,psis,n=None):
+    '''
+    print several expectation values, e.g. E, N, L^2.
+    '''
+    if n == None:
+        n = len(es)
+    if rank == 0: 
+        print('E0 = {:7.4f}'.format(es[0]))
+        print(('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
+               'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)'))
+    for i,(e,psi) in enumerate(zip(es-es[0],psis)):
+        if rank == 0 and i < n:
+            oc = getEgT2gOccupation(nBaths,psi)
+            print(('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
+                   ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
+                i,e,getTraceDensityMatrix(nBaths,psi),
+                oc[0],oc[1],oc[2],oc[3],
+                getLz3d(nBaths,psi),getSz3d(nBaths,psi),
+                getLsqr3d(nBaths,psi),getSsqr3d(nBaths,psi),
+                getLsqr3dWithBath(nBaths,psi),getSsqr3dWithBath(nBaths,psi)))
+
+def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
+    '''
+    print several thermal expectation values, e.g. E, N, L^2.
+    
+    cutOff - float. Energies more than cutOff*kB*T above the 
+            lowest energy is not considered in the average.
+    '''
+    e = es - es[0]
+    # Select relevant energies
+    mask = e < cutOff*k_B*T
+    e = e[mask]
+    psis = np.array(psis)[mask]
+    occs = thermal_average(
+        e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]),
+        T=T)
+    if rank == 0: 
+        print('<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T)))
+        print('<N(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getTraceDensityMatrix(nBaths,psi) for psi in psis],T=T)))
+        print('<N(egDn)> = {:4.3f}'.format(occs[0]))
+        print('<N(egUp)> = {:4.3f}'.format(occs[1]))
+        print('<N(t2gDn)> = {:4.3f}'.format(occs[2]))
+        print('<N(t2gUp)> = {:4.3f}'.format(occs[3]))
+        print('<Lz(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getLz3d(nBaths,psi) for psi in psis],T=T)))
+        print('<Sz(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getSz3d(nBaths,psi) for psi in psis],T=T)))
+        print('<L^2(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getLsqr3d(nBaths,psi) for psi in psis],T=T)))
+        print('<S^2(3d)> = {:4.3f}'.format(thermal_average(
+            e,[getSsqr3d(nBaths,psi) for psi in psis],T=T)))
 
 def dc_MLFT(n3d_i,c,Fdd,n2p_i=None,Fpd=None,Gpd=None):
     r"""
@@ -127,43 +226,6 @@ def get_spherical_2_cubic_matrix(spinpol=False,l=2):
         u = U
     return u
 
-def thermal_average(energies,observable,T=300):
-    '''
-    Returns thermally averaged observables.
-
-    Assumes all relevant states are included. 
-    Thus, no not check e.g. if the Boltzmann weight 
-    of the last state is small.
-
-    Parameters
-    ----------
-    energies - list(N)
-        energies[i] is the energy of state i.
-    observables - list(N,...)
-        observables[i,...] are observables for state i.
-    T : float
-        Temperature
-    tol : float
-        Tolerance for smallest weight for the last energy.
-
-    '''
-    if len(energies) != np.shape(observable)[0]:
-        raise ValueError("Passed array is not of the right shape")
-    z = 0
-    e_average = 0
-    o_average = 0
-    weights = np.zeros_like(energies)
-    shift = np.min(energies)
-    for j,(e,o) in enumerate(zip(energies,observable)):
-        weight = np.exp(-(e-shift)/(k_B*T))
-        z += weight
-        e_average += weight*e
-        o_average += weight*o
-        weights[j] = weight
-    e_average /= z
-    o_average /= z
-    weights /= z
-    return o_average
 
 def daggerOp(op):
     '''
@@ -287,7 +349,7 @@ def inner(a,b):
         Multi configurational state
     b : dict 
         Multi configurational state
-
+        
     Acknowledgement: Written entirely by Petter Saterskog
     '''
     acc=0
@@ -1455,58 +1517,6 @@ def applyLminus3d(nBaths,psi):
             addToFirst(psiNew,psiP,sqrt((l+m)*(l-m+1)))
     return psiNew
     
-def printExpValues(nBaths,es,psis,n=None):
-    '''
-    print several expectation values, e.g. E, N, L^2.
-    '''
-    if n == None:
-        n = len(es)
-    if rank == 0: 
-        print('E0 = {:7.4f}'.format(es[0]))
-        print(('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
-               'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)'))
-    for i,(e,psi) in enumerate(zip(es-es[0],psis)):
-        if rank == 0 and i < n:
-            oc = getEgT2gOccupation(nBaths,psi)
-            print(('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}' 
-                   ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
-                i,e,getTraceDensityMatrix(nBaths,psi),
-                oc[0],oc[1],oc[2],oc[3],
-                getLz3d(nBaths,psi),getSz3d(nBaths,psi),
-                getLsqr3d(nBaths,psi),getSsqr3d(nBaths,psi),
-                getLsqr3dWithBath(nBaths,psi),getSsqr3dWithBath(nBaths,psi)))
-
-def printThermalExpValues(nBaths,es,psis,T=300,cutOff=10):
-    '''
-    print several thermal expectation values, e.g. E, N, L^2.
-    
-    cutOff - float. Energies more than cutOff*kB*T above the 
-            lowest energy is not considered in the average.
-    '''
-    e = es - es[0]
-    # Select relevant energies
-    mask = e < cutOff*k_B*T
-    e = e[mask]
-    psis = np.array(psis)[mask]
-    occs = thermal_average(
-        e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]),
-        T=T)
-    if rank == 0: 
-        print('<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T)))
-        print('<N(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getTraceDensityMatrix(nBaths,psi) for psi in psis],T=T)))
-        print('<N(egDn)> = {:4.3f}'.format(occs[0]))
-        print('<N(egUp)> = {:4.3f}'.format(occs[1]))
-        print('<N(t2gDn)> = {:4.3f}'.format(occs[2]))
-        print('<N(t2gUp)> = {:4.3f}'.format(occs[3]))
-        print('<Lz(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getLz3d(nBaths,psi) for psi in psis],T=T)))
-        print('<Sz(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getSz3d(nBaths,psi) for psi in psis],T=T)))
-        print('<L^2(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getLsqr3d(nBaths,psi) for psi in psis],T=T)))
-        print('<S^2(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getSsqr3d(nBaths,psi) for psi in psis],T=T)))
 
 
 def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
@@ -1700,16 +1710,20 @@ def getHamiltonianMatrix(hOp,basis,mode='sparse_MPI'):
         row = []
         col = []
         jobs = getJobs(rank,ranks,n)
-        for j in jobs:
-            if rank == 0 and progress + 10 <= int(j*100./len(jobs)): 
-                progress = int(j*100./len(jobs))
-                print('{:d}% done'.format(progress))
-            res = applyOp(hOp,{basis[j]:1})
+        for j,job in enumerate(jobs):
+            res = applyOp(hOp,{basis[job]:1})
             for k,v in res.items():
                 if k in basisIndex:
                     data.append(v)
-                    col.append(j)
+                    col.append(job)
                     row.append(basisIndex[k])
+            if rank == 0 and progress + 10 <= int((j+1)*100./len(jobs)): 
+                progress = int((j+1)*100./len(jobs))
+                print('{:d}% done'.format(progress))
+        # Print out that the construction of Hamiltonian is done
+        if rank == 0 and progress != 100:
+            progress = 100
+            print('{:d}% done'.format(progress))
         hSparse = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
         # Broadcast sparse Hamiltonians
         for r in range(ranks):

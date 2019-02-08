@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 """
 A package dealing with many-body impurity models.
    
@@ -10,3 +10,4 @@ A package dealing with many-body impurity models.
 
 import finite
 import spectra
+import average

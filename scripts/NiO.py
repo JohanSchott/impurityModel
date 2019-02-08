@@ -8,9 +8,10 @@ from collections import OrderedDict
 import sys,os
 from mpi4py import MPI
 
-from finite import c2i,k_B
-import finite
 import spectra
+import finite
+from finite import c2i
+from average import k_B, thermal_average
 
 def main():
    
@@ -19,10 +20,10 @@ def main():
     rank = comm.rank
     ranks = comm.size
    
-    #if rank == 0: printGaunt()
+    #if rank == 0: finite.printGaunt()
     
     # -----------------------
-    # System information  
+    # System specific information  
     l1,l2 = 1,2 # Angular momentum
     # Number of bath sets
     nBaths = OrderedDict()
@@ -79,15 +80,8 @@ def main():
     vConEg = 0.6
     vConT2g = 0.4
     # -----------------------
-    # Ground state diagonalization mode
-    groundDiagMode = 'Lanczos'  # 'Lanczos' or 'full'
     # Maximum number of eigenstates to consider
     nPsiMax = 5
-    eigenValueTol = 1e-9
-    # Slater determinant truncation parameters
-    # Removes Slater determinants with weights
-    # smaller than this optimization parameter.
-    slaterWeightMin = 1e-7
     # -----------------------
     # Printing parameters
     nPrintSlaterWeights = 3
@@ -100,10 +94,13 @@ def main():
     T = 300
     # How much above lowest eigenenergy to consider 
     energyCut = 10*k_B*T
+    # energy-mesh
     w = np.linspace(-25,25,3000)
+    # Smearing, half with half maximum (HWHM). Due to short core-hole lifetime
     delta = 0.2
+    # Krylov size, used when spectra are  generated
     krylovSize = 80
-    # Occupation restrictions, used when spectra is generated
+    # Occupation restrictions, used when spectra are generated
     l = 2
     restrictions = {}
     restrictions[tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))] = (n0imp[l]-1,n0imp[l]+3)
@@ -113,11 +110,13 @@ def main():
     # Polarization vectors, of in and outgoing photon.
     epsilonsRIXSin = [[1,0,0],[0,1,0],[0,0,1]]  # [[0,0,1]]
     epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    wIn = np.linspace(-10,20,100)
+    wIn = np.linspace(-10,20,50)
     wLoss = np.linspace(-2,12,4000)
+    # Smearing, half with half maximum (HWHM). Due to finite lifetime of excited states
     deltaRIXS = 0.050
     # NIXS parameters
     qsNIXS = [2*np.array([1,1,1])/np.sqrt(3),7*np.array([1,1,1])/np.sqrt(3)]
+    # Smearing, half with half maximum (HWHM). Due to finite lifetime of excited states
     deltaNIXS = 0.100
     # Angular momentum of final and initial orbitals in the NIXS excitation process.
     liNIXS,ljNIXS = 2,2
@@ -144,33 +143,12 @@ def main():
     basis = finite.getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
                             dnTol,n0imp)
     if rank == 0: print('#basis states = {:d}'.format(len(basis))) 
-
     # Diagonalization of restricted active space Hamiltonian
-    if rank == 0: print('Create Hamiltonian matrix...')
-    h = finite.getHamiltonianMatrix(hOp,basis)    
-    if rank == 0: print('<#Hamiltonian elements/column> = {:d}'.format(
-        int(len(np.nonzero(h)[0])*1./len(basis)))) 
-    if rank == 0: print('Diagonalize the Hamiltonian...')
-    if groundDiagMode == 'full':
-        es, vecs = np.linalg.eigh(h.todense())
-        es = es[:nPsiMax]
-        vecs = vecs[:,:nPsiMax]
-    elif groundDiagMode == 'Lanczos':
-        es, vecs = scipy.sparse.linalg.eigsh(h,k=nPsiMax,which='SA',tol=eigenValueTol)
-        # Sort the eigenvalues and eigenvectors in ascending order.
-        indices = np.argsort(es)
-        es = np.array([es[i] for i in indices])
-        vecs = np.array([vecs[:,i] for i in indices]).T
-    else:
-        print('Wrong diagonalization mode')
-    if rank == 0: print('Proceed with {:d} eigenstates!'.format(len(es)))
-    psis = [({basis[i]:vecs[i,vi] for i in range(len(basis)) 
-              if slaterWeightMin <= abs(vecs[i,vi])**2 }) 
-            for vi in range(len(es))]
+    es,psis = finite.eigensystem(hOp,basis,nPsiMax)
     
     # Calculate static expectation values
     finite.printThermalExpValues(nBaths,es,psis)
-    finite.printExpValues(nBaths,es,psis,n=nPsiMax) 
+    finite.printExpValues(nBaths,es,psis) 
     
     # Print Slater determinants and weights 
     if rank == 0: print('Slater determinants/product states and correspoinding weights')
@@ -218,10 +196,7 @@ def main():
                             hField=hField,
                             eBath=[eValEg,eValT2g,eConEg,eConT2g],
                             vBath=[vValEg,vValT2g,vConEg,vConT2g],
-                            groundDiagMode=groundDiagMode,
                             nPsiMax=nPsiMax,
-                            eigenValueTol=eigenValueTol,
-                            slaterWeightMin=slaterWeightMin,
                             T=T,energyCut=energyCut,delta=delta,
                             krylovSize=krylovSize,restrictions=restrictions,
                             epsilons=epsilons,
@@ -254,18 +229,18 @@ def main():
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=2)
     if rank == 0: print("Inverse photoemission Green's function..")
     gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta,krylovSize,
-                               slaterWeightMin,energyCut,restrictions)
+                               energyCut,restrictions)
     if rank == 0: print("Photoemission Green's function..")
     gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                              slaterWeightMin,energyCut,restrictions)
+                              energyCut,restrictions)
     gsPS *= -1
     gs = gsPS + gsIPS
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
-    # thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
         if printH5:
             h5f.create_dataset('PS',data=-gs.imag)
@@ -290,14 +265,14 @@ def main():
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
     # Photoemission Green's function 
     gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                            slaterWeightMin,energyCut,restrictions)
+                            energyCut,restrictions)
     gs *= -1
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
-    # thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
         if printH5:
             h5f.create_dataset('XPS',data=-gs.imag)
@@ -322,14 +297,14 @@ def main():
     tOps = spectra.getNIXSOperators(nBaths,qsNIXS,liNIXS,ljNIXS,
                                     RiNIXS,RjNIXS,radialMesh)
     # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,wLoss,deltaNIXS,krylovSize,slaterWeightMin,
+    gs = spectra.getSpectra(hOp,tOps,psis,es,wLoss,deltaNIXS,krylovSize,
                             energyCut,restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#q-points = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
-    # thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
         if printH5:
             h5f.create_dataset('NIXS',data=-gs.imag)
@@ -353,14 +328,14 @@ def main():
     # Dipole transition operators
     tOps = spectra.getDipoleOperators(nBaths,epsilons)
     # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
+    gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,
                             energyCut,restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#polarizations = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
-    # thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
         if printH5:
             h5f.create_dataset('XAS',data=-gs.imag)
@@ -387,7 +362,7 @@ def main():
     tOpsOut = spectra.getDaggeredDipoleOperators(nBaths,epsilonsRIXSout)
     # Green's function 
     gs = spectra.getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIn,wLoss,delta,deltaRIXS,
-                            krylovSize,slaterWeightMin,energyCut,restrictions)
+                            krylovSize,energyCut,restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#in-polarizations = {:d}'.format(np.shape(gs)[1]))
@@ -395,7 +370,7 @@ def main():
         print('#mesh points of input energy = {:d}'.format(np.shape(gs)[3]))
         print('#mesh points of energy loss = {:d}'.format(np.shape(gs)[4]))
     # Thermal average
-    a = finite.thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
     if rank == 0: 
         if printH5:
             h5f.create_dataset('RIXS',data=-gs.imag)

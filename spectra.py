@@ -382,8 +382,8 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
             g = 1./(omegaP-alpha[i]-beta[i]**2*g)
     return g
 
-def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
-               energyCut,restrictions=None):
+def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut,
+               restrictions=None,slaterWeightMin=1e-7):
     r'''
     Return Green's function for states with low enough energy.
     
@@ -414,14 +414,14 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
         Broadening/resolution parameter.
     krylovSize : int
         Size of the Krylov space
-    slaterWeightMin : float
-        Restrict the number of product states by
-        looking at |amplitudes|^2. 
     energyCut : float
         Restrict the number of considered states
     restrictions : dict
         Restriction the occupation of generated 
         product states.
+    slaterWeightMin : float
+        Restrict the number of product states by
+        looking at |amplitudes|^2. 
     
     '''
     
@@ -457,7 +457,7 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,slaterWeightMin,
     return gs
 
 def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
-               slaterWeightMin,energyCut,restrictions,hGround=None,
+               energyCut,restrictions,slaterWeightMin=1e-7,hGround=None,
                parallelizationMode='wIn'):
     r"""
     Return RIXS Green's function for states with low enough energy.
@@ -513,14 +513,14 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
         Broadening/resolution parameter.
     krylovSize : int
         Size of the Krylov space
-    slaterWeightMin : float
-        Restrict the number of product states by
-        looking at |amplitudes|^2. 
     energyCut : float
         Restrict the number of considered states
     restrictions : dict
         Restriction the occupation of generated 
         product states.
+    slaterWeightMin : float
+        Restrict the number of product states by
+        looking at |amplitudes|^2. 
     hGround : dict
         Optional. The Hamiltonian for product states with no core hole.
         If present, it will be updated by this function.
