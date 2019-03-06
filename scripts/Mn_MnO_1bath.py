@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -u
 
 # Script for solving many-body impurity problem.
 
@@ -8,10 +8,11 @@ from collections import OrderedDict
 import sys,os
 from mpi4py import MPI
 
-import spectra
-import finite
-from finite import c2i
-from average import k_B, thermal_average
+from impurityModel import spectra
+from impurityModel import finite
+from impurityModel.finite import c2i
+from impurityModel.average import k_B, thermal_average
+
 
 def main():
    
@@ -38,8 +39,8 @@ def main():
     # Angular momentum : initial impurity occupation 
     n0imp = OrderedDict()
     n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
-    n0imp[l2] = 8 # 8 for Ni+2
-    # Angular momentum : max devation of initial impurity occupation
+    n0imp[l2] = 5 # 8 for Ni+2
+    # Angular momentum : max devation from initial impurity occupation
     dnTol = OrderedDict()
     dnTol[l1] = 0
     dnTol[l2] = 2
@@ -56,32 +57,32 @@ def main():
     # -----------------------
     # Hamiltonian parameters
     # Slater-Condon parameters
-    Fdd=[7.5,0,9.9,0,6.6]
+    Fdd=[6.0,0,9.0,0,6.1]
     Fpp=[0,0,0]
-    Fpd=[8.9,0,6.8]
-    Gpd=[0,5,0,2.8] 
+    Fpd=[7.5,0,5.6]
+    Gpd=[0,4.0,0,2.3] 
     # SOC values
-    xi_2p = 11.629
-    xi_3d = 0.096
+    xi_2p = 6.936
+    xi_3d = 0.051
     # Double counting parameter
-    chargeTransferCorrection = 1.5 # 3.5 gives good position of PS peaks
+    chargeTransferCorrection = 1.5
     # Onsite 3d energy parameters
-    eImp3d = -1.31796
-    deltaO = 0.60422
+    eImp3d = -0.463
+    deltaO = 0.638
     # Magnetic field
     hField = [0,0,0.0001] # 0.120*np.array([1,1,2])/np.sqrt(6) # [0,0,0.00001]
     # Bath energies and hoppings for 3d orbitals
-    eValEg = -4.4
-    eValT2g = -6.5
+    eValEg = -4.8
+    eValT2g = -6.7
     eConEg = 3
     eConT2g = 2
-    vValEg = 1.883
-    vValT2g = 1.395
+    vValEg = 1.910
+    vValT2g = 1.408
     vConEg = 0.6
     vConT2g = 0.4
     # -----------------------
     # Maximum number of eigenstates to consider
-    nPsiMax = 5
+    nPsiMax = 7
     # -----------------------
     # Printing parameters
     nPrintSlaterWeights = 3
@@ -103,14 +104,16 @@ def main():
     # Occupation restrictions, used when spectra are generated
     l = 2
     restrictions = {}
-    restrictions[tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))] = (n0imp[l]-1,n0imp[l]+3)
+    # Restriction on impurity orbitals
+    indices = tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))
+    restrictions[indices] = (n0imp[l]-1,n0imp[l]+3)
     # XAS polarization vectors. 
     epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
     # RIXS parameters
     # Polarization vectors, of in and outgoing photon.
     epsilonsRIXSin = [[1,0,0],[0,1,0],[0,0,1]]  # [[0,0,1]]
     epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    wIn = np.linspace(-10,20,50)
+    wIn = np.linspace(-10,15,50)
     wLoss = np.linspace(-2,12,4000)
     # Smearing, half with half maximum (HWHM). Due to finite lifetime of excited states
     deltaRIXS = 0.050
@@ -122,7 +125,7 @@ def main():
     liNIXS,ljNIXS = 2,2
     # File name of file containing radial mesh and radial part of final 
     # and initial orbitals in the NIXS excitation process.
-    radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Ni3d.dat'
+    radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Mn3d.dat'
     data = np.loadtxt(radialFileName)
     radialMesh = data[:,0]
     RiNIXS = data[:,1]
@@ -132,12 +135,12 @@ def main():
     
     # Hamiltonian
     if rank == 0: print('Construct the Hamiltonian operator...')
-    hOp = getHamiltonianOperator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
-                                 [xi_2p,xi_3d],
-                                 [n0imp,chargeTransferCorrection],
-                                 [eImp3d,deltaO],hField,
-                                 [vValEg,vValT2g,vConEg,vConT2g],
-                                 [eValEg,eValT2g,eConEg,eConT2g])
+    hOp = get_hamiltonian_operator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
+                                   [xi_2p,xi_3d],
+                                   [n0imp,chargeTransferCorrection],
+                                   [eImp3d,deltaO],hField,
+                                   [vValEg,vValT2g,vConEg,vConT2g],
+                                   [eValEg,eValT2g,eConEg,eConT2g])
     # Many body basis for the ground state
     if rank == 0: print('Create basis...')
     basis = finite.getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
@@ -395,10 +398,10 @@ def main():
     if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)
     
-def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
-                           DCinfo,impurityInfo,hField,
-                           vHoppings,eBaths):
-    '''
+def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
+                           DCinfo, impurityInfo, hField,
+                           vHoppings, eBaths):
+    """
     Return the Hamiltonian, in operator form.
     
     Parameters
@@ -423,8 +426,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
     eBaths : list
         Contains information about bath energies.
 
-    '''
-    
+    """
     # Divide up input parameters to more concrete variables 
     Fdd,Fpp,Fpd,Gpd = slaterCondon
     xi_2p,xi_3d = SOCs
@@ -439,7 +441,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
                                               Fpd=Fpd,Gpd=Gpd)
     # Add SOC 
     SOC2pOperator = finite.getSOCop(xi_2p,l=1)
-    SOC3dOperator = finite. getSOCop(xi_3d,l=2)
+    SOC3dOperator = finite.getSOCop(xi_3d,l=2)
     
     # Double counting (DC) correction
     # MLFT DC 
@@ -479,6 +481,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
         hHfieldOperator[(((l,m,0),'c'),((l,m,1),'a'))] = hy*1/2.*1j
         for s in range(2):
             hHfieldOperator[(((l,m,s),'c'),((l,m,s),'a'))] = hz*1/2. if s==1 else -hz*1/2.        
+
     # Bath (3d) on-site energies and hoppings
     # Calculate hopping terms between bath and (3d) impurity
     # either by reading matrix or parameterize it

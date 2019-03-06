@@ -8,6 +8,6 @@ A package dealing with many-body impurity models.
 
 """
 
-import finite
-import spectra
-import average
+from . import finite
+from . import spectra
+from . import average

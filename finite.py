@@ -10,7 +10,7 @@ import scipy.sparse
 from mpi4py import MPI
 
 #from removecreate import fortran
-from average import k_B,thermal_average
+from .average import k_B,thermal_average
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -18,12 +18,21 @@ rank = comm.rank
 ranks = comm.size
 
 def getJobs(rank,ranks,n):
-    '''
-    Return a tuple of jobs for each rank
+    """
+    Return a tuple of jobs for each rank.
 
     Note: This is a MPI help function.
 
-    '''
+    Parameters
+    ----------
+    rank : int
+        Current MPI rank/worker.
+    ranks : int
+        Number of MPI ranks/workers in total.
+    n : int
+        Total number of job tasks.
+
+    """
     jobs = []
     nj = n//ranks
     rest = n%ranks
@@ -34,7 +43,7 @@ def getJobs(rank,ranks,n):
 
 def eigensystem(hOp,basis,nPsiMax,groundDiagMode='Lanczos',eigenValueTol=1e-9,
                 slaterWeightMin=1e-7):
-    '''
+    """
     Return eigen-energies and eigenstates.
     
     Parameters
@@ -57,7 +66,7 @@ def eigensystem(hOp,basis,nPsiMax,groundDiagMode='Lanczos',eigenValueTol=1e-9,
     slaterWeightMin : float
         Minimum product state weight to be kept. 
 
-    '''
+    """
     if rank == 0: print('Create Hamiltonian matrix...')
     h = getHamiltonianMatrix(hOp,basis)    
     if rank == 0: print('<#Hamiltonian elements/column> = {:d}'.format(
@@ -246,10 +255,10 @@ def daggerOp(op):
     return opDagger
 
 def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
-    '''
+    """
     Return restricted basis of product states.
 
-    '''
+    """
     
     # Sanity check
     for l in nBaths.keys():
@@ -265,7 +274,7 @@ def getBasis(nBaths,valBaths,dnValBaths,dnConBaths,dnTol,n0imp):
         if rank == 0: print('l=',l)
         # Add configurations to this list
         basisL[l] = []
-        # Loop over different partion occupations
+        # Loop over different occupation partitions
         for dnVal in range(dnValBaths[l]+1): 
             for dnCon in range(dnConBaths[l]+1):
                 deltaNimp = dnVal - dnCon

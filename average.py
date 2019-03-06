@@ -7,7 +7,7 @@ import numpy as np
 k_B = 8.61701580807947e-05    
 
 def thermal_average(energies,observable,T=300):
-    '''
+    """
     Returns thermally averaged observables.
 
     Assumes all relevant states are included. 
@@ -23,7 +23,7 @@ def thermal_average(energies,observable,T=300):
     T : float
         Temperature
 
-    '''
+    """
     if len(energies) != np.shape(observable)[0]:
         raise ValueError("Passed array is not of the right shape")
     z = 0
@@ -41,3 +41,4 @@ def thermal_average(energies,observable,T=300):
     o_average /= z
     weights /= z
     return o_average
+

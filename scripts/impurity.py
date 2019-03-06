@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -u
 
 # Script for solving many-body impurity problem.
 
@@ -8,10 +8,11 @@ from collections import OrderedDict
 import sys,os
 from mpi4py import MPI
 
-import spectra
-import finite
-from finite import c2i
-from average import k_B, thermal_average
+from impurityModel import spectra
+from impurityModel import finite
+from impurityModel.finite import c2i
+from impurityModel.average import k_B, thermal_average
+
 
 def main():
    
@@ -39,7 +40,7 @@ def main():
     n0imp = OrderedDict()
     n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
     n0imp[l2] = 8 # 8 for Ni+2
-    # Angular momentum : max devation of initial impurity occupation
+    # Angular momentum : max devation from initial impurity occupation
     dnTol = OrderedDict()
     dnTol[l1] = 0
     dnTol[l2] = 2
@@ -100,10 +101,12 @@ def main():
     delta = 0.2
     # Krylov size, used when spectra are  generated
     krylovSize = 80
-    # Occupation restrictions, used when spectra is generated
+    # Occupation restrictions, used when spectra are generated
     l = 2
     restrictions = {}
-    restrictions[tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))] = (n0imp[l]-1,n0imp[l]+3)
+    # Restriction on impurity orbitals
+    indices = tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))
+    restrictions[indices] = (n0imp[l]-1,n0imp[l]+3)
     # XAS polarization vectors. 
     epsilons = [[0,0,1]]  # [[1,0,0],[0,1,0],[0,0,1]] 
     # RIXS parameters
@@ -132,12 +135,12 @@ def main():
     
     # Hamiltonian
     if rank == 0: print('Construct the Hamiltonian operator...')
-    hOp = getHamiltonianOperator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
-                                 [xi_2p,xi_3d],
-                                 [n0imp,chargeTransferCorrection],
-                                 [eImp3d,deltaO],hField,
-                                 [vValEg,vValT2g,vConEg,vConT2g],
-                                 [eValEg,eValT2g,eConEg,eConT2g])
+    hOp = get_hamiltonian_operator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
+                                   [xi_2p,xi_3d],
+                                   [n0imp,chargeTransferCorrection],
+                                   [eImp3d,deltaO],hField,
+                                   [vValEg,vValT2g,vConEg,vConT2g],
+                                   [eValEg,eValT2g,eConEg,eConT2g])
     # Many body basis for the ground state
     if rank == 0: print('Create basis...')
     basis = finite.getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
@@ -395,10 +398,10 @@ def main():
     if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)
     
-def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
-                           DCinfo,impurityInfo,hField,
-                           vHoppings,eBaths):
-    '''
+def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
+                           DCinfo, impurityInfo, hField,
+                           vHoppings, eBaths):
+    """
     Return the Hamiltonian, in operator form.
     
     Parameters
@@ -423,8 +426,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
     eBaths : list
         Contains information about bath energies.
 
-    '''
-    
+    """
     # Divide up input parameters to more concrete variables 
     Fdd,Fpp,Fpd,Gpd = slaterCondon
     xi_2p,xi_3d = SOCs
@@ -439,7 +441,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
                                               Fpd=Fpd,Gpd=Gpd)
     # Add SOC 
     SOC2pOperator = finite.getSOCop(xi_2p,l=1)
-    SOC3dOperator = finite. getSOCop(xi_3d,l=2)
+    SOC3dOperator = finite.getSOCop(xi_3d,l=2)
     
     # Double counting (DC) correction
     # MLFT DC 
@@ -479,6 +481,7 @@ def getHamiltonianOperator(nBaths,valBaths,slaterCondon,SOCs,
         hHfieldOperator[(((l,m,0),'c'),((l,m,1),'a'))] = hy*1/2.*1j
         for s in range(2):
             hHfieldOperator[(((l,m,s),'c'),((l,m,s),'a'))] = hz*1/2. if s==1 else -hz*1/2.        
+
     # Bath (3d) on-site energies and hoppings
     # Calculate hopping terms between bath and (3d) impurity
     # either by reading matrix or parameterize it

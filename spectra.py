@@ -7,8 +7,8 @@ import scipy.sparse
 import scipy.sparse.linalg
 from scipy.special import spherical_jn,sph_harm
 
-from finite import gauntC,c2i,getJobs
-from finite import daggerOp,applyOp,inner,add,norm2,expandBasisAndHamiltonian
+from .finite import gauntC,c2i,getJobs
+from .finite import daggerOp,applyOp,inner,add,norm2,expandBasisAndHamiltonian
 
 # MPI variables
 comm = MPI.COMM_WORLD
