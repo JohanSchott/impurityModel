@@ -5,23 +5,25 @@ import numpy as np
 from mpi4py import MPI
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.special import spherical_jn,sph_harm
+from scipy.special import spherical_jn, sph_harm
 
-from .finite import gauntC,c2i,getJobs
-from .finite import daggerOp,applyOp,inner,add,norm2,expandBasisAndHamiltonian
+from .finite import gauntC, c2i, get_job_tasks
+from .finite import daggerOp, applyOp, inner, add, norm2
+from .finite import expand_basis_and_hamiltonian
 
 # MPI variables
 comm = MPI.COMM_WORLD
 rank = comm.rank
 ranks = comm.size
-    
+
+
 def getDipoleOperators(nBaths,ns):
     r'''
     Return dipole transition operators.
-    
+
     Transitions between states of different angular momentum,
     defined by the keys in the nBaths dictionary.
-    
+
     Parameters
     ----------
     nBaths : dict
@@ -35,10 +37,11 @@ def getDipoleOperators(nBaths,ns):
         tOps.append(getDipoleOperator(nBaths,n))
     return tOps
 
+
 def getDaggeredDipoleOperators(nBaths,ns):
     '''
     Return daggered dipole transition operators.
-    
+
     Parameters
     ----------
     nBaths : dict
@@ -52,17 +55,19 @@ def getDaggeredDipoleOperators(nBaths,ns):
         tDaggerOps.append(daggerOp(getDipoleOperator(nBaths,n)))
     return tDaggerOps
 
+
 def getDipoleOperator(nBaths,n):
     r'''
     Return dipole transition operator :math:`\hat{T}`.
-    
+
     Transition between states of different angular momentum,
     defined by the keys in the nBaths dictionary.
-    
+
     Parameters
     ----------
     nBaths : Ordered dict
-        angular momentum: number of bath sets
+        int : int,
+        where the keys are angular momenta and values are number of bath sets.
     n : list
         polarization vector n = [nx,ny,nz]
 
@@ -86,20 +91,23 @@ def getDipoleOperator(nBaths,n):
                     tij *= nDict[m-mp]
                     if tij != 0:
                         i = c2i(nBaths,(l2,m,s))
-                        j = c2i(nBaths,(l1,mp,s)) 
-                        tOp[((i,'c'),(j,'a'))] = tij                      
+                        j = c2i(nBaths,(l1,mp,s))
+                        tOp[((i,'c'),(j,'a'))] = tij
     return tOp
+
 
 def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
     r'''
     Return non-resonant inelastic x-ray scattering transition operators.
-    
-    :math:`\hat{T} = \sum_{i,j,\sigma} T_{i,j} \hat{c}_{i\sigma}^\dagger \hat{c}_{j\sigma}`,
 
-    where :math:`T_{i,j} = \langle i | e^{i\mathbf{q}\cdot \mathbf{r}} | j \rangle`.
+    :math:`\hat{T} = \sum_{i,j,\sigma} T_{i,j}
+    \hat{c}_{i\sigma}^\dagger \hat{c}_{j\sigma}`,
+
+    where
+    :math:`T_{i,j} = \langle i | e^{i\mathbf{q}\cdot \mathbf{r}} | j \rangle`.
     The plane-wave is expanded in spherical harmonics.
     See PRL 99 257401 (2007) for more information.
-    
+
     Parameters
     ----------
     nBaths : Ordered dict
@@ -119,18 +127,18 @@ def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
         Normalized such that the integral of Ri^2(r) * r^2
         should be equal to one.
     r : list
-        Radial mesh points. 
+        Radial mesh points.
     kmin : int
         The lowest integer in the plane-wave expansion.
-        By default kmin = 1, which means that the monopole contribution 
+        By default kmin = 1, which means that the monopole contribution
         is not included.
         To include also the monopole scattering, set kmin = 0.
 
     '''
     if rank == 0:
-        if kmin == 0: 
+        if kmin == 0:
             print('Monopole contribution included in the expansion')
-        elif kmin > 0: 
+        elif kmin > 0:
             print('Monopole contribution not included in the expansion')
     tOps = []
     for q in qs:
@@ -138,17 +146,20 @@ def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
         tOps.append(getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin))
     return tOps
 
+
 def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
     r'''
-    Return non-resonant inelastic x-ray scattering transition 
+    Return non-resonant inelastic x-ray scattering transition
     operator :math:`\hat{T}`.
-    
-    :math:`\hat{T} = \sum_{i,j,\sigma} T_{i,j} \hat{c}_{i\sigma}^\dagger \hat{c}_{j\sigma}`,
 
-    where :math:`T_{i,j} = \langle i | e^{i\mathbf{q}\cdot \mathbf{r}} | j \rangle`.
+    :math:`\hat{T} = \sum_{i,j,\sigma} T_{i,j}
+    \hat{c}_{i\sigma}^\dagger \hat{c}_{j\sigma}`,
+
+    where
+    :math:`T_{i,j} = \langle i | e^{i\mathbf{q}\cdot \mathbf{r}} | j \rangle`.
     The plane-wave is expanded in spherical harmonics.
     See PRL 99 257401 (2007) for more information.
-    
+
     Parameters
     ----------
     nBaths : Ordered dict
@@ -169,18 +180,18 @@ def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
         Normalized such that the integral of Ri^2(r) * r^2
         should be equal to one.
     r : list
-        Radial mesh points. 
+        Radial mesh points.
     kmin : int
         The lowest integer in the plane-wave expansion.
-        By default kmin = 1, which means that the monopole contribution 
+        By default kmin = 1, which means that the monopole contribution
         is not included.
         To include also the monopole scattering, set kmin = 0.
 
     '''
     # Convert scattering list to numpy array
-    q = np.array(q) 
+    q = np.array(q)
     qNorm = np.linalg.norm(q)
-    # Polar (colatitudinal) coordinate 
+    # Polar (colatitudinal) coordinate
     theta = np.arccos(q[2]/qNorm)
     # Azimuthal (longitudinal) coordinate
     phi = np.arccos(q[0]/(qNorm*np.sin(theta)))
@@ -188,7 +199,7 @@ def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
     for k in range(kmin,abs(li+lj)+1):
         if (li+lj+k) % 2 == 0:
             Rintegral = np.trapz(np.conj(Ri)*spherical_jn(k,qNorm*r)*Rj*r**2,r)
-            if rank == 0: print('Rintegral(k=',k,') =',Rintegral) 
+            if rank == 0: print('Rintegral(k=',k,') =',Rintegral)
             for mi in range(-li,li+1):
                 for mj in range(-lj,lj+1):
                     m = mi-mj
@@ -200,24 +211,25 @@ def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
                         if tij != 0:
                             for s in range(2):
                                 i = c2i(nBaths,(li,mi,s))
-                                j = c2i(nBaths,(lj,mj,s)) 
+                                j = c2i(nBaths,(lj,mj,s))
                                 process = ((i,'c'),(j,'a'))
                                 if process in tOp:
-                                    tOp[((i,'c'),(j,'a'))] += tij                      
+                                    tOp[((i,'c'),(j,'a'))] += tij
                                 else:
-                                    tOp[((i,'c'),(j,'a'))] = tij                      
+                                    tOp[((i,'c'),(j,'a'))] = tij
     return tOp
+
 
 def getInversePhotoEmissionOperators(nBaths,l=2):
     r'''
     Return inverse photo emission operators :math:`\{ c_i^\dagger \}`.
-    
+
     Parameters
     ----------
     nBaths : dict
         Angular momentum: number of bath sets
     l : int
-        Angular momentum.   
+        Angular momentum.
 
     '''
     # Transition operators
@@ -227,16 +239,17 @@ def getInversePhotoEmissionOperators(nBaths,l=2):
             tOpsIPS.append({((c2i(nBaths,(l,m,s)),'c'),):1})
     return tOpsIPS
 
+
 def getPhotoEmissionOperators(nBaths,l=2):
     r'''
     Return photo emission operators :math:`\{ c_i \}`.
-    
+
     Parameters
     ----------
     nBaths : dict
         Angular momentum: number of bath sets
     l : int
-        Angular momentum.   
+        Angular momentum.
 
     '''
     # Transition operators
@@ -246,12 +259,14 @@ def getPhotoEmissionOperators(nBaths,l=2):
             tOpsPS.append({((c2i(nBaths,(l,m,s)),'a'),):1})
     return tOpsPS
 
-def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
-             restrictions=None,hBig=None,mode='numpy'):
+
+def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
+             restrictions=None, hBig=None, mode="sparse",
+             parallelization_mode="serial"):
     r'''
-    return Green's function 
+    return Green's function
     :math:`\langle psi|((omega+1j*delta+e)\hat{1} - hOp)^{-1} |psi \rangle`.
-    
+
     Parameters
     ----------
     e : float
@@ -260,7 +275,7 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         Multi state
     hOp : dict
         Operator
-    omega : list 
+    omega : list
         Real axis energy mesh
     delta : float
         Deviation from real axis.
@@ -269,22 +284,24 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         Size of the Krylov space
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at `|amplitudes|^2`. 
+        looking at `|amplitudes|^2`.
     restrictions : dict
-        Restriction the occupation of generated 
+        Restriction the occupation of generated
         product states.
     hBig : dict
         In and output argument.
         If present, the results of the operator hOp acting on each
-        product state in the state psi is added and stored in this 
+        product state in the state psi is added and stored in this
         variable. Format: `|PS> : H|PS>`,
         where `|PS>` is a product state and `H|PS>` is stored as a dictionary.
     mode : str
-        'dict' or 'numpy'. 
+        'dict', 'numpy' or 'sparse'.
         Determines which algorithm to use.
-        'numpy' is default. It is the fastest option.
-        It also can handle the situation where len(h) < krylovSize,
-        but the 'dict' algorithm can not.
+        'sparse' is default and it is the fastest option.
+        Also, "sparse" and "numpy" can handle the situation
+        where len(h) < krylovSize, but the 'dict' algorithm can not.
+    parallelization_mode : str
+        Parallelization mode. Either: "serial" or "H_build".
 
     '''
 
@@ -294,25 +311,26 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
     if len(psi) == 0: return g
     alpha = np.zeros(krylovSize,dtype=np.float)
     beta = np.zeros(krylovSize-1,dtype=np.float)
-    # Initialization 
+    # Initialization
     if hBig is None:
         hBig = {}
     if mode == 'dict':
+        assert parallelization_mode == "serial"
         v = list(np.zeros(krylovSize))
         w = list(np.zeros(krylovSize))
         wp = list(np.zeros(krylovSize))
         v[0] = psi
         #print('len(hBig) = ',len(hBig),', len(v[0]) = ',len(v[0]))
-        wp[0] = applyOp(hOp,v[0],slaterWeightMin,restrictions,hBig)
+        wp[0] = applyOp(hOp, v[0], slaterWeightMin, restrictions, hBig)
         #print('#len(hBig) = ',len(hBig),', len(wp[0]) = ',len(wp[0]))
         alpha[0] = inner(wp[0],v[0]).real
         w[0] = add(wp[0],v[0],-alpha[0])
         #print('len(w[0]) = ',len(w[0]))
-        
+
         # Approximate position of spectrum
         #print('alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e))
-    
-        # Construct Krylov states, 
+
+        # Construct Krylov states,
         # and elements alpha and beta
         for j in range(1,krylovSize):
             beta[j-1] = sqrt(norm2(w[j-1]))
@@ -328,17 +346,20 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
             alpha[j] = inner(wp[j],v[j]).real
             w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
             #print('len(hBig) = ',len(hBig),', len(w[j]) = ',len(w[j]))
-    elif mode == 'numpy':
+    elif mode == "sparse" or mode == "numpy":
         # Hamiltonian in dict format.
         # Possibly new product state keys are added to hBig.
-        h = expandBasisAndHamiltonian(hBig,hOp,psi.keys(),restrictions)
-        index = {ps:i for i,ps in enumerate(h.keys())} 
-        basis = {i:ps for i,ps in enumerate(h.keys())} 
+        h = expand_basis_and_hamiltonian(hBig, hOp, psi.keys(), restrictions,
+                                         parallelization_mode)
+        if rank == 0: print("Hamiltonian basis size: len(h)=",len(h))
+        index = {ps:i for i,ps in enumerate(h.keys())}
+        basis = {i:ps for i,ps in enumerate(h.keys())}
         # Number of basis states
         n = len(h)
         # Unnecessary and (impossible) to find more than n Krylov basis vectors.
-        krylovSize = min(krylovSize,n) 
+        krylovSize = min(krylovSize,n)
         # Express Hamiltonian in matrix form
+        #if mode == "sparse":
         hValues, rows, cols = [],[],[]
         for psJ,res in h.items():
             for psI,hValue in res.items():
@@ -347,8 +368,11 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
                 cols.append(index[psJ])
         # store Hamiltonian in sparse matrix form
         h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
-        # Store all Krylov state vectors.
-        # Not really needed but so far memory has not been a probelem.
+        if mode == "numpy":
+            h = h.toarray()
+        # Store Krylov state vectors.
+        # Not really needed to store all,
+        # but so far memory has not been a problem.
         v = np.zeros((krylovSize,n),dtype=np.complex)
         w = np.zeros((krylovSize,n),dtype=np.complex)
         wp = np.zeros((krylovSize,n),dtype=np.complex)
@@ -358,8 +382,8 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
         wp[0,:] = h.dot(v[0,:])
         alpha[0] = np.dot(np.conj(wp[0,:]),v[0,:]).real
         w[0,:] = wp[0,:] - alpha[0]*v[0,:]
-        
-        # Construct Krylov states, 
+
+        # Construct Krylov states,
         # and elements alpha and beta
         for j in range(1,krylovSize):
             beta[j-1] = sqrt(np.sum(np.abs(w[j-1,:])**2))
@@ -372,31 +396,35 @@ def getGreen(e,psi,hOp,omega,delta,krylovSize,slaterWeightMin,
             wp[j,:] = h.dot(v[j,:])
             alpha[j] = np.dot(np.conj(wp[j,:]),v[j,:]).real
             w[j,:] = wp[j,:] - alpha[j]*v[j,:] - beta[j-1]*v[j-1,:]
+    else:
+        sys.exit("Value of variable mode is incorrect.")
     # Construct Green's function from
     # continued fraction
     omegaP = omega+1j*delta+e
     for i in range(krylovSize-1,-1,-1):
         if i == krylovSize-1:
-            g = 1./(omegaP - alpha[i]) 
+            g = 1./(omegaP - alpha[i])
         else:
             g = 1./(omegaP-alpha[i]-beta[i]**2*g)
     return g
 
-def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut,
-               restrictions=None,slaterWeightMin=1e-7):
+
+def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
+               restrictions=None, slaterWeightMin=1e-7,
+               parallelization_mode="H_build"):
     r"""
     Return Green's function for states with low enough energy.
-    
-    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate: 
 
-    :math:`g(w+1j*delta) = 
-    = \langle psi| tOp^\dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp 
+    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate:
+
+    :math:`g(w+1j*delta) =
+    = \langle psi| tOp^\dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp
     |psi \rangle`,
 
-    where :math:`e = \langle psi| hOp |psi \rangle` 
-    
+    where :math:`e = \langle psi| hOp |psi \rangle`
+
     Lanczos algorithm is used.
-     
+
     Parameters
     ----------
     hOp : dict
@@ -407,7 +435,7 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut,
         List of Multi state dictionaries
     es : list
         Total energies
-    w : list 
+    w : list
         Real axis energy mesh
     delta : float
         Deviation from real axis.
@@ -417,55 +445,76 @@ def getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,energyCut,
     energyCut : float
         Restrict the number of considered states
     restrictions : dict
-        Restriction the occupation of generated 
+        Restriction the occupation of generated
         product states.
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at `|amplitudes|^2`. 
-    
+        looking at `|amplitudes|^2`.
+    parallelization_mode : str
+            "eigen_states" or "H_build".
+
     """
-    
-    # Relevant eigen energies  
+
+    # Relevant eigen energies
     esR = [e for e in es if e-es[0] < energyCut]
     n = len(esR)
     # Green's functions
     gs = np.zeros((n,len(tOps),len(w)),dtype=np.complex)
-    g = {}
-    # Hamiltonian dict of the form  |PS> : {H|PS>} 
+    # Hamiltonian dict of the form  |PS> : {H|PS>}
+    # New elements are added each time getGreen is called.
+    # Also acts as an input to getGreen and speed things up dramatically.
     h = {}
-    # Loop over eigen states, unique for each MPI rank
-    for i in getJobs(rank,ranks,n):
-        psi =  psis[i]
-        e = esR[i]
-        # Initialize Green's functions
-        g[i] = np.zeros((len(tOps),len(w)),dtype=np.complex)
-        # Loop over transition operators
-        for t,tOp in enumerate(tOps): 
-            psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
-            normalization = sqrt(norm2(psiR))
-            for state in psiR.keys(): 
-                psiR[state] /= normalization
-            g[i][t,:] = normalization**2*getGreen(e,psiR,hOp,w,delta,
-                                                  krylovSize,
-                                                  slaterWeightMin,
-                                                  restrictions,h)
-    # Distribute the Green's functions among the ranks
-    for r in range(ranks):
-        gTmp = comm.bcast(g, root=r)
-        for i,gValue in gTmp.items():
-            gs[i,:,:] = gValue
+    if parallelization_mode == "eigen_states":
+        g = {}
+        # Loop over eigen states, unique for each MPI rank
+        for i in get_job_tasks(rank, ranks, range(n)):
+            psi =  psis[i]
+            e = esR[i]
+            # Initialize Green's functions
+            g[i] = np.zeros((len(tOps),len(w)),dtype=np.complex)
+            # Loop over transition operators
+            for t,tOp in enumerate(tOps):
+                psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
+                normalization = sqrt(norm2(psiR))
+                for state in psiR.keys():
+                    psiR[state] /= normalization
+                g[i][t,:] = normalization**2*getGreen(
+                    e, psiR, hOp, w, delta, krylovSize, slaterWeightMin,
+                    restrictions, h, parallelization_mode="serial")
+        # Distribute the Green's functions among the ranks
+        for r in range(ranks):
+            gTmp = comm.bcast(g, root=r)
+            for i,gValue in gTmp.items():
+                gs[i,:,:] = gValue
+    elif parallelization_mode == "H_build":
+        # Loop over eigen states
+        for i in range(n):
+            psi =  psis[i]
+            e = esR[i]
+            # Loop over transition operators
+            for t,tOp in enumerate(tOps):
+                psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
+                normalization = sqrt(norm2(psiR))
+                for state in psiR.keys():
+                    psiR[state] /= normalization
+                gs[i,t,:] = normalization**2*getGreen(
+                    e, psiR, hOp, w, delta, krylovSize, slaterWeightMin,
+                    restrictions, h, parallelization_mode=parallelization_mode)
+    else:
+        sys.error("Incorrect value of variable parallelization_mode.")
     return gs
+
 
 def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                energyCut,restrictions,slaterWeightMin=1e-7,hGround=None,
-               parallelizationMode='wIn'):
+               parallelization_mode='H_build'):
     r"""
     Return RIXS Green's function for states with low enough energy.
-    
-    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate: 
 
-    :math:`g(w+1j*delta) 
-    = \langle psi| ROp^\dagger ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} ROp 
+    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate:
+
+    :math:`g(w+1j*delta)
+    = \langle psi| ROp^\dagger ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} ROp
     |psi \rangle`,
 
     where :math:`e = \langle psi| hOp |psi \rangle`, and
@@ -475,20 +524,21 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     Calculations are performed according to:
 
     1) Calculate state `|psi1> = tOpIn |psi>`.
-    2) Calculate state `|psi2> = ((wIns+1j*delta1+e)*\hat{1} - hOp)^{-1}|psi1>` 
-        This is done by introducing operator `A = (wIns+1j*delta1+e)*\hat{1} - hOp`.
-        By applying A from the left on `|psi2> = A^{-1}|psi1>` gives 
+    2) Calculate state `|psi2> = ((wIns+1j*delta1+e)*\hat{1} - hOp)^{-1}|psi1>`
+        This is done by introducing operator:
+        `A = (wIns+1j*delta1+e)*\hat{1} - hOp`.
+        By applying A from the left on `|psi2> = A^{-1}|psi1>` gives
         the inverse problem: `A|psi2> = |psi1>`.
-        This equation can be solved by guessing `|psi2>` and iteratively 
+        This equation can be solved by guessing `|psi2>` and iteratively
         improving it.
     3) Calculate state `|psi3> = tOpOut |psi2>`
     4) Calculate `normalization = sqrt(<psi3|psi3>)`
     5) Normalize psi3 according to: `psi3 /= normalization`
     6) Now the Green's function is given by:
-        :math:`g(wLoss+1j*delta2)  
-        = normalization^2 * \langle psi3| ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} |psi3 \rangle`,
-        which can efficiently be evaluation using Lanczos.    
-     
+        :math:`g(wLoss+1j*delta2) = normalization^2
+        * \langle psi3| ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} |psi3 \rangle`,
+        which can efficiently be evaluation using Lanczos.
+
     Parameters
     ----------
     hOp : dict
@@ -501,11 +551,11 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
         List of Multi state dictionaries
     es : list
         Total energies
-    wIns : list 
-        Real axis energy mesh for incoming photon energy 
-    wLoss : list 
-        Real axis energy mesh for photon energy loss, i.e. 
-        wLoss = wIns - wOut 
+    wIns : list
+        Real axis energy mesh for incoming photon energy
+    wLoss : list
+        Real axis energy mesh for photon energy loss, i.e.
+        wLoss = wIns - wOut
     delta1 : float
         Deviation from real axis.
         Broadening/resolution parameter.
@@ -517,47 +567,52 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     energyCut : float
         Restrict the number of considered states
     restrictions : dict
-        Restriction the occupation of generated 
+        Restriction the occupation of generated
         product states.
     slaterWeightMin : float
         Restrict the number of product states by
-        looking at `|amplitudes|^2`. 
+        looking at `|amplitudes|^2`.
     hGround : dict
-        Optional. The Hamiltonian for product states with no core hole.
+        Optional
+        tuple : dict, where dict is of the format tuple : float or complex
+        The Hamiltonian for product states with no core hole.
         If present, it will be updated by this function.
-    parallelizationMode : str
-        'serial', 'eigenStates' or 'wIn'
-    
+    parallelization_mode : str
+        "serial", "H_build", "wIn" or "H_build_wIn"
+
     """
     if hGround is None:
         hGround = {}
-    # Relevant eigen energies  
+    # Relevant eigen energies
     esR = [e for e in es if e-es[0] < energyCut]
     nE = len(esR)
     # Green's functions
     gs = np.zeros((nE,len(tOpsIn),len(tOpsOut),len(wIns),len(wLoss)),
                   dtype=np.complex)
-    # Hamiltonian dict of the form  |PS> : {H|PS>} 
+    # Hamiltonian dict of the form  |PS> : {H|PS>}
     # For product states with a core hole.
     hExcited = {}
-    
-    if parallelizationMode == 'serial':
+
+    if parallelization_mode == 'serial' or parallelization_mode == "H_build":
         # Loop over eigen states
         for iE in range(nE):
             psi =  psis[iE]
             e = esR[iE]
             # Loop over in-coming transition operators
-            for tIn,tOpIn in enumerate(tOpsIn): 
+            for tIn,tOpIn in enumerate(tOpsIn):
                 # Core-hole state
                 psi1 = applyOp(tOpIn,psi,slaterWeightMin,restrictions)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
-                h = expandBasisAndHamiltonian(hExcited,hOp,psi1.keys(),restrictions)
+                h = expand_basis_and_hamiltonian(hExcited, hOp, psi1.keys(),
+                                                 restrictions,
+                                                 parallelization_mode)
                 if rank == 0:
-                    print('len(psi1),len(h),len(hExcited),#elements added to hExcited')
+                    print("len(psi1),len(h),len(hExcited), "
+                          + "#elements added to hExcited")
                     print(len(psi1),len(h),len(hExcited),len(hExcited)-nTMP)
-                index = {ps:i for i,ps in enumerate(h.keys())} 
-                basis = {i:ps for i,ps in enumerate(h.keys())} 
+                index = {ps:i for i,ps in enumerate(h.keys())}
+                basis = {i:ps for i,ps in enumerate(h.keys())}
                 n = len(h)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
@@ -577,32 +632,34 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                 if rank == 0: print('Loop over in-coming photon energies...')
                 for iwIn,wIn in enumerate(wIns):
                     # A = (wIn+1j*delta1+e)*\hat{1} - hOp.
-                    a = scipy.sparse.csr_matrix(([wIn+1j*delta1+e]*n,(range(n),range(n))),
-                                                shape=(n,n))
+                    a = scipy.sparse.csr_matrix(
+                        ([wIn+1j*delta1+e]*n,(range(n),range(n))), shape=(n,n))
                     a -= h
-                    # Find x by solving: a*x = y            
+                    # Find x by solving: a*x = y
                     # Biconjugate gradient stabilized method.
-                    # Pure conjugate gradient does not apply since 
+                    # Pure conjugate gradient does not apply since
                     # it requires a Hermitian matrix.
                     x,info = scipy.sparse.linalg.bicgstab(a,y)
                     if info > 0 :
-                        print('convergence to tolerance not achieved')
+                        print("Rank ", rank,
+                              ": Convergence to tolerance not achieved")
                         print('#iterations = ',info)
                     elif info < 0 :
-                        print('illegal input or breakdown in conjugate gradient')
+                        print("Rank ", rank, "illegal input or breakdown"
+                              + " in conjugate gradient")
                     # Convert multi state from vector to dict format
                     psi2 = {}
                     for i,amp in enumerate(x):
                         if amp != 0:
                             psi2[basis[i]] = amp
                     # Loop over out-going transition operators
-                    for tOut,tOpOut in enumerate(tOpsOut): 
+                    for tOut,tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>
-                        # This state has no core-hole. 
+                        # This state has no core-hole.
                         psi3 = applyOp(tOpOut,psi2,slaterWeightMin,restrictions)
                         # Normalization factor
                         normalization = sqrt(norm2(psi3))
-                        for state in psi3.keys(): 
+                        for state in psi3.keys():
                             psi3[state] /= normalization
                         # Remove product states with small weight
                         for state,amp in list(psi3.items()):
@@ -610,25 +667,35 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                                 psi3.pop(state)
                         # Calculate Green's function
                         gs[iE,tIn,tOut,iwIn,:] = normalization**2*getGreen(
-                            e,psi3,hOp,wLoss,delta2,krylovSize,slaterWeightMin,
-                            restrictions,hGround)
-    elif parallelizationMode == 'wIn':
+                            e, psi3, hOp, wLoss, delta2, krylovSize,
+                            slaterWeightMin, restrictions, hGround,
+                            parallelization_mode=parallelization_mode)
+    elif parallelization_mode == 'wIn' or parallelization_mode == "H_build_wIn":
         # Loop over eigen states
         for iE in range(nE):
             psi =  psis[iE]
             e = esR[iE]
             # Loop over in-coming transition operators
-            for tIn,tOpIn in enumerate(tOpsIn): 
+            for tIn,tOpIn in enumerate(tOpsIn):
                 # Core-hole state
                 psi1 = applyOp(tOpIn,psi,slaterWeightMin,restrictions)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
-                h = expandBasisAndHamiltonian(hExcited,hOp,psi1.keys(),restrictions)
-                if rank == 0: 
-                    print('len(psi1),len(h),len(hExcited),#elements added to hExcited')
+                if parallelization_mode == "wIn":
+                    h = expand_basis_and_hamiltonian(
+                        hExcited, hOp, psi1.keys(), restrictions,
+                        parallelization_mode="serial")
+                elif parallelization_mode == "H_build_wIn":
+                    h = expand_basis_and_hamiltonian(
+                        hExcited, hOp, psi1.keys(), restrictions,
+                        parallelization_mode="H_build")
+
+                if rank == 0:
+                    print("len(psi1),len(h),len(hExcited), "
+                          + "#elements added to hExcited")
                     print(len(psi1),len(h),len(hExcited),len(hExcited)-nTMP)
-                index = {ps:i for i,ps in enumerate(h.keys())} 
-                basis = {i:ps for i,ps in enumerate(h.keys())} 
+                index = {ps:i for i,ps in enumerate(h.keys())}
+                basis = {i:ps for i,ps in enumerate(h.keys())}
                 n = len(h)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
@@ -649,37 +716,39 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                 g = {}
                 if rank == 0: print('Loop over in-coming photon energies...')
                 # Loop over in-coming photon energies, unique for each MPI rank
-                for iwIn in getJobs(rank,ranks,len(wIns)):
+                for iwIn in get_job_tasks(rank, ranks, range(len(wIns))):
                     wIn = wIns[iwIn]
                     # Initialize Green's functions
-                    g[iwIn] =  np.zeros((len(tOpsOut),len(wLoss)),dtype=np.complex)        
+                    g[iwIn] =  np.zeros((len(tOpsOut), len(wLoss)),
+                                        dtype=np.complex)
                     # A = (wIn+1j*delta1+e)*\hat{1} - hOp.
-                    a = scipy.sparse.csr_matrix(([wIn+1j*delta1+e]*n,(range(n),range(n))),
-                                                shape=(n,n))
+                    a = scipy.sparse.csr_matrix(
+                        ([wIn+1j*delta1+e]*n,(range(n),range(n))), shape=(n,n))
                     a -= h
-                    # Find x by solving: a*x = y            
+                    # Find x by solving: a*x = y
                     # Biconjugate gradient stabilized method.
-                    # Pure conjugate gradient does not apply since 
+                    # Pure conjugate gradient does not apply since
                     # it requires a Hermitian matrix.
                     x,info = scipy.sparse.linalg.bicgstab(a,y)
                     if info > 0 :
                         print('convergence to tolerance not achieved')
                         print('#iterations = ',info)
                     elif info < 0 :
-                        print('illegal input or breakdown in conjugate gradient')
+                        print("illegal input or breakdown "
+                              + "in conjugate gradient")
                     # Convert multi state from vector to dict format
                     psi2 = {}
                     for i,amp in enumerate(x):
                         if amp != 0:
                             psi2[basis[i]] = amp
                     # Loop over out-going transition operators
-                    for tOut,tOpOut in enumerate(tOpsOut): 
+                    for tOut,tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>
-                        # This state has no core-hole. 
+                        # This state has no core-hole.
                         psi3 = applyOp(tOpOut,psi2,slaterWeightMin,restrictions)
                         # Normalization factor
                         normalization = sqrt(norm2(psi3))
-                        for state in psi3.keys(): 
+                        for state in psi3.keys():
                             psi3[state] /= normalization
                         # Remove product states with small weight
                         for state,amp in list(psi3.items()):
@@ -687,8 +756,9 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                                 psi3.pop(state)
                         # Calculate Green's function
                         g[iwIn][tOut,:] = normalization**2*getGreen(
-                            e,psi3,hOp,wLoss,delta2,krylovSize,slaterWeightMin,
-                            restrictions,hGround)
+                            e, psi3, hOp, wLoss, delta2, krylovSize,
+                            slaterWeightMin, restrictions, hGround,
+                            parallelization_mode="serial")
 
                 # Distribute the Green's functions among the ranks
                 for r in range(ranks):
@@ -696,4 +766,3 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     for iwIn,gValue in gTmp.items():
                         gs[iE,tIn,:,iwIn,:] = gValue
     return gs
-
