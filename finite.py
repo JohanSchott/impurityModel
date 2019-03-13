@@ -1909,7 +1909,8 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
         h_big_new_local = {}
         while i < n :
             #if rank == 0: print("i=",i,", n=",n)
-            basis_new_local = []
+            basis_set = set(basis)
+            basis_new_local = set()
             for state_index in get_job_tasks(rank, ranks, range(i,n)):
                 state = basis[state_index]
                 # Obtain H|state>
@@ -1919,18 +1920,14 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
                     res = applyOp(hOp, {state:1}, restrictions=restrictions)
                     h_big_new_local[state] = res
                 h_local[state] = res
-                for ps in res.keys():
-                    if ps not in basis and ps not in basis_new_local:
-                        basis_new_local.append(ps)
+                basis_new_local.update(set(res.keys()).difference(basis_set))
             # Add unique elements of basis_new_local into basis_new
-            basis_new = []
+            basis_new = set()
             for r in range(ranks):
-                # Loop over product states in rank r's basis_new_local
-                for ps in comm.bcast(basis_new_local, root=r):
-                    if ps not in basis_new:
-                        basis_new.append(ps)
+                basis_new.update(comm.bcast(basis_new_local, root=r))
+
             # Add basis_new to basis
-            basis += basis_new
+            basis += list(basis_new)
             # Updated total number of product states |ps> where know H|ps>
             i = n
             # Updated total number of product states needed to consider.
