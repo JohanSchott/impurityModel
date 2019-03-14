@@ -1620,8 +1620,8 @@ def applyLminus3d(nBaths,psi):
     return psiNew
 
 
-def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
-            opResult=None,method='newTuple'):
+def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
+            opResult=None, method='newTuple'):
     r"""
     Return :math:`|psi' \rangle = op |psi \rangle`.
 
@@ -1670,18 +1670,16 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
 
     """
     psiNew = {}
-    # Number of operators, which is equal to the number of MPI jobs
-    n = len(psi)
-    # Keys and values of psi
     if method == 'newTuple' and opResult is None:
-        for state,amp in psi.items():
+        # Loop over product states in psi.
+        for state, amp in psi.items():
             #assert amp != 0
-            for process,h in op.items():
+            for process, h in op.items():
                 #assert h != 0
                 # Initialize state
                 sA = state
                 signTot = 1
-                for i,action in process[-1::-1]:
+                for i, action in process[-1::-1]:
                     if action == 'a':
                         sB,sign = remove(i,sA)
                     elif action == 'c':
@@ -1698,7 +1696,8 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
     elif method == 'newTuple':
         # Profiling variable
         #opResultLen = len(opResult)
-        for state,amp in psi.items():
+        # Loop over product states in psi.
+        for state, amp in psi.items():
             #assert amp != 0
             if state in opResult:
                 addToFirst(psiNew,opResult[state],amp)
@@ -1706,12 +1705,12 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
-                for process,h in op.items():
+                for process, h in op.items():
                     #assert h != 0
                     # Initialize state
                     sA = state
                     signTot = 1
-                    for i,action in process[-1::-1]:
+                    for i, action in process[-1::-1]:
                         if action == 'a':
                             sB,sign = remove(i,sA)
                         elif action == 'c':
@@ -1747,7 +1746,7 @@ def applyOp(op,psi,slaterWeightMin=1e-12,restrictions=None,
                     psiNew.pop(state)
                     break
     # Remove product states with small weight
-    for state,amp in list(psiNew.items()):
+    for state, amp in list(psiNew.items()):
         if abs(amp)**2 < slaterWeightMin:
             psiNew.pop(state)
     return psiNew

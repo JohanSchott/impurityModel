@@ -309,8 +309,6 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
     g = np.zeros(len(omega),dtype=np.complex)
     # In the exceptional case of an empty state psi, return zero.
     if len(psi) == 0: return g
-    alpha = np.zeros(krylovSize,dtype=np.float)
-    beta = np.zeros(krylovSize-1,dtype=np.float)
     # Initialization
     if hBig is None:
         hBig = {}
@@ -323,6 +321,8 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
         #print('len(hBig) = ',len(hBig),', len(v[0]) = ',len(v[0]))
         wp[0] = applyOp(hOp, v[0], slaterWeightMin, restrictions, hBig)
         #print('#len(hBig) = ',len(hBig),', len(wp[0]) = ',len(wp[0]))
+        alpha = np.zeros(krylovSize,dtype=np.float)
+        beta = np.zeros(krylovSize-1,dtype=np.float)
         alpha[0] = inner(wp[0],v[0]).real
         w[0] = add(wp[0],v[0],-alpha[0])
         #print('len(w[0]) = ',len(w[0]))
@@ -370,6 +370,9 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
         h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
         if mode == "numpy":
             h = h.toarray()
+        # Allocate tri-diagonal matrix elements
+        alpha = np.zeros(krylovSize,dtype=np.float)
+        beta = np.zeros(krylovSize-1,dtype=np.float)
         # Store Krylov state vectors.
         # Not really needed to store all,
         # but so far memory has not been a problem.
@@ -471,10 +474,10 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
             psi =  psis[i]
             e = esR[i]
             # Initialize Green's functions
-            g[i] = np.zeros((len(tOps),len(w)),dtype=np.complex)
+            g[i] = np.zeros((len(tOps),len(w)), dtype=np.complex)
             # Loop over transition operators
-            for t,tOp in enumerate(tOps):
-                psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
+            for t, tOp in enumerate(tOps):
+                psiR = applyOp(tOp, psi, slaterWeightMin, restrictions)
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
@@ -487,13 +490,14 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
             for i,gValue in gTmp.items():
                 gs[i,:,:] = gValue
     elif parallelization_mode == "H_build":
-        # Loop over eigen states
-        for i in range(n):
-            psi =  psis[i]
-            e = esR[i]
-            # Loop over transition operators
-            for t,tOp in enumerate(tOps):
-                psiR = applyOp(tOp,psi,slaterWeightMin,restrictions)
+        # Loop over transition operators
+        for t, tOp in enumerate(tOps):
+            t_big = {}
+            # Loop over eigen states
+            for i in range(n):
+                psi =  psis[i]
+                e = esR[i]
+                psiR = applyOp(tOp, psi, slaterWeightMin, restrictions, t_big)
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
@@ -507,7 +511,7 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
 
 def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                energyCut,restrictions,slaterWeightMin=1e-7,hGround=None,
-               parallelization_mode='H_build'):
+               parallelization_mode='H_build_wIn'):
     r"""
     Return RIXS Green's function for states with low enough energy.
 
@@ -592,25 +596,27 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     # Hamiltonian dict of the form  |PS> : {H|PS>}
     # For product states with a core hole.
     hExcited = {}
-
+    tOut_big = [{}]*len(tOpsOut)
     if parallelization_mode == 'serial' or parallelization_mode == "H_build":
-        # Loop over eigen states
-        for iE in range(nE):
-            psi =  psis[iE]
-            e = esR[iE]
-            # Loop over in-coming transition operators
-            for tIn,tOpIn in enumerate(tOpsIn):
+        # Loop over in-coming transition operators
+        for tIn,tOpIn in enumerate(tOpsIn):
+            tIn_big = {}
+            # Loop over eigen states
+            for iE in range(nE):
+                psi =  psis[iE]
+                e = esR[iE]
                 # Core-hole state
-                psi1 = applyOp(tOpIn,psi,slaterWeightMin,restrictions)
+                psi1 = applyOp(tOpIn, psi, slaterWeightMin, restrictions,
+                               tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
                 h = expand_basis_and_hamiltonian(hExcited, hOp, psi1.keys(),
                                                  restrictions,
                                                  parallelization_mode)
                 if rank == 0:
-                    print("len(psi1),len(h),len(hExcited), "
-                          + "#elements added to hExcited")
-                    print(len(psi1),len(h),len(hExcited),len(hExcited)-nTMP)
+                    print("len(psi1), len(h), len(hExcited), "
+                          + "#elements added to hExcited: ",
+                          len(psi1), len(h), len(hExcited), len(hExcited)-nTMP)
                 index = {ps:i for i,ps in enumerate(h.keys())}
                 basis = {i:ps for i,ps in enumerate(h.keys())}
                 n = len(h)
@@ -652,11 +658,13 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     for i,amp in enumerate(x):
                         if amp != 0:
                             psi2[basis[i]] = amp
+
                     # Loop over out-going transition operators
                     for tOut,tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>
                         # This state has no core-hole.
-                        psi3 = applyOp(tOpOut,psi2,slaterWeightMin,restrictions)
+                        psi3 = applyOp(tOpOut, psi2, slaterWeightMin,
+                                       restrictions, tOut_big[tOut])
                         # Normalization factor
                         normalization = sqrt(norm2(psi3))
                         for state in psi3.keys():
@@ -671,14 +679,16 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                             slaterWeightMin, restrictions, hGround,
                             parallelization_mode=parallelization_mode)
     elif parallelization_mode == 'wIn' or parallelization_mode == "H_build_wIn":
-        # Loop over eigen states
-        for iE in range(nE):
-            psi =  psis[iE]
-            e = esR[iE]
-            # Loop over in-coming transition operators
-            for tIn,tOpIn in enumerate(tOpsIn):
+        # Loop over in-coming transition operators
+        for tIn, tOpIn in enumerate(tOpsIn):
+            tIn_big = {}
+            # Loop over eigen states
+            for iE in range(nE):
+                psi =  psis[iE]
+                e = esR[iE]
                 # Core-hole state
-                psi1 = applyOp(tOpIn,psi,slaterWeightMin,restrictions)
+                psi1 = applyOp(tOpIn, psi, slaterWeightMin, restrictions,
+                               tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
                 if parallelization_mode == "wIn":
@@ -689,23 +699,22 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                     h = expand_basis_and_hamiltonian(
                         hExcited, hOp, psi1.keys(), restrictions,
                         parallelization_mode="H_build")
-
                 if rank == 0:
-                    print("len(psi1),len(h),len(hExcited), "
-                          + "#elements added to hExcited")
-                    print(len(psi1),len(h),len(hExcited),len(hExcited)-nTMP)
+                    print("len(psi1), len(h), len(hExcited), "
+                          + "#elements added to hExcited: ",
+                          len(psi1), len(h), len(hExcited), len(hExcited)-nTMP)
                 index = {ps:i for i,ps in enumerate(h.keys())}
                 basis = {i:ps for i,ps in enumerate(h.keys())}
                 n = len(h)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
-                for ps,amp in psi1.items():
+                for ps, amp in psi1.items():
                     y[index[ps]] = amp
                 # store psi1 as a sparse vector
                 #y = scipy.sparse.csr_matrix(y)
                 # Express Hamiltonian in matrix form
                 hValues, rows, cols = [],[],[]
-                for psJ,res in h.items():
+                for psJ, res in h.items():
                     for psI,hValue in res.items():
                         hValues.append(hValue)
                         rows.append(index[psI])
@@ -738,14 +747,15 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                               + "in conjugate gradient")
                     # Convert multi state from vector to dict format
                     psi2 = {}
-                    for i,amp in enumerate(x):
+                    for i, amp in enumerate(x):
                         if amp != 0:
                             psi2[basis[i]] = amp
                     # Loop over out-going transition operators
-                    for tOut,tOpOut in enumerate(tOpsOut):
+                    for tOut, tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>
                         # This state has no core-hole.
-                        psi3 = applyOp(tOpOut,psi2,slaterWeightMin,restrictions)
+                        psi3 = applyOp(tOpOut, psi2, slaterWeightMin,
+                                       restrictions, tOut_big[tOut])
                         # Normalization factor
                         normalization = sqrt(norm2(psi3))
                         for state in psi3.keys():
@@ -763,6 +773,6 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
                 # Distribute the Green's functions among the ranks
                 for r in range(ranks):
                     gTmp = comm.bcast(g, root=r)
-                    for iwIn,gValue in gTmp.items():
+                    for iwIn, gValue in gTmp.items():
                         gs[iE,tIn,:,iwIn,:] = gValue
     return gs
