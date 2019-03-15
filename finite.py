@@ -1867,7 +1867,7 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
     restrictions : dict
         Restriction the occupation of generated product states.
     parallelization_mode : str
-        Parallelization mode. Either: "serial", "serial2" or "H_build".
+        Parallelization mode. Either: "serial", "serial_slow" or "H_build".
 
 
     Returns
@@ -1882,6 +1882,19 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
     h = {}
     i = len(h)
     if parallelization_mode == "serial":
+        n = len(basis)
+        while i < n :
+            basis_set = set(basis)
+            basis_new = set()
+            for b in basis[i:n]:
+                res = applyOp(hOp, {b:1}, restrictions=restrictions,
+                              opResult=h_big)
+                h[b] = res
+                basis_new.update(set(res.keys()).difference(basis_set))
+            i = n # = len(h)
+            basis += list(basis_new)
+            n = len(basis)
+    elif parallelization_mode == "serial_slow":
         while len(h) < len(basis) :
             res = applyOp(hOp, {basis[i]:1}, restrictions=restrictions,
                           opResult=h_big)
@@ -1890,18 +1903,6 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
                 if ps not in basis:
                     basis.append(ps)
             i += 1
-    elif parallelization_mode == "serial2":
-        n = len(basis)
-        while i < n :
-            for b in basis[i:n]:
-                res = applyOp(hOp, {b:1}, restrictions=restrictions,
-                              opResult=h_big)
-                h[b] = res
-                for ps in res.keys():
-                    if ps not in basis:
-                        basis.append(ps)
-            i = n # = len(h)
-            n = len(basis)
     elif parallelization_mode == "H_build":
         n = len(basis)
         h_local = {}
