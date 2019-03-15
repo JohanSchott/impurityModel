@@ -6,6 +6,7 @@ from mpi4py import MPI
 import scipy.sparse
 import scipy.sparse.linalg
 from scipy.special import spherical_jn, sph_harm
+import time
 
 from .finite import gauntC, c2i, get_job_tasks
 from .finite import daggerOp, applyOp, inner, add, norm2
@@ -755,11 +756,16 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                         for state,amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
+
+                        t0 = time.time()
+
                         # Calculate Green's function
                         g[iwIn][tOut,:] = normalization**2*getGreen(
                             e, psi3, hOp, wLoss, delta2, krylovSize,
                             slaterWeightMin, restrictions, hGround,
                             parallelization_mode="serial")
+                        
+                        if rank == 0: print("dt = ", time.time() - t0)
 
                 # Distribute the Green's functions among the ranks
                 for r in range(ranks):
