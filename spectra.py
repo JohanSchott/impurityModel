@@ -412,13 +412,13 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
     return g
 
 
-def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
-               restrictions=None, slaterWeightMin=1e-7,
+def getSpectra(hOp, tOps, psis, es, w, delta, restrictions=None,
+               krylovSize=150, slaterWeightMin=1e-7, 
                parallelization_mode="H_build"):
     r"""
     Return Green's function for states with low enough energy.
 
-    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate:
+    For states :math:`|psi \rangle`, calculate:
 
     :math:`g(w+1j*delta) =
     = \langle psi| tOp^\dagger ((w+1j*delta+e)*\hat{1} - hOp)^{-1} tOp
@@ -443,13 +443,11 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
     delta : float
         Deviation from real axis.
         Broadening/resolution parameter.
-    krylovSize : int
-        Size of the Krylov space
-    energyCut : float
-        Restrict the number of considered states
     restrictions : dict
         Restriction the occupation of generated
         product states.
+    krylovSize : int
+        Size of the Krylov space
     slaterWeightMin : float
         Restrict the number of product states by
         looking at `|amplitudes|^2`.
@@ -457,10 +455,7 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
             "eigen_states" or "H_build".
 
     """
-
-    # Relevant eigen energies
-    esR = [e for e in es if e-es[0] < energyCut]
-    n = len(esR)
+    n = len(es)
     # Green's functions
     gs = np.zeros((n,len(tOps),len(w)),dtype=np.complex)
     # Hamiltonian dict of the form  |PS> : {H|PS>}
@@ -472,7 +467,7 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
         # Loop over eigen states, unique for each MPI rank
         for i in get_job_tasks(rank, ranks, range(n)):
             psi =  psis[i]
-            e = esR[i]
+            e = es[i]
             # Initialize Green's functions
             g[i] = np.zeros((len(tOps),len(w)), dtype=np.complex)
             # Loop over transition operators
@@ -496,7 +491,7 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
             # Loop over eigen states
             for i in range(n):
                 psi =  psis[i]
-                e = esR[i]
+                e = es[i]
                 psiR = applyOp(tOp, psi, slaterWeightMin, restrictions, t_big)
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
@@ -509,13 +504,13 @@ def getSpectra(hOp, tOps, psis, es, w, delta, krylovSize, energyCut,
     return gs
 
 
-def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
-               energyCut,restrictions,slaterWeightMin=1e-7,hGround=None,
-               parallelization_mode='H_build_wIn'):
+def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
+               restrictions=None, krylovSize=150, slaterWeightMin=1e-7,
+               hGround=None, parallelization_mode='H_build_wIn'):
     r"""
-    Return RIXS Green's function for states with low enough energy.
+    Return RIXS Green's function for states.
 
-    For states :math:`|psi \rangle` with e < e[0] + energyCut, calculate:
+    For states :math:`|psi \rangle`, calculate:
 
     :math:`g(w+1j*delta)
     = \langle psi| ROp^\dagger ((wLoss+1j*delta2+e)*\hat{1} - hOp)^{-1} ROp
@@ -566,13 +561,11 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     delta2 : float
         Deviation from real axis.
         Broadening/resolution parameter.
-    krylovSize : int
-        Size of the Krylov space
-    energyCut : float
-        Restrict the number of considered states
     restrictions : dict
         Restriction the occupation of generated
         product states.
+    krylovSize : int
+        Size of the Krylov space
     slaterWeightMin : float
         Restrict the number of product states by
         looking at `|amplitudes|^2`.
@@ -587,9 +580,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
     """
     if hGround is None:
         hGround = {}
-    # Relevant eigen energies
-    esR = [e for e in es if e-es[0] < energyCut]
-    nE = len(esR)
+    nE = len(es)
     # Green's functions
     gs = np.zeros((nE,len(tOpsIn),len(tOpsOut),len(wIns),len(wLoss)),
                   dtype=np.complex)
@@ -604,7 +595,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
             # Loop over eigen states
             for iE in range(nE):
                 psi =  psis[iE]
-                e = esR[iE]
+                e = es[iE]
                 # Core-hole state
                 psi1 = applyOp(tOpIn, psi, slaterWeightMin, restrictions,
                                tIn_big)
@@ -685,7 +676,7 @@ def getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIns,wLoss,delta1,delta2,krylovSize,
             # Loop over eigen states
             for iE in range(nE):
                 psi =  psis[iE]
-                e = esR[iE]
+                e = es[iE]
                 # Core-hole state
                 psi1 = applyOp(tOpIn, psi, slaterWeightMin, restrictions,
                                tIn_big)

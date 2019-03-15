@@ -94,13 +94,11 @@ def main():
     # Temperature (Kelvin)
     T = 300
     # How much above lowest eigenenergy to consider 
-    energyCut = 10*k_B*T
+    energy_cut = 10*k_B*T
     # energy-mesh
     w = np.linspace(-25,25,3000)
     # Smearing, half with half maximum (HWHM). Due to short core-hole lifetime
     delta = 0.2
-    # Krylov size, used when spectra are  generated
-    krylovSize = 80
     # Occupation restrictions, used when spectra are generated
     l = 2
     restrictions = {}
@@ -147,7 +145,7 @@ def main():
                             dnTol,n0imp)
     if rank == 0: print('#basis states = {:d}'.format(len(basis))) 
     # Diagonalization of restricted active space Hamiltonian
-    es,psis = finite.eigensystem(hOp,basis,nPsiMax)
+    es, psis = finite.eigensystem(hOp,basis,nPsiMax)
     
     # Calculate static expectation values
     finite.printThermalExpValues(nBaths,es,psis)
@@ -200,8 +198,8 @@ def main():
                             eBath=[eValEg,eValT2g,eConEg,eConT2g],
                             vBath=[vValEg,vValT2g,vConEg,vConT2g],
                             nPsiMax=nPsiMax,
-                            T=T,energyCut=energyCut,delta=delta,
-                            krylovSize=krylovSize,restrictions=restrictions,
+                            T=T,energy_cut=energy_cut,delta=delta,
+                            restrictions=restrictions,
                             epsilons=epsilons,
                             epsilonsRIXSin=epsilonsRIXSin,epsilonsRIXSout=epsilonsRIXSout,
                             deltaRIXS=deltaRIXS,
@@ -225,17 +223,19 @@ def main():
                                 qsNIXS=qsNIXS,r=radialMesh,RiNIXS=RiNIXS,
                                 RjNIXS=RjNIXS)
 
+    # Consider from now on only eigenstates with low energy
+    es = tuple( e for e in es if e - es[0] < energy_cut )
+    psis = tuple( psis[i] for i in range(len(es)) )
+    if rank == 0: print("Consider {:d} eigenstates for the spectra \n".format(len(es)))
 
     if rank == 0: print('Create 3d inverse photoemission and photoemission spectra...')
     # Transition operators
     tOpsIPS = spectra.getInversePhotoEmissionOperators(nBaths,l=2)
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=2)
     if rank == 0: print("Inverse photoemission Green's function..")
-    gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta,krylovSize,
-                               energyCut,restrictions)
+    gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta, restrictions)
     if rank == 0: print("Photoemission Green's function..")
-    gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                              energyCut,restrictions)
+    gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta, restrictions)
     gsPS *= -1
     gs = gsPS + gsIPS
     if rank == 0: 
@@ -267,8 +267,7 @@ def main():
     # Transition operators
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
     # Photoemission Green's function 
-    gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta,krylovSize,
-                            energyCut,restrictions)
+    gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta, restrictions)
     gs *= -1
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
@@ -300,8 +299,7 @@ def main():
     tOps = spectra.getNIXSOperators(nBaths,qsNIXS,liNIXS,ljNIXS,
                                     RiNIXS,RjNIXS,radialMesh)
     # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,wLoss,deltaNIXS,krylovSize,
-                            energyCut,restrictions)
+    gs = spectra.getSpectra(hOp,tOps,psis,es,wLoss,deltaNIXS, restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#q-points = {:d}'.format(np.shape(gs)[1]))
@@ -331,8 +329,7 @@ def main():
     # Dipole transition operators
     tOps = spectra.getDipoleOperators(nBaths,epsilons)
     # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta,krylovSize,
-                            energyCut,restrictions)
+    gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta, restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#polarizations = {:d}'.format(np.shape(gs)[1]))
@@ -364,8 +361,8 @@ def main():
     # Dipole 3d -> 2p transition operators
     tOpsOut = spectra.getDaggeredDipoleOperators(nBaths,epsilonsRIXSout)
     # Green's function 
-    gs = spectra.getRIXSmap(hOp,tOpsIn,tOpsOut,psis,es,wIn,wLoss,delta,deltaRIXS,
-                            krylovSize,energyCut,restrictions)
+    gs = spectra.getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIn, wLoss, delta,
+                            deltaRIXS, restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#in-polarizations = {:d}'.format(np.shape(gs)[1]))

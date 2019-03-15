@@ -51,8 +51,8 @@ def get_job_tasks(rank, ranks, tasks_tot):
     return tuple(tasks)
 
 
-def eigensystem(hOp,basis,nPsiMax,groundDiagMode='Lanczos',eigenValueTol=1e-9,
-                slaterWeightMin=1e-7):
+def eigensystem(hOp, basis, nPsiMax, groundDiagMode='Lanczos', 
+               eigenValueTol=1e-9, slaterWeightMin=1e-7):
     """
     Return eigen-energies and eigenstates.
 
@@ -112,8 +112,8 @@ def printExpValues(nBaths,es,psis,n=None):
         print('E0 = {:7.4f}'.format(es[0]))
         print(('  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) '
                'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)'))
-    for i,(e,psi) in enumerate(zip(es-es[0],psis)):
-        if rank == 0 and i < n:
+    if rank == 0 :
+        for i,(e,psi) in enumerate(zip(es[:n] - es[0],psis[:n])):
             oc = getEgT2gOccupation(nBaths,psi)
             print(('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}'
                    ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
@@ -122,7 +122,7 @@ def printExpValues(nBaths,es,psis,n=None):
                 getLz3d(nBaths,psi),getSz3d(nBaths,psi),
                 getLsqr3d(nBaths,psi),getSsqr3d(nBaths,psi),
                 getLsqr3dWithBath(nBaths,psi),getSsqr3dWithBath(nBaths,psi)))
-
+        print("\n")
 
 def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
     '''
