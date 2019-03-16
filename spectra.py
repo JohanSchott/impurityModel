@@ -377,29 +377,30 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
         # Store Krylov state vectors.
         # Not really needed to store all,
         # but so far memory has not been a problem.
-        v = np.zeros((krylovSize,n),dtype=np.complex)
-        w = np.zeros((krylovSize,n),dtype=np.complex)
-        wp = np.zeros((krylovSize,n),dtype=np.complex)
+        v = np.zeros((2,n), dtype=np.complex)
+        w = np.zeros(n, dtype=np.complex)
+        wp = np.zeros(n, dtype=np.complex)
         # Express psi as a vector
         for ps,amp in psi.items():
             v[0,index[ps]] = amp
-        wp[0,:] = h.dot(v[0,:])
-        alpha[0] = np.dot(np.conj(wp[0,:]),v[0,:]).real
-        w[0,:] = wp[0,:] - alpha[0]*v[0,:]
+        wp = h.dot(v[0,:])
+        alpha[0] = np.dot(np.conj(wp),v[0,:]).real
+        w = wp - alpha[0]*v[0,:]
 
         # Construct Krylov states,
         # and elements alpha and beta
         for j in range(1,krylovSize):
-            beta[j-1] = sqrt(np.sum(np.abs(w[j-1,:])**2))
+            beta[j-1] = sqrt(np.sum(np.abs(w)**2))
             if beta[j-1] != 0:
-                v[j,:] = w[j-1,:]/beta[j-1]
+                v[1,:] = w/beta[j-1]
             else:
                 # Pick normalized state v[j],
                 # orthogonal to v[0],v[1],v[2],...,v[j-1]
                 raise ValueError('Warning: beta==0, implementation missing!')
-            wp[j,:] = h.dot(v[j,:])
-            alpha[j] = np.dot(np.conj(wp[j,:]),v[j,:]).real
-            w[j,:] = wp[j,:] - alpha[j]*v[j,:] - beta[j-1]*v[j-1,:]
+            wp = h.dot(v[1,:])
+            alpha[j] = np.dot(np.conj(wp),v[1,:]).real
+            w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
+            v[0,:] = v[1,:]
     else:
         sys.exit("Value of variable mode is incorrect.")
     # Construct Green's function from
