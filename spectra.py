@@ -262,7 +262,7 @@ def getPhotoEmissionOperators(nBaths,l=2):
 
 
 def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
-             restrictions=None, hBig=None, mode="sparse",
+             restrictions=None, h_big=None, mode="sparse",
              parallelization_mode="serial"):
     r'''
     return Green's function
@@ -289,18 +289,16 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
     restrictions : dict
         Restriction the occupation of generated
         product states.
-    hBig : dict
+    h_big : dict
         In and output argument.
         If present, the results of the operator hOp acting on each
         product state in the state psi is added and stored in this
         variable. Format: `|PS> : H|PS>`,
         where `|PS>` is a product state and `H|PS>` is stored as a dictionary.
     mode : str
-        'dict', 'numpy' or 'sparse'.
+        'dict', 'dense', 'sparse'
         Determines which algorithm to use.
-        'sparse' is default and it is the fastest option.
-        Also, "sparse" and "numpy" can handle the situation
-        where len(h) < krylovSize, but the 'dict' algorithm can not.
+        Option 'sparse' should be best.
     parallelization_mode : str
         Parallelization mode. Either: "serial" or "H_build".
 
@@ -311,17 +309,17 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
     # In the exceptional case of an empty state psi, return zero.
     if len(psi) == 0: return g
     # Initialization
-    if hBig is None:
-        hBig = {}
+    if h_big is None:
+        h_big = {}
     if mode == 'dict':
         assert parallelization_mode == "serial"
         v = list(np.zeros(krylovSize))
         w = list(np.zeros(krylovSize))
         wp = list(np.zeros(krylovSize))
         v[0] = psi
-        #print('len(hBig) = ',len(hBig),', len(v[0]) = ',len(v[0]))
-        wp[0] = applyOp(hOp, v[0], slaterWeightMin, restrictions, hBig)
-        #print('#len(hBig) = ',len(hBig),', len(wp[0]) = ',len(wp[0]))
+        #print('len(h_big) = ',len(h_big),', len(v[0]) = ',len(v[0]))
+        wp[0] = applyOp(hOp, v[0], slaterWeightMin, restrictions, h_big)
+        #print('#len(h_big) = ',len(h_big),', len(wp[0]) = ',len(wp[0]))
         alpha = np.zeros(krylovSize,dtype=np.float)
         beta = np.zeros(krylovSize-1,dtype=np.float)
         alpha[0] = inner(wp[0],v[0]).real
@@ -343,52 +341,40 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
                 # orthogonal to v[0],v[1],v[2],...,v[j-1]
                 print('Warning: beta==0, implementation missing!')
             #print('len(v[',j,'] =',len(v[j]))
-            wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions,hBig)
+            wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions,h_big)
             alpha[j] = inner(wp[j],v[j]).real
             w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
-            #print('len(hBig) = ',len(hBig),', len(w[j]) = ',len(w[j]))
-    elif mode == "sparse" or mode == "numpy":
-        # Hamiltonian in dict format.
-        # Possibly new product state keys are added to hBig.
-        h = expand_basis_and_hamiltonian(hBig, hOp, psi.keys(), restrictions,
-                                         parallelization_mode)
-        if rank == 0: print("Hamiltonian basis size: len(h)=",len(h))
-        index = {ps:i for i,ps in enumerate(h.keys())}
-        basis = {i:ps for i,ps in enumerate(h.keys())}
+            #print('len(h_big) = ',len(h_big),', len(w[j]) = ',len(w[j]))
+    elif mode == "sparse" or mode == "dense":
+        # Obtain Hamiltonian in matrix format.
+        # Possibly add new product state keys to h_big.
+        h, basis_index = expand_basis_and_hamiltonian(
+            h_big, hOp, psi.keys(), restrictions, parallelization_mode)
+        if rank == 0: print(("Hamiltonian basis sizes: len(basis_index) = {:d},"
+                             + " len(h_big) = {:d}").format(len(basis_index), 
+                                                            len(h_big)))
         # Number of basis states
-        n = len(h)
-        # Unnecessary and (impossible) to find more than n Krylov basis vectors.
+        n = len(basis_index)
+        # Unnecessary (and impossible) to find more than n Krylov basis vectors.
         krylovSize = min(krylovSize,n)
-        # Express Hamiltonian in matrix form
-        #if mode == "sparse":
-        hValues, rows, cols = [],[],[]
-        for psJ,res in h.items():
-            for psI,hValue in res.items():
-                hValues.append(hValue)
-                rows.append(index[psI])
-                cols.append(index[psJ])
-        # store Hamiltonian in sparse matrix form
-        h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
-        if mode == "numpy":
+        if mode == "dense":
             h = h.toarray()
         # Allocate tri-diagonal matrix elements
         alpha = np.zeros(krylovSize,dtype=np.float)
         beta = np.zeros(krylovSize-1,dtype=np.float)
-        # Store Krylov state vectors.
-        # Not really needed to store all,
-        # but so far memory has not been a problem.
+        # Allocate space for Krylov state vectors.
+        # Do not save all Krylov vectors to save memory.
         v = np.zeros((2,n), dtype=np.complex)
         w = np.zeros(n, dtype=np.complex)
         wp = np.zeros(n, dtype=np.complex)
         # Express psi as a vector
-        for ps,amp in psi.items():
-            v[0,index[ps]] = amp
+        for ps, amp in psi.items():
+            v[0,basis_index[ps]] = amp
         wp = h.dot(v[0,:])
         alpha[0] = np.dot(np.conj(wp),v[0,:]).real
         w = wp - alpha[0]*v[0,:]
-
         # Construct Krylov states,
-        # and elements alpha and beta
+        # and more importantly the vectors alpha and beta
         for j in range(1,krylovSize):
             beta[j-1] = sqrt(np.sum(np.abs(w)**2))
             if beta[j-1] != 0:
@@ -402,7 +388,7 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
             w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
             v[0,:] = v[1,:]
     else:
-        sys.exit("Value of variable mode is incorrect.")
+        sys.exit("Value of variable 'mode' is incorrect.")
     # Construct Green's function from
     # continued fraction
     omegaP = omega+1j*delta+e
@@ -495,6 +481,7 @@ def getSpectra(hOp, tOps, psis, es, w, delta, restrictions=None,
                 psi =  psis[i]
                 e = es[i]
                 psiR = applyOp(tOp, psi, slaterWeightMin, restrictions, t_big)
+                if rank == 0: print("len(t_big) = {:d}".format(len(t_big)))
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
@@ -603,31 +590,24 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                                tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
-                h = expand_basis_and_hamiltonian(hExcited, hOp, psi1.keys(),
-                                                 restrictions,
-                                                 parallelization_mode)
+                h, basis_index = expand_basis_and_hamiltonian(
+                    hExcited, hOp, psi1.keys(), restrictions, 
+                    parallelization_mode)
                 if rank == 0:
-                    print("len(psi1), len(h), len(hExcited), "
+                    print("len(psi1), len(basis_index), len(hExcited), "
                           + "#elements added to hExcited: ",
-                          len(psi1), len(h), len(hExcited), len(hExcited)-nTMP)
-                index = {ps:i for i,ps in enumerate(h.keys())}
-                basis = {i:ps for i,ps in enumerate(h.keys())}
-                n = len(h)
+                          len(psi1), len(basis_index), len(hExcited), 
+                          len(hExcited)-nTMP)
+                n = len(basis_index)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
                 for ps,amp in psi1.items():
-                    y[index[ps]] = amp
-                # store psi1 as a sparse vector
+                    y[basis_index[ps]] = amp
+                # If one would like to store psi1 as a sparse vector
                 #y = scipy.sparse.csr_matrix(y)
-                # Express Hamiltonian in matrix form
-                hValues, rows, cols = [],[],[]
-                for psJ,res in h.items():
-                    for psI,hValue in res.items():
-                        hValues.append(hValue)
-                        rows.append(index[psI])
-                        cols.append(index[psJ])
-                # store Hamiltonian in sparse matrix form
-                h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
+                
+                # Fast look-up of product states
+                basis_state = {index : ps for ps, index in basis_index.items()}
                 if rank == 0: print('Loop over in-coming photon energies...')
                 for iwIn,wIn in enumerate(wIns):
                     # A = (wIn+1j*delta1+e)*\hat{1} - hOp.
@@ -648,9 +628,9 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                               + " in conjugate gradient")
                     # Convert multi state from vector to dict format
                     psi2 = {}
-                    for i,amp in enumerate(x):
+                    for i, amp in enumerate(x):
                         if amp != 0:
-                            psi2[basis[i]] = amp
+                            psi2[basis_state[i]] = amp
 
                     # Loop over out-going transition operators
                     for tOut,tOpOut in enumerate(tOpsOut):
@@ -685,35 +665,28 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
                 if parallelization_mode == "wIn":
-                    h = expand_basis_and_hamiltonian(
+                    h, basis_index = expand_basis_and_hamiltonian(
                         hExcited, hOp, psi1.keys(), restrictions,
                         parallelization_mode="serial")
                 elif parallelization_mode == "H_build_wIn":
-                    h = expand_basis_and_hamiltonian(
+                    h, basis_index = expand_basis_and_hamiltonian(
                         hExcited, hOp, psi1.keys(), restrictions,
                         parallelization_mode="H_build")
                 if rank == 0:
-                    print("len(psi1), len(h), len(hExcited), "
+                    print("len(psi1), len(basis_index), len(hExcited), "
                           + "#elements added to hExcited: ",
-                          len(psi1), len(h), len(hExcited), len(hExcited)-nTMP)
-                index = {ps:i for i,ps in enumerate(h.keys())}
-                basis = {i:ps for i,ps in enumerate(h.keys())}
-                n = len(h)
+                          len(psi1), len(basis_index), len(hExcited), 
+                          len(hExcited)-nTMP)
+                n = len(basis_index)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
                 for ps, amp in psi1.items():
-                    y[index[ps]] = amp
-                # store psi1 as a sparse vector
+                    y[basis_index[ps]] = amp
+                # If one would like to store psi1 as a sparse vector
                 #y = scipy.sparse.csr_matrix(y)
-                # Express Hamiltonian in matrix form
-                hValues, rows, cols = [],[],[]
-                for psJ, res in h.items():
-                    for psI,hValue in res.items():
-                        hValues.append(hValue)
-                        rows.append(index[psI])
-                        cols.append(index[psJ])
-                # store Hamiltonian in sparse matrix form
-                h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
+
+                # Fast look-up of product states
+                basis_state = {index : ps for ps, index in basis_index.items()}
                 # Rank dependent variable
                 g = {}
                 if rank == 0: print('Loop over in-coming photon energies...')
@@ -742,7 +715,7 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                     psi2 = {}
                     for i, amp in enumerate(x):
                         if amp != 0:
-                            psi2[basis[i]] = amp
+                            psi2[basis_state[i]] = amp
                     # Loop over out-going transition operators
                     for tOut, tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>

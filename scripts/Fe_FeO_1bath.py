@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 -u
+#!/usr/bin/env python3
 
 # Script for solving many-body impurity problem.
 
@@ -7,6 +7,7 @@ import scipy.sparse.linalg
 from collections import OrderedDict
 import sys,os
 from mpi4py import MPI
+import time
 
 from impurityModel import spectra
 from impurityModel import finite
@@ -22,6 +23,7 @@ def main():
     ranks = comm.size
    
     #if rank == 0: finite.printGaunt()
+    t0 = time.time()
     
     # -----------------------
     # System specific information  
@@ -57,10 +59,10 @@ def main():
     # -----------------------
     # Hamiltonian parameters
     # Slater-Condon parameters
-    Fdd=[6.5,0,9.3,0,6.2]
-    Fpp=[0,0,0]
-    Fpd=[7.5,0,6.0]
-    Gpd=[0,4.3,0,2.4] 
+    Fdd = [6.5, 0, 9.3, 0, 6.2]
+    Fpp = [0, 0, 0]
+    Fpd = [7.5, 0, 6.0]
+    Gpd = [0, 4.3, 0, 2.4] 
     # SOC values
     xi_2p = 8.301
     xi_3d = 0.064
@@ -70,7 +72,7 @@ def main():
     eImp3d = -0.620
     deltaO = 0.646
     # Magnetic field
-    hField = [0,0,0.00001] # 0.120*np.array([1,1,2])/np.sqrt(6) # [0,0,0.00001]
+    hField = [0, 0, 0.00001] # 0.120*np.array([1,1,2])/np.sqrt(6) # [0,0,0.00001]
     # Bath energies and hoppings for 3d orbitals
     eValEg = -4.8
     eValT2g = -6.7
@@ -103,8 +105,23 @@ def main():
     l = 2
     restrictions = {}
     # Restriction on impurity orbitals
-    indices = tuple(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))
-    restrictions[indices] = (n0imp[l]-1,n0imp[l]+3)
+    indices = frozenset(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))
+    restrictions[indices] = (n0imp[l] - 1, n0imp[l] + 3)
+    # Restriction on valence bath orbitals
+    indices = []
+    for m in range(-l,l+1):
+        for s in range(2):
+            for bathset in range(valBaths[l]):
+                indices.append(c2i(nBaths,(l,m,s,bathset)))
+    restrictions[frozenset(indices)] = (valBaths[l]*2*(2*l+1) - 2, 
+                                        valBaths[l]*2*(2*l+1))
+    # Restriction on conduction bath orbitals
+    indices = []
+    for m in range(-l,l+1):
+        for s in range(2):
+            for bathset in range(valBaths[l],nBaths[l]):
+                indices.append(c2i(nBaths,(l,m,s,bathset)))
+    restrictions[frozenset(indices)] = (0, 0)
     # XAS polarization vectors. 
     epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
     # RIXS parameters
@@ -133,10 +150,10 @@ def main():
     
     # Hamiltonian
     if rank == 0: print('Construct the Hamiltonian operator...')
-    hOp = get_hamiltonian_operator(nBaths,valBaths,[Fdd,Fpp,Fpd,Gpd],
+    hOp = get_hamiltonian_operator(nBaths, valBaths, [Fdd, Fpp, Fpd, Gpd],
                                    [xi_2p,xi_3d],
                                    [n0imp,chargeTransferCorrection],
-                                   [eImp3d,deltaO],hField,
+                                   [eImp3d, deltaO], hField,
                                    [vValEg,vValT2g,vConEg,vConT2g],
                                    [eValEg,eValT2g,eConEg,eConT2g])
     # Many body basis for the ground state
@@ -146,6 +163,9 @@ def main():
     if rank == 0: print('#basis states = {:d}'.format(len(basis))) 
     # Diagonalization of restricted active space Hamiltonian
     es, psis = finite.eigensystem(hOp,basis,nPsiMax)
+    
+    if rank == 0: print("t(ground_state) = ",time.time()-t0, "\n")
+    t0 = time.time()
     
     # Calculate static expectation values
     finite.printThermalExpValues(nBaths,es,psis)
@@ -223,6 +243,9 @@ def main():
                                 qsNIXS=qsNIXS,r=radialMesh,RiNIXS=RiNIXS,
                                 RjNIXS=RjNIXS)
 
+    if rank == 0: print("t(expectation values) = ",time.time()-t0, "\n")
+    t0 = time.time()
+
     # Consider from now on only eigenstates with low energy
     es = tuple( e for e in es if e - es[0] < energy_cut )
     psis = tuple( psis[i] for i in range(len(es)) )
@@ -262,6 +285,8 @@ def main():
                    header='E  sum  T1  T2  T3 ...')
         print('')
     
+    if rank == 0: print("t(ps) = ",time.time()-t0, "\n")
+    t0 = time.time()
 
     if rank == 0: print('Create core 2p x-ray photoemission spectra (XPS) ...')
     # Transition operators
@@ -293,6 +318,8 @@ def main():
                    header='E  sum  T1  T2  T3 ...')
         print('')
    
+    if rank == 0: print("t(xps) = ",time.time()-t0, "\n")
+    t0 = time.time()
 
     if rank == 0: print('Create NIXS spectra...')    
     # Transition operator: exp(iq*r) 
@@ -324,6 +351,8 @@ def main():
                    header='E  sum  T1  T2  T3 ...')
         print('')
 
+    if rank == 0: print("t(nixs) = ",time.time()-t0, "\n")
+    t0 = time.time()
 
     if rank == 0: print('Create XAS spectra...')
     # Dipole transition operators
@@ -354,6 +383,8 @@ def main():
                    header='E  sum  T1  T2  T3 ...')
         print('')
     
+    if rank == 0: print("t(xas) = ",time.time()-t0, "\n")
+    t0 = time.time()
     
     if rank == 0: print('Create RIXS spectra...')
     # Dipole 2p -> 3d transition operators
@@ -391,6 +422,8 @@ def main():
         tmp.tofile('RIXS.bin')
         print('')
     
+    if rank == 0: print("t(rixs) = ",time.time()-t0, "\n")
+    t0 = time.time()
     
     if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)

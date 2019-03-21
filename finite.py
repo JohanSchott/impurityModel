@@ -404,6 +404,9 @@ def append_to_first(h1,h2):
     r"""
     Update dictionary h1 by appending it with the elements from h2.
 
+    If h1 and h2 contain same key, the value of h1 for this key
+    will be overwritten by the value of h2 for this key.
+
     Parameters
     ----------
     h1 : dict
@@ -413,7 +416,7 @@ def append_to_first(h1,h2):
 
     """
     for s, a in h2.items():
-        assert s not in h1
+        #assert s not in h1
         h1[s] = a
 
 
@@ -1621,7 +1624,7 @@ def applyLminus3d(nBaths,psi):
 
 
 def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
-            opResult=None, method='newTuple'):
+            opResult=None):
     r"""
     Return :math:`|psi' \rangle = op |psi \rangle`.
 
@@ -1654,8 +1657,6 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
         If present, the results of the operator op acting on each
         product state in the state psi is added and stored in this
         variable.
-    method : str
-        Determine which way to calculate the result.
 
     Returns
     -------
@@ -1670,7 +1671,37 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
 
     """
     psiNew = {}
-    if method == 'newTuple' and opResult is None:
+    if opResult is None and restrictions != None:
+        # Loop over product states in psi.
+        for state, amp in psi.items():
+            #assert amp != 0
+            for process, h in op.items():
+                #assert h != 0
+                # Initialize state
+                sA = state
+                signTot = 1
+                for i, action in process[-1::-1]:
+                    if action == 'a':
+                        sB,sign = remove(i,sA)
+                    elif action == 'c':
+                        sB,sign = create(i,sA)
+                    if sign == 0:
+                        break
+                    sA = sB
+                    signTot *= sign
+                else:
+                    if sB in psiNew:
+                        psiNew[sB] += amp*h*signTot
+                    else:
+                        # Check that product state sB fulfills occupation restrictions
+                        for restriction, occupations in restrictions.items():
+                            n = len(restriction.intersection(sB))
+                            if n < occupations[0] or occupations[1] < n:
+                                break
+                        else:
+                            # Occupations ok, so add contributions
+                            psiNew[sB] = amp*h*signTot
+    elif opResult is None and restrictions == None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
@@ -1693,9 +1724,47 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
                         psiNew[sB] += amp*h*signTot
                     else:
                         psiNew[sB] = amp*h*signTot
-    elif method == 'newTuple':
-        # Profiling variable
-        #opResultLen = len(opResult)
+    elif restrictions != None:
+        # Loop over product states in psi.
+        for state, amp in psi.items():
+            #assert amp != 0
+            if state in opResult:
+                addToFirst(psiNew,opResult[state],amp)
+            else:
+                # Create new element in opResult
+                # Store H|PS> for product states |PS> not yet in opResult
+                opResult[state] = {}
+                for process, h in op.items():
+                    #assert h != 0
+                    # Initialize state
+                    sA = state
+                    signTot = 1
+                    for i, action in process[-1::-1]:
+                        if action == 'a':
+                            sB,sign = remove(i,sA)
+                        elif action == 'c':
+                            sB,sign = create(i,sA)
+                        if sign == 0:
+                            break
+                        sA = sB
+                        signTot *= sign
+                    else:
+                        # Check that product state sB fulfills occupation restrictions
+                        for restriction, occupations in restrictions.items():
+                            n = len(restriction.intersection(sB))
+                            if n < occupations[0] or occupations[1] < n:
+                                break
+                        else:
+                            # Occupations ok, so add contributions
+                            if sB in opResult[state]:
+                                opResult[state][sB] += h*signTot
+                            else:
+                                opResult[state][sB] = h*signTot
+                            if sB in psiNew:
+                                psiNew[sB] += amp*h*signTot
+                            else:
+                                psiNew[sB] = amp*h*signTot
+    elif restrictions == None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
@@ -1730,21 +1799,7 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
                             psiNew[sB] = amp*h*signTot
     else:
         print('Warning: method not implemented.')
-    # Profiling
-    #if rank == 0 and opResult != None:
-    #    print('len(opResult): new={:d}, old={:d}, old/new={:5.2f}'.format(
-    #        len(opResult),opResultLen,opResultLen*1./len(opResult)))
-    # Remove product states not fullfilling the occupation restrictions
-    if restrictions != None:
-        for state,amp in list(psiNew.items()):
-            for restriction,occupations in restrictions.items():
-                n = 0
-                for i in restriction:
-                    if i in state:
-                        n += 1
-                if n < occupations[0] or occupations[1] < n:
-                    psiNew.pop(state)
-                    break
+
     # Remove product states with small weight
     for state, amp in list(psiNew.items()):
         if abs(amp)**2 < slaterWeightMin:
@@ -1773,7 +1828,7 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
     """
     # Number of basis states
     n = len(basis)
-    basisIndex = {basis[i]:i for i in range(n)}
+    basis_index = {basis[i]:i for i in range(n)}
     if rank == 0: print('Filling the Hamiltonian...')
     progress = 0
     if mode == 'dense_serial':
@@ -1784,8 +1839,8 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
                 print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
-                if k in basisIndex:
-                    h[basisIndex[k],j] = v
+                if k in basis_index:
+                    h[basis_index[k],j] = v
     elif mode == 'dense_MPI':
         h = np.zeros((n,n),dtype=np.complex)
         hRank = {}
@@ -1797,8 +1852,8 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
                 print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
-                if k in basisIndex:
-                    hRank[j][basisIndex[k]] = v
+                if k in basis_index:
+                    hRank[j][basis_index[k]] = v
         # Broadcast Hamiltonian dicts
         for r in range(ranks):
             hTmp = comm.bcast(hRank, root=r)
@@ -1815,10 +1870,10 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
                 print('{:d}% done'.format(progress))
             res = applyOp(hOp,{basis[j]:1})
             for k,v in res.items():
-                if k in basisIndex:
+                if k in basis_index:
                     data.append(v)
                     col.append(j)
-                    row.append(basisIndex[k])
+                    row.append(basis_index[k])
         h = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
     elif mode == 'sparse_MPI':
         h = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
@@ -1828,11 +1883,11 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
         jobs = get_job_tasks(rank, ranks, range(n))
         for j, job in enumerate(jobs):
             res = applyOp(hOp,{basis[job]:1})
-            for k,v in res.items():
-                if k in basisIndex:
+            for k, v in res.items():
+                if k in basis_index:
                     data.append(v)
                     col.append(job)
-                    row.append(basisIndex[k])
+                    row.append(basis_index[k])
             if rank == 0 and progress + 10 <= int((j+1)*100./len(jobs)):
                 progress = int((j+1)*100./len(jobs))
                 print('{:d}% done'.format(progress))
@@ -1848,10 +1903,92 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
     return h
 
 
-def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
-                                 parallelization_mode="serial"):
+def get_hamiltonian_matrix_from_h_dict(h_big, basis, 
+                                       parallelization_mode='serial',
+                                       mode='sparse'):
     """
-    Return Hamiltonian.
+    Return Hamiltonian expressed in the provided basis of product states 
+    in matrix format.
+
+    Also return dictionary with product states in basis as keys,
+    and basis indices as values.
+
+    Parameters
+    ----------
+    h_big : dict
+        tuple : dict
+        Product states and the result of the Hamiltonian acting on them.
+        h_big may contain more product states than in the active basis. 
+    basis : tuple
+        All product states included in the basis.
+    parallelization_mode : str
+        Parallelization mode. Either: "serial" or "H_build".
+    mode : str
+        Algorithm for calculating the Hamiltonian and type format of
+        returned Hamiltonian.
+        'dense' or 'sparse'.
+
+    """
+    # Number of basis states
+    n = len(basis)
+    basis_index = {basis[i]:i for i in range(n)}
+    #if rank == 0: print('Filling the Hamiltonian...')
+    #progress = 0
+    if mode == 'dense' and parallelization_mode == 'serial':
+        h = np.zeros((n,n),dtype=np.complex)
+        for j in range(n):
+            #if rank == 0 and progress + 10 <= int(j*100./n):
+            #    progress = int(j*100./n)
+            #    print('{:d}% done'.format(progress))
+            res = h_big[basis[j]]
+            for k, v in res.items():
+                h[basis_index[k], j] = v
+    elif mode == 'sparse' and parallelization_mode == 'serial':
+        data = []
+        row = []
+        col = []
+        for j in range(n):
+            #if rank == 0 and progress + 10 <= int(j*100./n):
+            #    progress = int(j*100./n)
+            #    print('{:d}% done'.format(progress))
+            res = h_big[basis[j]]
+            for k, v in res.items():
+                data.append(v)
+                col.append(j)
+                row.append(basis_index[k])
+        h = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
+    elif mode == 'sparse' and parallelization_mode == 'H_build':
+        h = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
+        data = []
+        row = []
+        col = []
+        for job in get_job_tasks(rank, ranks, range(n)):
+            res = h_big[basis[job]]
+            for k, v in res.items():
+                data.append(v)
+                col.append(job)
+                row.append(basis_index[k])
+            #if rank == 0 and progress + 10 <= int((j+1)*100./len(jobs)):
+            #    progress = int((j+1)*100./len(jobs))
+            #    print('{:d}% done'.format(progress))
+        # Print out that the construction of Hamiltonian is done
+        #if rank == 0 and progress != 100:
+        #    progress = 100
+        #    print('{:d}% done'.format(progress))
+        hSparse = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
+        # Different ranks have information about different basis states.
+        # Therefor, need to broadcast and append sparse Hamiltonians
+        for r in range(ranks):
+            h += comm.bcast(hSparse, root=r)
+    else:
+        sys.exit("Wrong input parameters")   
+    return h, basis_index
+
+
+def expand_basis(h_big, hOp, basis0, restrictions, 
+                 parallelization_mode="serial"):
+    """
+    Return basis.
 
     Parameters
     ----------
@@ -1861,7 +1998,7 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
         New product states might be added to this variable.
     hOp : dict
         The Hamiltonian. With elements of the form process : h_value
-    basis0 : list
+    basis0 : tuple
         List of product states.
         These product states are used to generate more basis states.
     restrictions : dict
@@ -1872,8 +2009,105 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
 
     Returns
     -------
-    h : dict
+    basis : tuple
+        The restricted active space basis of product states.
+
+    """
+    # Copy basis0, to avoid changing it when the basis grows
+    basis = list(basis0)
+    i = 0
+    n = len(basis)
+    if parallelization_mode == "serial":
+        while i < n :
+            basis_set = frozenset(basis)
+            basis_new = set()
+            for b in basis[i:n]:
+                res = applyOp(hOp, {b:1}, restrictions=restrictions,
+                              opResult=h_big)
+                basis_new.update(set(res.keys()).difference(basis_set))
+                #basis_new.update(basis_set.difference(res.keys()))
+            i = n
+            basis += list(basis_new)
+            n = len(basis)
+    elif parallelization_mode == "serial_slow":
+        while i < n :
+            res = applyOp(hOp, {basis[i]:1}, restrictions=restrictions,
+                          opResult=h_big)
+            for ps in res.keys():
+                if ps not in basis:
+                    basis.append(ps)
+            i += 1
+            n = len(basis)
+    elif parallelization_mode == "H_build":
+        h_big_new_local = {}
+        while i < n :
+            #if rank == 0: print("i=",i,", n=",n)
+            basis_set = frozenset(basis)
+            basis_new_local = set()
+            for state_index in get_job_tasks(rank, ranks, range(i,n)):
+                state = basis[state_index]
+                # Obtain H|state>
+                if state in h_big:
+                    res = h_big[state]
+                else:
+                    res = applyOp(hOp, {state:1}, restrictions=restrictions)
+                    h_big_new_local[state] = res
+                basis_new_local.update(set(res.keys()).difference(basis_set))
+            # Add unique elements of basis_new_local into basis_new
+            basis_new = set()
+            for r in range(ranks):
+                basis_new.update(comm.bcast(basis_new_local, root=r))
+            # Add basis_new to basis
+            basis += list(basis_new)
+            # Updated total number of product states |ps> where know H|ps>
+            i = n
+            # Updated total number of product states needed to consider.
+            n = len(basis)
+        # Merge h_big_new_local into h_big.
+        for r in range(ranks):
+            # Add rank r's h_big_new_local to h_big.
+            # The keys in h_big_new_local are unique for each rank, i.e.
+            # ps_i for rank r does not exist as a key in h_big_new_local
+            # for any other rank than rank r.
+            # Neither does it exist in the initial h_big.
+            append_to_first(h_big, comm.bcast(h_big_new_local, root=r))
+    else:
+        sys.exit("Wrong parallelization parameter.")
+    return tuple(basis)
+
+
+def expand_basis_and_hamiltonian_mem_hungry(h_big, hOp, basis0, restrictions,
+                                            parallelization_mode="serial"):
+    """
+    Return Hamiltonian in matrix format.
+    
+    Also return dictionary with product states in basis as keys,
+    and basis indices as values.
+    
+    Also possibly add new product state keys to h_big.
+
+    Parameters
+    ----------
+    h_big : dict
+        Elements of the form `|PS> : {H|PS>}`,
+        where `|PS>` is a product state.
+        New product states might be added to this variable.
+    hOp : dict
+        The Hamiltonian. With elements of the form process : h_value
+    basis0 : tuple
+        List of product states.
+        These product states are used to generate more basis states.
+    restrictions : dict
+        Restriction the occupation of generated product states.
+    parallelization_mode : str
+        Parallelization mode. Either: "serial", "serial_slow" or "H_build".
+
+    Returns
+    -------
+    h : scipy sparse csr_matrix 
         The Hamiltonian acting on the relevant product states.
+    basis_index : dict
+        tuple : int
 
     """
     # Copy basis0, to avoid changing it when the basis grows
@@ -1884,7 +2118,7 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
     if parallelization_mode == "serial":
         n = len(basis)
         while i < n :
-            basis_set = set(basis)
+            basis_set = frozenset(basis)
             basis_new = set()
             for b in basis[i:n]:
                 res = applyOp(hOp, {b:1}, restrictions=restrictions,
@@ -1909,7 +2143,7 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
         h_big_new_local = {}
         while i < n :
             #if rank == 0: print("i=",i,", n=",n)
-            basis_set = set(basis)
+            basis_set = frozenset(basis)
             basis_new_local = set()
             for state_index in get_job_tasks(rank, ranks, range(i,n)):
                 state = basis[state_index]
@@ -1932,11 +2166,6 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
             i = n
             # Updated total number of product states needed to consider.
             n = len(basis)
-
-        #if rank == 0:
-        #    #print("Final: i=",i,", n=",n)
-        #    print("len(h_local)=",len(h_local),", len(h_big_new_local)=",
-        #          len(h_big_new_local))
         # Merge h_local into h
         for r in range(ranks):
             # Add rank r's h_local to h.
@@ -1954,7 +2183,64 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
             append_to_first(h_big, comm.bcast(h_big_new_local, root=r))
     else:
         sys.exit("Wrong parallelization parameter.")
-    return h
+    # For fast look-up of basis index given a product state.
+    basis_index = {ps:i for i, ps in enumerate(h.keys())}
+    # Number of basis states
+    n = len(h)
+    # Obtain Hamiltonian in matrix format.
+    hValues, rows, cols = [],[],[]
+    for psJ,res in h.items():
+        for psI,hValue in res.items():
+            hValues.append(hValue)
+            rows.append(basis_index[psI])
+            cols.append(basis_index[psJ])
+    # store Hamiltonian in sparse matrix form
+    h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
+    return h, basis_index
+
+
+def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions, 
+                                     parallelization_mode="serial"):
+    """
+    Return Hamiltonian in matrix format.
+    
+    Also return dictionary with product states in basis as keys,
+    and basis indices as values.
+    
+    Also possibly add new product state keys to h_big.
+    
+    Parameters
+    ----------
+    h_big : dict
+        Elements of the form `|PS> : {H|PS>}`,
+        where `|PS>` is a product state.
+        New product states might be added to this variable.
+    hOp : dict
+        The Hamiltonian. With elements of the form process : h_value
+    basis0 : tuple
+        List of product states.
+        These product states are used to generate more basis states.
+    restrictions : dict
+        Restriction the occupation of generated product states.
+    parallelization_mode : str
+        Parallelization mode. Either: "serial" or "H_build".
+
+    Returns
+    -------
+    h : scipy sparse csr_matrix 
+        The Hamiltonian acting on the relevant product states.
+    basis_index : dict
+        tuple : int
+    
+    """
+    # Obtain tuple containing different product states.
+    # Possibly add new product state keys to h_big.
+    basis = expand_basis(h_big, hOp, basis0, restrictions, 
+                         parallelization_mode)
+    # Obtain Hamiltonian in matrix format.
+    h, basis_index = get_hamiltonian_matrix_from_h_dict(
+        h_big, basis, parallelization_mode)
+    return h, basis_index 
 
 
 def add(psi1,psi2,mul=1):
@@ -1974,12 +2260,6 @@ def add(psi1,psi2,mul=1):
 
     """
     psi = psi1.copy()
-    #psi = {}
-    #for s,a in psi1.items():
-    #    if s in psi:
-    #        psi[s] += a
-    #    else:
-    #        psi[s] = a
     for s,a in psi2.items():
         if s in psi:
             psi[s] += mul*a
