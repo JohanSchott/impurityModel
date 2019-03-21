@@ -25,11 +25,11 @@ export PATH=$PATH:path/to/folder/impurityModel/plotScripts
 
 - Create a directory somewhere and execute one of the scripts in the `impurityModel/scripts` folder. E.g. type:
 ```bash
-NiO.py 
+Ni_NiO_1bath.py 
 ```
 or for usage of more than one MPI process, type e.g.:
 ```bash
-mpirun -n 3 NiO.py 
+mpirun -n 3 Ni_NiO_1bath.py 
 ```
 
 #### Output files
