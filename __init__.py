@@ -11,3 +11,5 @@ A package dealing with many-body impurity models.
 from . import finite
 from . import spectra
 from . import average
+from . import product_state_representation
+
