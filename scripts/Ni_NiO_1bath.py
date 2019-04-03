@@ -16,15 +16,15 @@ from impurityModel.average import k_B, thermal_average
 
 
 def main():
-   
-    # MPI variables 
+
+    # MPI variables
     comm = MPI.COMM_WORLD
     rank = comm.rank
     ranks = comm.size
-   
+
     #if rank == 0: finite.printGaunt()
     t0 = time.time()
-    
+
     # -----------------------
     # System specific information  
     l1,l2 = 1,2 # Angular momentum
@@ -37,8 +37,8 @@ def main():
     valBaths[l1] = 0
     valBaths[l2] = 1
     # -----------------------
-    # Basis occupation information. 
-    # Angular momentum : initial impurity occupation 
+    # Basis occupation information.
+    # Angular momentum : initial impurity occupation
     n0imp = OrderedDict()
     n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
     n0imp[l2] = 8 # 8 for Ni+2
@@ -95,7 +95,7 @@ def main():
     # Spectra parameters
     # Temperature (Kelvin)
     T = 300
-    # How much above lowest eigenenergy to consider 
+    # How much above lowest eigenenergy to consider
     energy_cut = 10*k_B*T
     # energy-mesh
     w = np.linspace(-25,25,3000)
@@ -113,7 +113,7 @@ def main():
         for s in range(2):
             for bathset in range(valBaths[l]):
                 indices.append(c2i(nBaths,(l,m,s,bathset)))
-    restrictions[frozenset(indices)] = (valBaths[l]*2*(2*l+1) - 2, 
+    restrictions[frozenset(indices)] = (valBaths[l]*2*(2*l+1) - 2,
                                         valBaths[l]*2*(2*l+1))
     # Restriction on conduction bath orbitals
     indices = []
@@ -122,7 +122,7 @@ def main():
             for bathset in range(valBaths[l],nBaths[l]):
                 indices.append(c2i(nBaths,(l,m,s,bathset)))
     restrictions[frozenset(indices)] = (0, 0)
-    # XAS polarization vectors. 
+    # XAS polarization vectors.
     epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
     # RIXS parameters
     # Polarization vectors, of in and outgoing photon.
@@ -130,7 +130,8 @@ def main():
     epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
     wIn = np.linspace(-10,20,50)
     wLoss = np.linspace(-2,12,4000)
-    # Smearing, half with half maximum (HWHM). Due to finite lifetime of excited states
+    # Smearing, half with half maximum (HWHM).
+    # Due to finite lifetime of excited states
     deltaRIXS = 0.050
     # NIXS parameters
     qsNIXS = [2*np.array([1,1,1])/np.sqrt(3),7*np.array([1,1,1])/np.sqrt(3)]
@@ -147,7 +148,10 @@ def main():
     RjNIXS = np.copy(RiNIXS)
     # -----------------------
 
-    
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
+    if rank == 0: print("#spin-orbitals:",n_spin_orbitals)
+
     # Hamiltonian
     if rank == 0: print('Construct the Hamiltonian operator...')
     hOp = get_hamiltonian_operator(nBaths, valBaths, [Fdd, Fpp, Fpd, Gpd],
@@ -158,23 +162,23 @@ def main():
                                    [eValEg,eValT2g,eConEg,eConT2g])
     # Many body basis for the ground state
     if rank == 0: print('Create basis...')
-    basis = finite.getBasis(nBaths,valBaths,dnValBaths,dnConBaths,
-                            dnTol,n0imp)
-    if rank == 0: print('#basis states = {:d}'.format(len(basis))) 
+    basis = finite.get_basis(nBaths, valBaths, dnValBaths, dnConBaths,
+                             dnTol, n0imp)
+    if rank == 0: print('#basis states = {:d}'.format(len(basis)))
     # Diagonalization of restricted active space Hamiltonian
-    es, psis = finite.eigensystem(hOp,basis,nPsiMax)
-    
+    es, psis = finite.eigensystem(n_spin_orbitals, hOp, basis, nPsiMax)
+
     if rank == 0: print("t(ground_state) = ",time.time()-t0, "\n")
     t0 = time.time()
-    
+
     # Calculate static expectation values
     finite.printThermalExpValues(nBaths,es,psis)
-    finite.printExpValues(nBaths,es,psis) 
-    
-    # Print Slater determinants and weights 
+    finite.printExpValues(nBaths,es,psis)
+
+    # Print Slater determinants and weights
     if rank == 0: print('Slater determinants/product states and correspoinding weights')
     weights = []
-    for i,psi in enumerate(psis[:nPsiMax]):
+    for i, psi in enumerate(psis):
         if rank == 0: print('Eigenstate {:d}.'.format(i))
         if rank == 0: print('Consists of {:d} product states.'.format(len(psi)))
         ws = np.array([ abs(a)**2 for a in psi.values() ])
@@ -183,50 +187,53 @@ def main():
         ws = ws[j[-1::-1]]
         s = s[j[-1::-1]]
         weights.append(ws)
-        if rank == 0 and nPrintSlaterWeights > 0: 
+        if rank == 0 and nPrintSlaterWeights > 0:
             print('Highest (product state) weights:')
             print(ws[:nPrintSlaterWeights])
             print('Corresponding product states:')
             print(s[:nPrintSlaterWeights])
-            print('') 
+            print('')
 
-    # Calculate density matrix 
+    # Calculate density matrix
     if rank == 0: print('Density matrix (in cubic basis):')
-    for i,psi in enumerate(psis[:nPsiMax]):
+    for i,psi in enumerate(psis):
         if rank == 0: print('Eigenstate {:d}'.format(i))
-        n = finite.getDensityMatrixCubic(nBaths,psi)
+        n = finite.getDensityMatrixCubic(nBaths, psi)
         if rank == 0: print('#element={:d}'.format(len(n)))
         for e,ne in n.items():
-            if rank == 0 and abs(ne) > tolPrintOccupation: 
+            if rank == 0 and abs(ne) > tolPrintOccupation:
                 if e[0] == e[1]:
                     print('Diagonal: (i,s)=',e[0],', occupation = {:7.2f}'.format(ne))
                 else:
-                    print('Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne)) 
-        if rank == 0: print('') 
+                    print('Off-diagonal: (i,si),(j,sj)=',e,', {:7.2f}'.format(ne))
+        if rank == 0: print('')
 
     # Save some information to disk
     if rank == 0:
         # Most of the input parameters. Dictonaries can be stored in this file format.
-        np.savez_compressed('data',l1=l1,l2=l2,nBaths=nBaths,valBaths=valBaths,
-                            n0imp=n0imp,dnTol=dnTol,
-                            dnValBaths=dnValBaths,dnConBaths=dnConBaths,
-                            Fdd=Fdd,Fpp=Fpp,Fpd=Fpd,Gpd=Gpd,
-                            xi_2p=xi_2p,xi_3d=xi_3d,
+        np.savez_compressed('data', l1=l1, l2=l2, nBaths=nBaths,
+                            valBaths=valBaths,
+                            n0imp=n0imp, dnTol=dnTol,
+                            dnValBaths=dnValBaths, dnConBaths=dnConBaths,
+                            Fdd=Fdd, Fpp=Fpp, Fpd=Fpd, Gpd=Gpd,
+                            xi_2p=xi_2p, xi_3d=xi_3d,
                             chargeTransferCorrection=chargeTransferCorrection,
-                            eImp3d=eImp3d,deltaO=deltaO,
+                            eImp3d=eImp3d, deltaO=deltaO,
                             hField=hField,
-                            eBath=[eValEg,eValT2g,eConEg,eConT2g],
-                            vBath=[vValEg,vValT2g,vConEg,vConT2g],
+                            eBath=[eValEg, eValT2g, eConEg, eConT2g],
+                            vBath=[vValEg, vValT2g, vConEg, vConT2g],
                             nPsiMax=nPsiMax,
-                            T=T,energy_cut=energy_cut,delta=delta,
+                            T=T, energy_cut=energy_cut, delta=delta,
                             restrictions=restrictions,
                             epsilons=epsilons,
-                            epsilonsRIXSin=epsilonsRIXSin,epsilonsRIXSout=epsilonsRIXSout,
+                            epsilonsRIXSin=epsilonsRIXSin,
+                            epsilonsRIXSout=epsilonsRIXSout,
                             deltaRIXS=deltaRIXS,
                             deltaNIXS=deltaNIXS,
+                            n_spin_orbitals=n_spin_orbitals,
                             hOp=hOp) 
         # Save some of the arrays.
-        if printH5:  
+        if printH5:
             import h5py
             # This file format does not support dictonaries.
             h5f = h5py.File('spectra.h5','w')
@@ -239,8 +246,8 @@ def main():
             h5f.create_dataset('RiNIXS',data=RiNIXS)
             h5f.create_dataset('RjNIXS',data=RjNIXS)
         else: 
-            np.savez_compressed('spectraInfo',E=es,w=w,wIn=wIn,wLoss=wLoss,
-                                qsNIXS=qsNIXS,r=radialMesh,RiNIXS=RiNIXS,
+            np.savez_compressed('spectraInfo', E=es, w=w, wIn=wIn, wLoss=wLoss,
+                                qsNIXS=qsNIXS, r=radialMesh, RiNIXS=RiNIXS,
                                 RjNIXS=RjNIXS)
 
     if rank == 0: print("t(expectation values) = ",time.time()-t0, "\n")
@@ -253,21 +260,23 @@ def main():
 
     if rank == 0: print('Create 3d inverse photoemission and photoemission spectra...')
     # Transition operators
-    tOpsIPS = spectra.getInversePhotoEmissionOperators(nBaths,l=2)
-    tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=2)
+    tOpsIPS = spectra.getInversePhotoEmissionOperators(nBaths, l=2)
+    tOpsPS = spectra.getPhotoEmissionOperators(nBaths, l=2)
     if rank == 0: print("Inverse photoemission Green's function..")
-    gsIPS = spectra.getSpectra(hOp,tOpsIPS,psis,es,w,delta, restrictions)
+    gsIPS = spectra.getSpectra(n_spin_orbitals, hOp, tOpsIPS, psis, es, w,
+                               delta, restrictions)
     if rank == 0: print("Photoemission Green's function..")
-    gsPS = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta, restrictions)
+    gsPS = spectra.getSpectra(n_spin_orbitals, hOp, tOpsPS, psis, es, -w,
+                              -delta, restrictions)
     gsPS *= -1
     gs = gsPS + gsIPS
-    if rank == 0: 
+    if rank == 0:
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
     a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
+    if rank == 0:
         if printH5:
             h5f.create_dataset('PS',data=-gs.imag)
             h5f.create_dataset('PSthermal',data=a)
@@ -284,23 +293,24 @@ def main():
         np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
         print('')
-    
+
     if rank == 0: print("t(ps) = ",time.time()-t0, "\n")
     t0 = time.time()
 
     if rank == 0: print('Create core 2p x-ray photoemission spectra (XPS) ...')
     # Transition operators
     tOpsPS = spectra.getPhotoEmissionOperators(nBaths,l=1)
-    # Photoemission Green's function 
-    gs = spectra.getSpectra(hOp,tOpsPS,psis,es,-w,-delta, restrictions)
+    # Photoemission Green's function
+    gs = spectra.getSpectra(n_spin_orbitals, hOp, tOpsPS, psis, es, -w,
+                            -delta, restrictions)
     gs *= -1
-    if rank == 0: 
+    if rank == 0:
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
     a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
+    if rank == 0:
         if printH5:
             h5f.create_dataset('XPS',data=-gs.imag)
             h5f.create_dataset('XPSthermal',data=a)
@@ -326,7 +336,8 @@ def main():
     tOps = spectra.getNIXSOperators(nBaths,qsNIXS,liNIXS,ljNIXS,
                                     RiNIXS,RjNIXS,radialMesh)
     # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,wLoss,deltaNIXS, restrictions)
+    gs = spectra.getSpectra(n_spin_orbitals, hOp, tOps, psis, es, wLoss,
+                            deltaNIXS, restrictions)
     if rank == 0: 
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#q-points = {:d}'.format(np.shape(gs)[1]))
@@ -354,18 +365,20 @@ def main():
     if rank == 0: print("t(nixs) = ",time.time()-t0, "\n")
     t0 = time.time()
 
+
     if rank == 0: print('Create XAS spectra...')
     # Dipole transition operators
     tOps = spectra.getDipoleOperators(nBaths,epsilons)
-    # Green's function 
-    gs = spectra.getSpectra(hOp,tOps,psis,es,w,delta, restrictions)
-    if rank == 0: 
+    # Green's function
+    gs = spectra.getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w,
+                            delta, restrictions)
+    if rank == 0:
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#polarizations = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
     a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
+    if rank == 0:
         if printH5:
             h5f.create_dataset('XAS',data=-gs.imag)
             h5f.create_dataset('XASthermal',data=a)
@@ -382,19 +395,19 @@ def main():
         np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
         print('')
-    
+
     if rank == 0: print("t(xas) = ",time.time()-t0, "\n")
     t0 = time.time()
-    
+
     if rank == 0: print('Create RIXS spectra...')
     # Dipole 2p -> 3d transition operators
     tOpsIn = spectra.getDipoleOperators(nBaths,epsilonsRIXSin)
     # Dipole 3d -> 2p transition operators
     tOpsOut = spectra.getDaggeredDipoleOperators(nBaths,epsilonsRIXSout)
-    # Green's function 
-    gs = spectra.getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIn, wLoss, delta,
-                            deltaRIXS, restrictions)
-    if rank == 0: 
+    # Green's function
+    gs = spectra.getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es,
+                            wIn, wLoss, delta, deltaRIXS, restrictions)
+    if rank == 0:
         print('#relevant eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#in-polarizations = {:d}'.format(np.shape(gs)[1]))
         print('#out-polarizations = {:d}'.format(np.shape(gs)[2]))
@@ -402,7 +415,7 @@ def main():
         print('#mesh points of energy loss = {:d}'.format(np.shape(gs)[4]))
     # Thermal average
     a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
+    if rank == 0:
         if printH5:
             h5f.create_dataset('RIXS',data=-gs.imag)
             h5f.create_dataset('RIXSthermal',data=a)
@@ -411,7 +424,7 @@ def main():
     # Sum over transition operators
     aSum = np.sum(a,axis=(0,1))
     # Save spectra to disk
-    if rank == 0: 
+    if rank == 0:
         print('Save spectra to disk...')
         # I[wLoss,wIn], with wLoss on first column and wIn on first row.
         tmp = np.zeros((len(wLoss)+1,len(wIn)+1),dtype=np.float32)
@@ -421,19 +434,19 @@ def main():
         tmp[1:,1:] = aSum.T
         tmp.tofile('RIXS.bin')
         print('')
-    
+
     if rank == 0: print("t(rixs) = ",time.time()-t0, "\n")
     t0 = time.time()
-    
+
     if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)
-    
+
 def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
                            DCinfo, impurityInfo, hField,
                            vHoppings, eBaths):
     """
     Return the Hamiltonian, in operator form.
-    
+
     Parameters
     ----------
     nBaths : dict
@@ -457,7 +470,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
         Contains information about bath energies.
 
     """
-    # Divide up input parameters to more concrete variables 
+    # Divide up input parameters to more concrete variables
     Fdd,Fpp,Fpd,Gpd = slaterCondon
     xi_2p,xi_3d = SOCs
     n0imp,chargeTransferCorrection = DCinfo
@@ -469,12 +482,12 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     # Calculate U operator  
     uOperator = finite.get2p3dSlaterCondonUop(Fdd=Fdd,Fpp=Fpp,
                                               Fpd=Fpd,Gpd=Gpd)
-    # Add SOC 
+    # Add SOC
     SOC2pOperator = finite.getSOCop(xi_2p,l=1)
     SOC3dOperator = finite.getSOCop(xi_3d,l=2)
-    
+
     # Double counting (DC) correction
-    # MLFT DC 
+    # MLFT DC
     dc = finite.dc_MLFT(n3d_i=n0imp[2],c=chargeTransferCorrection,Fdd=Fdd,
                         n2p_i=n0imp[1],Fpd=Fpd,Gpd=Gpd)
     eDCOperator = {}
@@ -482,7 +495,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
         for m in range(-l,l+1):
             for s in range(2):
                 eDCOperator[(((l,m,s),'c'),((l,m,s),'a'))] = -dc[il]
-    
+
     # Calculate impurity 3d Hamiltonian
     # (Either by reading matrix or parameterize it)
     l = 2 
@@ -567,5 +580,3 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
 
 if __name__== "__main__":
     main()
-    #cProfile.run('main()',sort='cumulative')
-

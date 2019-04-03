@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+
+finite
+======
+
+This module contains functions doing the bulk of the calculations.
+
+"""
+
+import sys
 from math import pi,sqrt
 import numpy as np
 from sympy.physics.wigner import gaunt
@@ -9,8 +19,10 @@ from collections import OrderedDict
 import scipy.sparse
 from mpi4py import MPI
 
-#from removecreate import fortran
+
+from . import product_state_representation as psr
 from .average import k_B, thermal_average
+
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -51,13 +63,15 @@ def get_job_tasks(rank, ranks, tasks_tot):
     return tuple(tasks)
 
 
-def eigensystem(hOp, basis, nPsiMax, groundDiagMode='Lanczos', 
+def eigensystem(n_spin_orbitals, hOp, basis, nPsiMax, groundDiagMode='Lanczos',
                eigenValueTol=1e-9, slaterWeightMin=1e-7):
     """
     Return eigen-energies and eigenstates.
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     hOp : dict
         tuple : float or complex
         The Hamiltonain operator to diagonalize.
@@ -78,9 +92,9 @@ def eigensystem(hOp, basis, nPsiMax, groundDiagMode='Lanczos',
 
     """
     if rank == 0: print('Create Hamiltonian matrix...')
-    h = get_hamiltonian_matrix(hOp, basis)
+    h = get_hamiltonian_matrix(n_spin_orbitals, hOp, basis)
     if rank == 0: print('<#Hamiltonian elements/column> = {:d}'.format(
-        int(len(np.nonzero(h)[0])*1./len(basis))))
+        int(len(np.nonzero(h)[0])/len(basis))))
     if rank == 0: print('Diagonalize the Hamiltonian...')
     if groundDiagMode == 'full':
         es, vecs = np.linalg.eigh(h.todense())
@@ -102,7 +116,7 @@ def eigensystem(hOp, basis, nPsiMax, groundDiagMode='Lanczos',
     return es, psis
 
 
-def printExpValues(nBaths,es,psis,n=None):
+def printExpValues(nBaths, es, psis, n=None):
     '''
     print several expectation values, e.g. E, N, L^2.
     '''
@@ -114,14 +128,14 @@ def printExpValues(nBaths,es,psis,n=None):
                'N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)'))
     if rank == 0 :
         for i,(e,psi) in enumerate(zip(es[:n] - es[0],psis[:n])):
-            oc = getEgT2gOccupation(nBaths,psi)
+            oc = getEgT2gOccupation(nBaths, psi)
             print(('{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}'
                    ' {:7.2f} {:6.2f} {:7.2f} {:7.2f} {:8.2f} {:8.2f}').format(
-                i,e,getTraceDensityMatrix(nBaths,psi),
-                oc[0],oc[1],oc[2],oc[3],
-                getLz3d(nBaths,psi),getSz3d(nBaths,psi),
-                getLsqr3d(nBaths,psi),getSsqr3d(nBaths,psi),
-                getLsqr3dWithBath(nBaths,psi),getSsqr3dWithBath(nBaths,psi)))
+                i, e, getTraceDensityMatrix(nBaths, psi),
+                oc[0], oc[1], oc[2], oc[3],
+                getLz3d(nBaths, psi), getSz3d(nBaths, psi),
+                getLsqr3d(nBaths, psi), getSsqr3d(nBaths, psi),
+                getLsqr3dWithBath(nBaths, psi), getSsqr3dWithBath(nBaths, psi)))
         print("\n")
 
 def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
@@ -137,12 +151,12 @@ def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
     e = e[mask]
     psis = np.array(psis)[mask]
     occs = thermal_average(
-        e,np.array([getEgT2gOccupation(nBaths,psi) for psi in psis]),
+        e, np.array([getEgT2gOccupation(nBaths, psi) for psi in psis]),
         T=T)
     if rank == 0:
-        print('<E-E0> = {:4.3f}'.format(thermal_average(e,e,T=T)))
+        print('<E-E0> = {:4.3f}'.format(thermal_average(e, e, T=T)))
         print('<N(3d)> = {:4.3f}'.format(thermal_average(
-            e,[getTraceDensityMatrix(nBaths,psi) for psi in psis],T=T)))
+            e, [getTraceDensityMatrix(nBaths, psi) for psi in psis], T=T)))
         print('<N(egDn)> = {:4.3f}'.format(occs[0]))
         print('<N(egUp)> = {:4.3f}'.format(occs[1]))
         print('<N(t2gDn)> = {:4.3f}'.format(occs[2]))
@@ -157,7 +171,7 @@ def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
             e,[getSsqr3d(nBaths,psi) for psi in psis],T=T)))
 
 
-def dc_MLFT(n3d_i,c,Fdd,n2p_i=None,Fpd=None,Gpd=None):
+def dc_MLFT(n3d_i, c, Fdd, n2p_i=None, Fpd=None, Gpd=None):
     r"""
     Return double counting (DC) in multiplet ligand field theory.
 
@@ -271,7 +285,7 @@ def daggerOp(op):
     return opDagger
 
 
-def getBasis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
+def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     """
     Return restricted basis of product states.
 
@@ -285,13 +299,9 @@ def getBasis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     n0imp : dict
 
     """
-
     # Sanity check
     for l in nBaths.keys():
         assert valBaths[l] <= nBaths[l]
-
-    # Angular momentum
-    l1,l2 = nBaths.keys()
 
     # For each partition, create all configurations
     # given the occupation in that partition.
@@ -347,37 +357,17 @@ def getBasis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
                         for bVal in basisVal:
                             for bCon in basisCon:
                                 basisL[l].append(bImp+bVal+bCon)
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     basis = []
     assert len(nBaths) == 2
-    # This is only valid for two impurity blocks
+    # Angular momentum
+    l1, l2 = nBaths.keys()
+    # Two explicit loops is only valid for two impurity blocks
     for b1 in basisL[l1]:
         for b2 in basisL[l2]:
-            basis.append(tuple(sorted(b1+b2)))
-    basis = tuple(basis)
-    return basis
-
-
-def binary_search(a, x):
-    '''
-    Return index to the leftmost value exactly equal to x.
-
-    If x is not in the list, return -1.
-
-    '''
-    i = bisect_left(a, x)
-    return i if i != len(a) and a[i] == x else -1
-
-
-def binary_search_bigger(a, x):
-    '''
-    Return the index to the leftmost value bigger than than x,
-    if x is not in the list.
-
-    If x is in the list, return -1.
-
-    '''
-    i = bisect_left(a, x)
-    return i if i == len(a) or a[i] != x else -1
+            basis.append(psr.tuple2int(tuple(sorted(b1+b2)), n_spin_orbitals))
+    return tuple(basis)
 
 
 def inner(a,b):
@@ -442,66 +432,30 @@ def addToFirst(psi1,psi2,mul=1):
     	else:
     		psi1[s] = a*mul
 
+def binary_search(a, x):
+    '''
+    Return index to the leftmost value exactly equal to x.
 
-def c(i,psi):
-    r'''
-    Return :math:`|psi' \rangle = c_i |psi \rangle`.
-
-    Acknowledgement: Written mostly by Petter Saterskog
-
-    Parameters
-    ----------
-    i : int
-        Spin-orbital index
-    psi : dict
-        Multi configurational state
-
-    Returns
-    -------
-    ret : dict
-        New multi configurational state
+    If x is not in the list, return -1.
 
     '''
-    ret={}
-    for state,amp in psi.items():
-        j = binary_search(state,i)
-        if j != -1:
-            cstate = state[:j] + state[j+1:]
-            camp = amp if j%2==0 else -amp
-            ret[cstate] = camp
-    return ret
+    i = bisect_left(a, x)
+    return i if i != len(a) and a[i] == x else -1
 
 
-def cd(i,psi):
-    r'''
-    Return :math:`|psi' \rangle = c_i^\dagger |psi \rangle`.
+def binary_search_bigger(a, x):
+    '''
+    Return the index to the leftmost value bigger than x,
+    if x is not in the list.
 
-    Acknowledgement: Written mostly by Petter Saterskog
-
-    Parameters
-    ----------
-    i : int
-        Spin-orbital index
-    psi : dict
-        Multi configurational state
-
-    Returns
-    -------
-    ret : dict
-        New multi configurational state
+    If x is in the list, return -1.
 
     '''
-    ret={}
-    for state,amp in psi.items():
-        j = binary_search_bigger(state,i)
-        if j != -1:
-            camp = amp if j%2==0 else -amp
-            cstate = state[:j] + (i,) + state[j:]
-            ret[cstate] = camp
-    return ret
+    i = bisect_left(a, x)
+    return i if i == len(a) or a[i] != x else -1
 
 
-def remove(i,state):
+def remove_t(i, state):
     '''
     Remove electron at orbital i in state.
 
@@ -524,41 +478,73 @@ def remove(i,state):
     j = binary_search(state,i)
     if j != -1:
         stateNew = state[:j] + state[j+1:]
-        amp = 1 if j%2==0 else -1
-        return stateNew,amp
+        amp = 1 if j%2 == 0 else -1
+        return stateNew, amp
     else:
-        return (),0
+        return (), 0
 
 
-def removeList(i,state):
-    '''
-    Update state by removing electron at orbital i.
+def remove_i(n_spin_orbitals, i, state):
+    """
+    Remove electron at orbital i in state.
+
+    Parameters
+    ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
+    i : int
+        Spin-orbital index
+    state : int
+        Product state.
+
+    Returns
+    -------
+    state_new : int
+        Product state
+    amp : int
+        Amplitude
+
+    """
+    binary = psr.int2binary(state, n_spin_orbitals)
+    if binary[i] == "0":
+        return -1, 0
+    elif binary[i] == "1":
+        state_new = state - 2**(n_spin_orbitals-i-1)
+        amp = 1 if binary[:i].count("1") % 2 == 0 else -1
+        return state_new, amp
+    else:
+        sys.exit("Binary representation of state is wrong.")
+
+def remove_b(i, state):
+    """
+    Remove electron at orbital i in state.
 
     Parameters
     ----------
     i : int
         Spin-orbital index
-    state : list
+    state : str
         Product state.
-        Elements are indices of occupied orbitals.
 
     Returns
     -------
+    state_new : str
+        Product state
     amp : int
         Amplitude
 
-    '''
-    j = binary_search(state,i)
-    if j != -1:
-        state.remove(i)
-        amp = 1 if j%2==0 else -1
-        return amp
+    """
+    if state[i] == "0":
+        return -1, 0
+    elif state[i] == "1":
+        state_new = state[:i] + "0" + state[i+1:]
+        amp = 1 if state[:i].count("1") % 2 == 0 else -1
+        return state_new, amp
     else:
-        state[:] = []
-        return 0
+        sys.exit("Binary representation of state is wrong.")
 
 
-def create(i,state):
+def create_t(i, state):
     '''
     Create electron at orbital i in state.
 
@@ -578,41 +564,125 @@ def create(i,state):
         Amplitude
 
     '''
-    j = binary_search_bigger(state,i)
+    j = binary_search_bigger(state, i)
     if j != -1:
         amp = 1 if j%2==0 else -1
         cstate = state[:j] + (i,) + state[j:]
-        return cstate,amp
+        return cstate, amp
     else:
-        return (),0
+        return (), 0
 
 
-def createList(i,state):
-    '''
-    Update state by Creating electron at orbital i.
+def create_i(n_spin_orbitals, i, state):
+    """
+    Create electron at orbital i in state.
+
+    Parameters
+    ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
+    i : int
+        Spin-orbital index.
+    state : int
+        Product state.
+
+    Returns
+    -------
+    stateNew : int
+        Product state.
+    amp : int
+        Amplitude.
+
+    """
+    binary = psr.int2binary(state, n_spin_orbitals)
+    if binary[i] == "1":
+        return -1, 0
+    elif binary[i] == "0":
+        state_new = state + 2**(n_spin_orbitals-i-1)
+        amp = 1 if binary[:i].count("1") % 2 == 0 else -1
+        return state_new, amp
+    else:
+        sys.exit("Binary representation of state is wrong.")
+
+def create_b(i, state):
+    """
+    Create electron at orbital i in state.
 
     Parameters
     ----------
     i : int
-        Spin-orbital index
-    state : list
+        Spin-orbital index.
+    state : str
         Product state.
-        Elements are indices of occupied orbitals.
 
     Returns
     -------
+    stateNew : str
+        Product state.
     amp : int
-        Amplitude
+        Amplitude.
+
+    """
+    if state[i] == "1":
+        return -1, 0
+    elif state[i] == "0":
+        state_new = state[:i] + "1" + state[i+1:]
+        amp = 1 if state[:i].count("1") % 2 == 0 else -1
+        return state_new, amp
+    else:
+        sys.exit("Binary representation of state is wrong.")
+
+
+def a(n_spin_orbitals, i, psi):
+    r'''
+    Return :math:`|psi' \rangle = c_i |psi \rangle`.
+
+    Parameters
+    ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
+    i : int
+        Spin-orbital index
+    psi : dict
+        Multi configurational state
+
+    Returns
+    -------
+    ret : dict
+        New multi configurational state
 
     '''
-    j = binary_search_bigger(state,i)
-    if j != -1:
-        amp = 1 if j%2==0 else -1
-        state.insert(j,i)
-        return amp
-    else:
-        state[:] = []
-        return 0
+    ret={}
+    for state, amp in psi.items():
+        state_new, sign = remove_i(n_spin_orbitals, i, state)
+        if sign != 0: ret[state_new] = amp*sign
+    return ret
+
+
+def c(n_spin_orbitals, i, psi):
+    r'''
+    Return :math:`|psi' \rangle = c_i^\dagger |psi \rangle`.
+
+    Parameters
+    ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
+    i : int
+        Spin-orbital index
+    psi : dict
+        Multi configurational state
+
+    Returns
+    -------
+    ret : dict
+        New multi configurational state
+
+    '''
+    ret={}
+    for state, amp in psi.items():
+        state_new, sign = create_i(n_spin_orbitals, i, state)
+        if sign != 0: ret[state_new] = amp*sign
+    return ret
 
 
 def gauntC(k,l,m,lp,mp,prec=16):
@@ -914,7 +984,7 @@ def i2c(nBaths,i):
                     k += 1
 
 
-def getLz3d(nBaths,psi):
+def getLz3d(nBaths, psi):
     r'''
     Return expectation value :math:`\langle psi| Lz_{3d} |psi \rangle`.
 
@@ -926,10 +996,12 @@ def getLz3d(nBaths,psi):
         Multi configurational state.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     Lz = 0
-    for state,amp in psi.items():
+    for state, amp in psi.items():
         tmp = 0
-        for i in state:
+        for i in psr.int2tuple(state, n_spin_orbitals):
             spinOrb = i2c(nBaths,i)
             if len(spinOrb)==3 and spinOrb[0]==2:
                 tmp += spinOrb[1]
@@ -937,7 +1009,7 @@ def getLz3d(nBaths,psi):
     return Lz
 
 
-def getSz3d(nBaths,psi):
+def getSz3d(nBaths, psi):
     r'''
     Return expectation value :math:`\langle psi| Sz_{3d} |psi \rangle`.
 
@@ -949,10 +1021,12 @@ def getSz3d(nBaths,psi):
         Multi configurational state.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     Sz = 0
     for state,amp in psi.items():
         tmp = 0
-        for i in state:
+        for i in psr.int2tuple(state, n_spin_orbitals):
             spinOrb = i2c(nBaths,i)
             if len(spinOrb)==3 and spinOrb[0]==2:
                 tmp += -1/2. if spinOrb[2]==0 else 1/2.
@@ -960,7 +1034,7 @@ def getSz3d(nBaths,psi):
     return Sz
 
 
-def getSsqr3dWithBath(nBaths,psi,tol=1e-8):
+def getSsqr3dWithBath(nBaths, psi, tol=1e-8):
     r'''
     Return expectation value :math:`\langle psi| S^2 |psi \rangle`.
 
@@ -972,16 +1046,16 @@ def getSsqr3dWithBath(nBaths,psi,tol=1e-8):
         normalized multi configurational state.
 
     '''
-    psi1 = applySz3dWithBath(nBaths,psi)
-    psi2 = applySplus3dWithBath(nBaths,psi)
-    psi3 = applySminus3dWithBath(nBaths,psi)
+    psi1 = applySz3dWithBath(nBaths, psi)
+    psi2 = applySplus3dWithBath(nBaths, psi)
+    psi3 = applySminus3dWithBath(nBaths, psi)
     S2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if S2.imag > tol:
         print('Warning: <S^2> complex valued!')
     return S2.real
 
 
-def getSsqr3d(nBaths,psi,tol=1e-8):
+def getSsqr3d(nBaths, psi, tol=1e-8):
     r'''
     Return expectation value :math:`\langle psi| S^2_{3d} |psi \rangle`.
 
@@ -993,16 +1067,16 @@ def getSsqr3d(nBaths,psi,tol=1e-8):
         normalized multi configurational state.
 
     '''
-    psi1 = applySz3d(nBaths,psi)
-    psi2 = applySplus3d(nBaths,psi)
-    psi3 = applySminus3d(nBaths,psi)
+    psi1 = applySz3d(nBaths, psi)
+    psi2 = applySplus3d(nBaths, psi)
+    psi3 = applySminus3d(nBaths, psi)
     S2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if S2.imag > tol:
         print('Warning: <S^2> complex valued!')
     return S2.real
 
 
-def getLsqr3dWithBath(nBaths,psi,tol=1e-8):
+def getLsqr3dWithBath(nBaths, psi, tol=1e-8):
     r'''
     Return expectation value :math:`\langle psi| L^2 |psi \rangle`.
 
@@ -1014,16 +1088,16 @@ def getLsqr3dWithBath(nBaths,psi,tol=1e-8):
         normalized multi configurational state.
 
     '''
-    psi1 = applyLz3dWithBath(nBaths,psi)
-    psi2 = applyLplus3dWithBath(nBaths,psi)
-    psi3 = applyLminus3dWithBath(nBaths,psi)
+    psi1 = applyLz3dWithBath(nBaths, psi)
+    psi2 = applyLplus3dWithBath(nBaths, psi)
+    psi3 = applyLminus3dWithBath(nBaths, psi)
     L2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if L2.imag > tol:
         print('Warning: <L^2> complex valued!')
     return L2.real
 
 
-def getLsqr3d(nBaths,psi,tol=1e-8):
+def getLsqr3d(nBaths, psi, tol=1e-8):
     r'''
     Return expectation value :math:`\langle psi| L^2_{3d} |psi \rangle`.
 
@@ -1035,16 +1109,16 @@ def getLsqr3d(nBaths,psi,tol=1e-8):
         normalized multi configurational state.
 
     '''
-    psi1 = applyLz3d(nBaths,psi)
-    psi2 = applyLplus3d(nBaths,psi)
-    psi3 = applyLminus3d(nBaths,psi)
+    psi1 = applyLz3d(nBaths, psi)
+    psi2 = applyLplus3d(nBaths, psi)
+    psi3 = applyLminus3d(nBaths, psi)
     L2 = norm2(psi1)+1/2.*(norm2(psi2)+norm2(psi3))
     if L2.imag > tol:
         print('Warning: <L^2> complex valued!')
     return L2.real
 
 
-def getTraceDensityMatrix(nBaths,psi,l=2):
+def getTraceDensityMatrix(nBaths, psi, l=2):
     r'''
     Return  :math:`\langle psi| \sum_i c_i^\dagger c_i |psi \rangle`.
 
@@ -1058,20 +1132,23 @@ def getTraceDensityMatrix(nBaths,psi,l=2):
         Angular momentum
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     n = 0
-    for state,amp in psi.items():
+    for state, amp in psi.items():
+        binary = psr.int2binary(state, n_spin_orbitals)
         nState = 0
         for m in range(-l,l+1):
             for s in range(2):
                 i = c2i(nBaths,(l,m,s))
-                if i in state:
+                if binary[i] == "1":
                     nState += 1
         nState *= abs(amp)**2
         n += nState
     return n
 
 
-def getDensityMatrix(nBaths,psi,l=2):
+def getDensityMatrix(nBaths, psi, l=2):
     r'''
     Return density matrix in spherical harmonics basis.
 
@@ -1102,6 +1179,8 @@ def getDensityMatrix(nBaths,psi,l=2):
     means operator: :math:`value * c_{li,mi,si}^\dagger c_{lj,mj,sj}`
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     densityMatrix = OrderedDict()
     for mi in range(-l,l+1):
             for mj in range(-l,l+1):
@@ -1109,13 +1188,15 @@ def getDensityMatrix(nBaths,psi,l=2):
                     for sj in range(2):
                         i = c2i(nBaths,(l,mi,si))
                         j = c2i(nBaths,(l,mj,sj))
-                        tmp = inner(psi,cd(j,c(i,psi)))
+                        psi_new = a(n_spin_orbitals, i, psi)
+                        psi_new = c(n_spin_orbitals, j, psi_new)
+                        tmp = inner(psi, psi_new)
                         if tmp != 0:
                             densityMatrix[((l,mi,si),(l,mj,sj))] = tmp
     return densityMatrix
 
 
-def getDensityMatrixCubic(nBaths,psi):
+def getDensityMatrixCubic(nBaths, psi):
     r'''
     Return density matrix in cubic harmonics basis.
 
@@ -1140,7 +1221,7 @@ def getDensityMatrixCubic(nBaths,psi):
 
     '''
     # density matrix in spherical harmonics
-    nSph = getDensityMatrix(nBaths,psi)
+    nSph = getDensityMatrix(nBaths, psi)
     l = 2
     # |i(cubic)> = sum_j u[j,i] |j(spherical)>
     u = get_spherical_2_cubic_matrix()
@@ -1149,8 +1230,8 @@ def getDensityMatrixCubic(nBaths,psi):
         for j in range(2*l+1):
             for si in range(2):
                 for sj in range(2):
-                    for k,mk in enumerate(range(-l,l+1)):
-                        for m,mm in enumerate(range(-l,l+1)):
+                    for k, mk in enumerate(range(-l,l+1)):
+                        for m, mm in enumerate(range(-l,l+1)):
                             eSph = ((l,mm,si),(l,mk,sj))
                             if eSph in nSph:
                                 tmp = np.conj(u[m,i])*nSph[eSph]*u[k,j]
@@ -1163,7 +1244,7 @@ def getDensityMatrixCubic(nBaths,psi):
     return nCub
 
 
-def getEgT2gOccupation(nBaths,psi):
+def getEgT2gOccupation(nBaths, psi):
     r'''
     Return occupations of :math:`eg_\downarrow, eg_\uparrow,
     t2g_\downarrow, t2g_\uparrow` states.
@@ -1181,6 +1262,8 @@ def getEgT2gOccupation(nBaths,psi):
     = \sum_{j,k} u[k,ic]^*  n[{k,s},{j,s}] u[j,ic]`
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     l = 2
     # |i(cubic)> = sum_j u[j,i] |j(spherical)>
     u = get_spherical_2_cubic_matrix()
@@ -1191,7 +1274,9 @@ def getEgT2gOccupation(nBaths,psi):
                 for s in range(2):
                     jj = c2i(nBaths,(l,mj,s))
                     kk = c2i(nBaths,(l,mk,s))
-                    v = u[j,i]*np.conj(u[k,i])*inner(psi,cd(jj,c(kk,psi)))
+                    psi_new = a(n_spin_orbitals, kk, psi)
+                    psi_new = c(n_spin_orbitals, jj, psi_new)
+                    v = u[j,i]*np.conj(u[k,i])*inner(psi, psi_new)
                     if i<2:
                         if s==0:
                             eg_dn += v
@@ -1211,7 +1296,7 @@ def getEgT2gOccupation(nBaths,psi):
     return occs
 
 
-def applySz3dWithBath(nBaths,psi):
+def applySz3dWithBath(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = S^{z} |psi \rangle`.
 
@@ -1231,23 +1316,25 @@ def applySz3dWithBath(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         for s in range(2):
             # Impurity
             i = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(i,psi))
-            addToFirst(psiNew,psiP,1/2. if s==1 else -1/2.)
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, i, psi))
+            addToFirst(psiNew, psiP, 1/2. if s==1 else -1/2.)
             # Bath
             for bathSet in range(nBaths[l]):
                 i = c2i(nBaths,(l,m,s,bathSet))
-                psiP = cd(i,c(i,psi))
-                addToFirst(psiNew,psiP,1/2. if s==1 else -1/2.)
+                psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, i, psi))
+                addToFirst(psiNew, psiP, 1/2. if s==1 else -1/2.)
     return psiNew
 
 
-def applySz3d(nBaths,psi):
+def applySz3d(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = S^{z}_{3d} |psi \rangle`.
 
@@ -1267,17 +1354,19 @@ def applySz3d(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         for s in range(2):
             i = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(i,psi))
-            addToFirst(psiNew,psiP,1/2. if s==1 else -1/2.)
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, i, psi))
+            addToFirst(psiNew, psiP, 1/2. if s==1 else -1/2.)
     return psiNew
 
 
-def applyLz3dWithBath(nBaths,psi):
+def applyLz3dWithBath(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = L^{z} |psi \rangle`.
 
@@ -1297,23 +1386,25 @@ def applyLz3dWithBath(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         for s in range(2):
             # Impurity
             i = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(i,psi))
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, i, psi))
             addToFirst(psiNew,psiP,m)
             # Bath
             for bathSet in range(nBaths[l]):
                 i = c2i(nBaths,(l,m,s,bathSet))
-                psiP = cd(i,c(i,psi))
-                addToFirst(psiNew,psiP,m)
+                psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, i, psi))
+                addToFirst(psiNew, psiP, m)
     return psiNew
 
 
-def applyLz3d(nBaths,psi):
+def applyLz3d(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = L^{z}_{3d} |psi \rangle`.
 
@@ -1333,17 +1424,19 @@ def applyLz3d(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         for s in range(2):
             i = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(i,psi))
-            addToFirst(psiNew,psiP,m)
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, i, psi))
+            addToFirst(psiNew, psiP, m)
     return psiNew
 
 
-def applySplus3dWithBath(nBaths,psi):
+def applySplus3dWithBath(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = S^{+} |psi \rangle`.
 
@@ -1363,13 +1456,15 @@ def applySplus3dWithBath(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         # Impurity
         i = c2i(nBaths,(l,m,1))
         j = c2i(nBaths,(l,m,0))
-        psiP = cd(i,c(j,psi))
+        psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
         # sQ = 1/2.
         # sqrt((sQ-(-sQ))*(sQ+(-sQ)+1)) == 1
         addToFirst(psiNew,psiP)
@@ -1377,12 +1472,12 @@ def applySplus3dWithBath(nBaths,psi):
         for bathSet in range(nBaths[l]):
             i = c2i(nBaths,(l,m,1,bathSet))
             j = c2i(nBaths,(l,m,0,bathSet))
-            psiP = cd(i,c(j,psi))
-            addToFirst(psiNew,psiP)
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
+            addToFirst(psiNew, psiP)
     return psiNew
 
 
-def applySplus3d(nBaths,psi):
+def applySplus3d(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = S^{+}_{3d} |psi \rangle`.
 
@@ -1402,19 +1497,21 @@ def applySplus3d(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         i = c2i(nBaths,(l,m,1))
         j = c2i(nBaths,(l,m,0))
-        psiP = cd(i,c(j,psi))
+        psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
         # sQ = 1/2.
         # sqrt((sQ-(-sQ))*(sQ+(-sQ)+1)) == 1
         addToFirst(psiNew,psiP)
     return psiNew
 
 
-def applyLplus3dWithBath(nBaths,psi):
+def applyLplus3dWithBath(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = L^{+} |psi \rangle`.
 
@@ -1434,6 +1531,8 @@ def applyLplus3dWithBath(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l):
@@ -1441,18 +1540,18 @@ def applyLplus3dWithBath(nBaths,psi):
             # Impurity
             i = c2i(nBaths,(l,m+1,s))
             j = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(j,psi))
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
             addToFirst(psiNew,psiP,sqrt((l-m)*(l+m+1)))
             # Bath
             for bathSet in range(nBaths[l]):
                 i = c2i(nBaths,(l,m+1,s,bathSet))
                 j = c2i(nBaths,(l,m,s,bathSet))
-                psiP = cd(i,c(j,psi))
+                psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
                 addToFirst(psiNew,psiP,sqrt((l-m)*(l+m+1)))
     return psiNew
 
 
-def applyLplus3d(nBaths,psi):
+def applyLplus3d(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = L^{+}_{3d} |psi \rangle`.
 
@@ -1472,18 +1571,20 @@ def applyLplus3d(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l):
         for s in range(2):
             i = c2i(nBaths,(l,m+1,s))
             j = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(j,psi))
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
             addToFirst(psiNew,psiP,sqrt((l-m)*(l+m+1)))
     return psiNew
 
 
-def applySminus3dWithBath(nBaths,psi):
+def applySminus3dWithBath(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = S^{-} |psi \rangle`.
 
@@ -1503,13 +1604,15 @@ def applySminus3dWithBath(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         # Impurity
         i = c2i(nBaths,(l,m,0))
         j = c2i(nBaths,(l,m,1))
-        psiP = cd(i,c(j,psi))
+        psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
         # sQ = 1/2.
         # sqrt((sQ+sQ)*(sQ-sQ+1)) == 1
         addToFirst(psiNew,psiP)
@@ -1517,12 +1620,12 @@ def applySminus3dWithBath(nBaths,psi):
         for bathSet in range(nBaths[l]):
             i = c2i(nBaths,(l,m,0,bathSet))
             j = c2i(nBaths,(l,m,1,bathSet))
-            psiP = cd(i,c(j,psi))
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
             addToFirst(psiNew,psiP)
     return psiNew
 
 
-def applySminus3d(nBaths,psi):
+def applySminus3d(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = S^{-}_{3d} |psi \rangle`.
 
@@ -1542,19 +1645,21 @@ def applySminus3d(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l,l+1):
         i = c2i(nBaths,(l,m,0))
         j = c2i(nBaths,(l,m,1))
-        psiP = cd(i,c(j,psi))
+        psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
         # sQ = 1/2.
         # sqrt((sQ+sQ)*(sQ-sQ+1)) == 1
         addToFirst(psiNew,psiP)
     return psiNew
 
 
-def applyLminus3dWithBath(nBaths,psi):
+def applyLminus3dWithBath(nBaths, psi):
     r"""
     Return :math:`|psi' \rangle = L^{-} |psi \rangle`.
 
@@ -1574,6 +1679,8 @@ def applyLminus3dWithBath(nBaths,psi):
         With the same format as psi.
 
     """
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l+1,l+1):
@@ -1581,18 +1688,18 @@ def applyLminus3dWithBath(nBaths,psi):
             # Impurity
             i = c2i(nBaths,(l,m-1,s))
             j = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(j,psi))
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
             addToFirst(psiNew,psiP,sqrt((l+m)*(l-m+1)))
             # Bath
             for bathSet in range(nBaths[l]):
                 i = c2i(nBaths,(l,m-1,s,bathSet))
                 j = c2i(nBaths,(l,m,s,bathSet))
-                psiP = cd(i,c(j,psi))
+                psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
                 addToFirst(psiNew,psiP,sqrt((l+m)*(l-m+1)))
     return psiNew
 
 
-def applyLminus3d(nBaths,psi):
+def applyLminus3d(nBaths, psi):
     r'''
     Return :math:`|psi' \rangle = L^{-}_{3d} |psi \rangle`.
 
@@ -1612,18 +1719,20 @@ def applyLminus3d(nBaths,psi):
         With the same format as psi.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     psiNew = {}
     l = 2
     for m in range(-l+1,l+1):
         for s in range(2):
             i = c2i(nBaths,(l,m-1,s))
             j = c2i(nBaths,(l,m,s))
-            psiP = cd(i,c(j,psi))
+            psiP = c(n_spin_orbitals, i, a(n_spin_orbitals, j, psi))
             addToFirst(psiNew,psiP,sqrt((l+m)*(l-m+1)))
     return psiNew
 
 
-def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
+def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             opResult=None):
     r"""
     Return :math:`|psi' \rangle = op |psi \rangle`.
@@ -1633,6 +1742,8 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     op : dict
         Operator of the format
         tuple : amplitude,
@@ -1675,128 +1786,145 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
+            binary = psr.int2binary(state, n_spin_orbitals)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
-                sA = state
+                stateA_binary = binary
                 signTot = 1
                 for i, action in process[-1::-1]:
                     if action == 'a':
-                        sB,sign = remove(i,sA)
+                        stateB_binary, sign = remove_b(i, stateA_binary)
                     elif action == 'c':
-                        sB,sign = create(i,sA)
+                        stateB_binary, sign = create_b(i, stateA_binary)
                     if sign == 0:
                         break
-                    sA = sB
+                    stateA_binary = stateB_binary
                     signTot *= sign
                 else:
-                    if sB in psiNew:
-                        psiNew[sB] += amp*h*signTot
+                    stateB = psr.binary2int(stateB_binary)
+                    if stateB in psiNew:
+                        psiNew[stateB] += amp*h*signTot
                     else:
-                        # Check that product state sB fulfills occupation restrictions
+                        # Convert product state to the tuple representation.
+                        stateB_tuple = psr.binary2tuple(stateB_binary)
+                        #sB_t = psr.int2tuple(sB, n_spin_orbitals)
+                        # Check that product state sB fulfills
+                        # occupation restrictions.
                         for restriction, occupations in restrictions.items():
-                            n = len(restriction.intersection(sB))
+                            n = len(restriction.intersection(stateB_tuple))
                             if n < occupations[0] or occupations[1] < n:
                                 break
                         else:
                             # Occupations ok, so add contributions
-                            psiNew[sB] = amp*h*signTot
+                            psiNew[stateB] = amp*h*signTot
     elif opResult is None and restrictions == None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
+            binary = psr.int2binary(state, n_spin_orbitals)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
-                sA = state
+                stateA_binary = binary
                 signTot = 1
                 for i, action in process[-1::-1]:
                     if action == 'a':
-                        sB,sign = remove(i,sA)
+                        stateB_binary, sign = remove_b(i, stateA_binary)
                     elif action == 'c':
-                        sB,sign = create(i,sA)
+                        stateB_binary, sign = create_b(i, stateA_binary)
                     if sign == 0:
                         break
-                    sA = sB
+                    stateA_binary = stateB_binary
                     signTot *= sign
                 else:
-                    if sB in psiNew:
-                        psiNew[sB] += amp*h*signTot
+                    stateB = psr.binary2int(stateB_binary)
+                    if stateB in psiNew:
+                        psiNew[stateB] += amp*h*signTot
                     else:
-                        psiNew[sB] = amp*h*signTot
+                        psiNew[stateB] = amp*h*signTot
     elif restrictions != None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
             if state in opResult:
-                addToFirst(psiNew,opResult[state],amp)
+                addToFirst(psiNew, opResult[state], amp)
             else:
+                binary = psr.int2binary(state, n_spin_orbitals)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
                 for process, h in op.items():
                     #assert h != 0
                     # Initialize state
-                    sA = state
+                    stateA_binary = binary
                     signTot = 1
                     for i, action in process[-1::-1]:
                         if action == 'a':
-                            sB,sign = remove(i,sA)
+                            stateB_binary, sign = remove_b(i, stateA_binary)
                         elif action == 'c':
-                            sB,sign = create(i,sA)
+                            stateB_binary, sign = create_b(i, stateA_binary)
                         if sign == 0:
                             break
-                        sA = sB
+                        stateA_binary = stateB_binary
                         signTot *= sign
                     else:
-                        # Check that product state sB fulfills occupation restrictions
-                        for restriction, occupations in restrictions.items():
-                            n = len(restriction.intersection(sB))
-                            if n < occupations[0] or occupations[1] < n:
-                                break
-                        else:
+                        stateB = psr.binary2int(stateB_binary)
+                        if stateB in psiNew:
                             # Occupations ok, so add contributions
-                            if sB in opResult[state]:
-                                opResult[state][sB] += h*signTot
+                            psiNew[stateB] += amp*h*signTot
+                            if stateB in opResult[state]:
+                                opResult[state][stateB] += h*signTot
                             else:
-                                opResult[state][sB] = h*signTot
-                            if sB in psiNew:
-                                psiNew[sB] += amp*h*signTot
+                                opResult[state][stateB] = h*signTot
+                        else:
+                            # Convert product state to the tuple representation.
+                            stateB_tuple = psr.binary2tuple(stateB_binary)
+                            # Check that product state sB fulfills the
+                            # occupation restrictions.
+                            for restriction,occupations in restrictions.items():
+                                n = len(restriction.intersection(stateB_tuple))
+                                if n < occupations[0] or occupations[1] < n:
+                                    break
                             else:
-                                psiNew[sB] = amp*h*signTot
+                                # Occupations ok, so add contributions
+                                psiNew[stateB] = amp*h*signTot
+                                opResult[state][stateB] = h*signTot
     elif restrictions == None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
             if state in opResult:
-                addToFirst(psiNew,opResult[state],amp)
+                addToFirst(psiNew, opResult[state], amp)
             else:
+                binary = psr.int2binary(state, n_spin_orbitals)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
                 for process, h in op.items():
                     #assert h != 0
                     # Initialize state
-                    sA = state
+                    stateA_binary = binary
                     signTot = 1
                     for i, action in process[-1::-1]:
                         if action == 'a':
-                            sB,sign = remove(i,sA)
+                            stateB_binary, sign = remove_b(i, stateA_binary)
                         elif action == 'c':
-                            sB,sign = create(i,sA)
+                            stateB_binary, sign = create_b(i, stateA_binary)
                         if sign == 0:
                             break
-                        sA = sB
+                        stateA_binary = stateB_binary
                         signTot *= sign
                     else:
-                        if sB in opResult[state]:
-                            opResult[state][sB] += h*signTot
+                        stateB = psr.binary2int(stateB_binary)
+                        if stateB in opResult[state]:
+                            opResult[state][stateB] += h*signTot
                         else:
-                            opResult[state][sB] = h*signTot
-                        if sB in psiNew:
-                            psiNew[sB] += amp*h*signTot
+                            opResult[state][stateB] = h*signTot
+                        if stateB in psiNew:
+                            psiNew[stateB] += amp*h*signTot
                         else:
-                            psiNew[sB] = amp*h*signTot
+                            psiNew[stateB] = amp*h*signTot
     else:
         print('Warning: method not implemented.')
 
@@ -1807,12 +1935,14 @@ def applyOp(op, psi, slaterWeightMin=1e-12, restrictions=None,
     return psiNew
 
 
-def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
+def get_hamiltonian_matrix(n_spin_orbitals, hOp, basis, mode='sparse_MPI'):
     """
     Return Hamiltonian expressed in the provided basis of product states.
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     hOp : dict
         tuple : float or complex
         The Hamiltonain operator to diagonalize.
@@ -1837,10 +1967,10 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
             if rank == 0 and progress + 10 <= int(j*100./n):
                 progress = int(j*100./n)
                 print('{:d}% done'.format(progress))
-            res = applyOp(hOp,{basis[j]:1})
+            res = applyOp(n_spin_orbitals, hOp, {basis[j]:1})
             for k,v in res.items():
                 if k in basis_index:
-                    h[basis_index[k],j] = v
+                    h[basis_index[k], j] = v
     elif mode == 'dense_MPI':
         h = np.zeros((n,n),dtype=np.complex)
         hRank = {}
@@ -1850,7 +1980,7 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
             if rank == 0 and progress + 10 <= int(j*100./len(jobs)):
                 progress = int(j*100./len(jobs))
                 print('{:d}% done'.format(progress))
-            res = applyOp(hOp,{basis[j]:1})
+            res = applyOp(n_spin_orbitals, hOp, {basis[j]:1})
             for k,v in res.items():
                 if k in basis_index:
                     hRank[j][basis_index[k]] = v
@@ -1868,7 +1998,7 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
             if rank == 0 and progress + 10 <= int(j*100./n):
                 progress = int(j*100./n)
                 print('{:d}% done'.format(progress))
-            res = applyOp(hOp,{basis[j]:1})
+            res = applyOp(n_spin_orbitals, hOp, {basis[j]:1})
             for k,v in res.items():
                 if k in basis_index:
                     data.append(v)
@@ -1882,7 +2012,7 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
         col = []
         jobs = get_job_tasks(rank, ranks, range(n))
         for j, job in enumerate(jobs):
-            res = applyOp(hOp,{basis[job]:1})
+            res = applyOp(n_spin_orbitals, hOp, {basis[job]:1})
             for k, v in res.items():
                 if k in basis_index:
                     data.append(v)
@@ -1903,11 +2033,11 @@ def get_hamiltonian_matrix(hOp, basis, mode='sparse_MPI'):
     return h
 
 
-def get_hamiltonian_matrix_from_h_dict(h_big, basis, 
+def get_hamiltonian_matrix_from_h_dict(h_big, basis,
                                        parallelization_mode='serial',
                                        mode='sparse'):
     """
-    Return Hamiltonian expressed in the provided basis of product states 
+    Return Hamiltonian expressed in the provided basis of product states
     in matrix format.
 
     Also return dictionary with product states in basis as keys,
@@ -1918,7 +2048,7 @@ def get_hamiltonian_matrix_from_h_dict(h_big, basis,
     h_big : dict
         tuple : dict
         Product states and the result of the Hamiltonian acting on them.
-        h_big may contain more product states than in the active basis. 
+        h_big may contain more product states than in the active basis.
     basis : tuple
         All product states included in the basis.
     parallelization_mode : str
@@ -1981,17 +2111,19 @@ def get_hamiltonian_matrix_from_h_dict(h_big, basis,
         for r in range(ranks):
             h += comm.bcast(hSparse, root=r)
     else:
-        sys.exit("Wrong input parameters")   
+        sys.exit("Wrong input parameters")
     return h, basis_index
 
 
-def expand_basis(h_big, hOp, basis0, restrictions, 
+def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
                  parallelization_mode="serial"):
     """
     Return basis.
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     h_big : dict
         Elements of the form `|PS> : {H|PS>}`,
         where `|PS>` is a product state.
@@ -2022,8 +2154,8 @@ def expand_basis(h_big, hOp, basis0, restrictions,
             basis_set = frozenset(basis)
             basis_new = set()
             for b in basis[i:n]:
-                res = applyOp(hOp, {b:1}, restrictions=restrictions,
-                              opResult=h_big)
+                res = applyOp(n_spin_orbitals, hOp, {b:1},
+                              restrictions=restrictions, opResult=h_big)
                 basis_new.update(set(res.keys()).difference(basis_set))
                 #basis_new.update(basis_set.difference(res.keys()))
             i = n
@@ -2031,8 +2163,8 @@ def expand_basis(h_big, hOp, basis0, restrictions,
             n = len(basis)
     elif parallelization_mode == "serial_slow":
         while i < n :
-            res = applyOp(hOp, {basis[i]:1}, restrictions=restrictions,
-                          opResult=h_big)
+            res = applyOp(n_spin_orbitals, hOp, {basis[i]:1},
+                          restrictions=restrictions, opResult=h_big)
             for ps in res.keys():
                 if ps not in basis:
                     basis.append(ps)
@@ -2050,7 +2182,8 @@ def expand_basis(h_big, hOp, basis0, restrictions,
                 if state in h_big:
                     res = h_big[state]
                 else:
-                    res = applyOp(hOp, {state:1}, restrictions=restrictions)
+                    res = applyOp(n_spin_orbitals, hOp, {state:1},
+                                  restrictions=restrictions)
                     h_big_new_local[state] = res
                 basis_new_local.update(set(res.keys()).difference(basis_set))
             # Add unique elements of basis_new_local into basis_new
@@ -2076,141 +2209,20 @@ def expand_basis(h_big, hOp, basis0, restrictions,
     return tuple(basis)
 
 
-def expand_basis_and_hamiltonian_mem_hungry(h_big, hOp, basis0, restrictions,
-                                            parallelization_mode="serial"):
+def expand_basis_and_hamiltonian(n_spin_orbitals, h_big, hOp, basis0,
+                                 restrictions, parallelization_mode="serial"):
     """
     Return Hamiltonian in matrix format.
-    
+
     Also return dictionary with product states in basis as keys,
     and basis indices as values.
-    
+
     Also possibly add new product state keys to h_big.
 
     Parameters
     ----------
-    h_big : dict
-        Elements of the form `|PS> : {H|PS>}`,
-        where `|PS>` is a product state.
-        New product states might be added to this variable.
-    hOp : dict
-        The Hamiltonian. With elements of the form process : h_value
-    basis0 : tuple
-        List of product states.
-        These product states are used to generate more basis states.
-    restrictions : dict
-        Restriction the occupation of generated product states.
-    parallelization_mode : str
-        Parallelization mode. Either: "serial", "serial_slow" or "H_build".
-
-    Returns
-    -------
-    h : scipy sparse csr_matrix 
-        The Hamiltonian acting on the relevant product states.
-    basis_index : dict
-        tuple : int
-
-    """
-    # Copy basis0, to avoid changing it when the basis grows
-    basis = list(basis0)
-    # Return Hamiltonian
-    h = {}
-    i = len(h)
-    if parallelization_mode == "serial":
-        n = len(basis)
-        while i < n :
-            basis_set = frozenset(basis)
-            basis_new = set()
-            for b in basis[i:n]:
-                res = applyOp(hOp, {b:1}, restrictions=restrictions,
-                              opResult=h_big)
-                h[b] = res
-                basis_new.update(set(res.keys()).difference(basis_set))
-            i = n # = len(h)
-            basis += list(basis_new)
-            n = len(basis)
-    elif parallelization_mode == "serial_slow":
-        while len(h) < len(basis) :
-            res = applyOp(hOp, {basis[i]:1}, restrictions=restrictions,
-                          opResult=h_big)
-            h[basis[i]] = res
-            for ps in res.keys():
-                if ps not in basis:
-                    basis.append(ps)
-            i += 1
-    elif parallelization_mode == "H_build":
-        n = len(basis)
-        h_local = {}
-        h_big_new_local = {}
-        while i < n :
-            #if rank == 0: print("i=",i,", n=",n)
-            basis_set = frozenset(basis)
-            basis_new_local = set()
-            for state_index in get_job_tasks(rank, ranks, range(i,n)):
-                state = basis[state_index]
-                # Obtain H|state>
-                if state in h_big:
-                    res = h_big[state]
-                else:
-                    res = applyOp(hOp, {state:1}, restrictions=restrictions)
-                    h_big_new_local[state] = res
-                h_local[state] = res
-                basis_new_local.update(set(res.keys()).difference(basis_set))
-            # Add unique elements of basis_new_local into basis_new
-            basis_new = set()
-            for r in range(ranks):
-                basis_new.update(comm.bcast(basis_new_local, root=r))
-
-            # Add basis_new to basis
-            basis += list(basis_new)
-            # Updated total number of product states |ps> where know H|ps>
-            i = n
-            # Updated total number of product states needed to consider.
-            n = len(basis)
-        # Merge h_local into h
-        for r in range(ranks):
-            # Add rank r's h_local to h.
-            # The keys in h_local are unique for each rank, i.e.
-            # ps_i for rank r does not exist as a key in h_local for any
-            # other rank than rank r.
-            append_to_first(h, comm.bcast(h_local, root=r))
-        # Merge h_big_new_local into h_big.
-        for r in range(ranks):
-            # Add rank r's h_big_new_local to h_big.
-            # The keys in h_big_new_local are unique for each rank, i.e.
-            # ps_i for rank r does not exist as a key in h_big_new_local
-            # for any other rank than rank r.
-            # Neither does it exist in the initial h_big.
-            append_to_first(h_big, comm.bcast(h_big_new_local, root=r))
-    else:
-        sys.exit("Wrong parallelization parameter.")
-    # For fast look-up of basis index given a product state.
-    basis_index = {ps:i for i, ps in enumerate(h.keys())}
-    # Number of basis states
-    n = len(h)
-    # Obtain Hamiltonian in matrix format.
-    hValues, rows, cols = [],[],[]
-    for psJ,res in h.items():
-        for psI,hValue in res.items():
-            hValues.append(hValue)
-            rows.append(basis_index[psI])
-            cols.append(basis_index[psJ])
-    # store Hamiltonian in sparse matrix form
-    h = scipy.sparse.csr_matrix((hValues,(rows,cols)),shape=(n,n))
-    return h, basis_index
-
-
-def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions, 
-                                     parallelization_mode="serial"):
-    """
-    Return Hamiltonian in matrix format.
-    
-    Also return dictionary with product states in basis as keys,
-    and basis indices as values.
-    
-    Also possibly add new product state keys to h_big.
-    
-    Parameters
-    ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     h_big : dict
         Elements of the form `|PS> : {H|PS>}`,
         where `|PS>` is a product state.
@@ -2227,20 +2239,20 @@ def expand_basis_and_hamiltonian(h_big, hOp, basis0, restrictions,
 
     Returns
     -------
-    h : scipy sparse csr_matrix 
+    h : scipy sparse csr_matrix
         The Hamiltonian acting on the relevant product states.
     basis_index : dict
         tuple : int
-    
+
     """
     # Obtain tuple containing different product states.
     # Possibly add new product state keys to h_big.
-    basis = expand_basis(h_big, hOp, basis0, restrictions, 
+    basis = expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
                          parallelization_mode)
     # Obtain Hamiltonian in matrix format.
     h, basis_index = get_hamiltonian_matrix_from_h_dict(
         h_big, basis, parallelization_mode)
-    return h, basis_index 
+    return h, basis_index
 
 
 def add(psi1,psi2,mul=1):

@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+"""
+
+spectra
+=======
+
+This module contains functions for calculating various spectra.
+
+"""
+
 from math import sqrt
 import numpy as np
 from mpi4py import MPI
@@ -261,8 +270,8 @@ def getPhotoEmissionOperators(nBaths,l=2):
     return tOpsPS
 
 
-def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
-             restrictions=None, h_big=None, mode="sparse",
+def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
+             slaterWeightMin, restrictions=None, h_big=None, mode="sparse",
              parallelization_mode="serial"):
     r'''
     return Green's function
@@ -270,6 +279,8 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     e : float
         Total energy
     psi : dict
@@ -318,7 +329,8 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
         wp = list(np.zeros(krylovSize))
         v[0] = psi
         #print('len(h_big) = ',len(h_big),', len(v[0]) = ',len(v[0]))
-        wp[0] = applyOp(hOp, v[0], slaterWeightMin, restrictions, h_big)
+        wp[0] = applyOp(n_spin_orbitals, hOp, v[0], slaterWeightMin,
+                        restrictions, h_big)
         #print('#len(h_big) = ',len(h_big),', len(wp[0]) = ',len(wp[0]))
         alpha = np.zeros(krylovSize,dtype=np.float)
         beta = np.zeros(krylovSize-1,dtype=np.float)
@@ -341,7 +353,8 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
                 # orthogonal to v[0],v[1],v[2],...,v[j-1]
                 print('Warning: beta==0, implementation missing!')
             #print('len(v[',j,'] =',len(v[j]))
-            wp[j] = applyOp(hOp,v[j],slaterWeightMin,restrictions,h_big)
+            wp[j] = applyOp(n_spin_orbitals, hOp, v[j], slaterWeightMin,
+                            restrictions,h_big)
             alpha[j] = inner(wp[j],v[j]).real
             w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
             #print('len(h_big) = ',len(h_big),', len(w[j]) = ',len(w[j]))
@@ -349,9 +362,10 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
         # Obtain Hamiltonian in matrix format.
         # Possibly add new product state keys to h_big.
         h, basis_index = expand_basis_and_hamiltonian(
-            h_big, hOp, psi.keys(), restrictions, parallelization_mode)
+            n_spin_orbitals, h_big, hOp, psi.keys(), restrictions,
+            parallelization_mode)
         if rank == 0: print(("Hamiltonian basis sizes: len(basis_index) = {:d},"
-                             + " len(h_big) = {:d}").format(len(basis_index), 
+                             + " len(h_big) = {:d}").format(len(basis_index),
                                                             len(h_big)))
         # Number of basis states
         n = len(basis_index)
@@ -400,8 +414,8 @@ def getGreen(e, psi, hOp, omega, delta, krylovSize, slaterWeightMin,
     return g
 
 
-def getSpectra(hOp, tOps, psis, es, w, delta, restrictions=None,
-               krylovSize=150, slaterWeightMin=1e-7, 
+def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
+               restrictions=None, krylovSize=150, slaterWeightMin=1e-7,
                parallelization_mode="H_build"):
     r"""
     Return Green's function for states with low enough energy.
@@ -418,6 +432,8 @@ def getSpectra(hOp, tOps, psis, es, w, delta, restrictions=None,
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     hOp : dict
         Operator
     tOps : list
@@ -460,13 +476,15 @@ def getSpectra(hOp, tOps, psis, es, w, delta, restrictions=None,
             g[i] = np.zeros((len(tOps),len(w)), dtype=np.complex)
             # Loop over transition operators
             for t, tOp in enumerate(tOps):
-                psiR = applyOp(tOp, psi, slaterWeightMin, restrictions)
+                psiR = applyOp(n_spin_orbitals, tOp, psi, slaterWeightMin,
+                               restrictions)
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
                 g[i][t,:] = normalization**2*getGreen(
-                    e, psiR, hOp, w, delta, krylovSize, slaterWeightMin,
-                    restrictions, h, parallelization_mode="serial")
+                    n_spin_orbitals, e, psiR, hOp, w, delta, krylovSize,
+                    slaterWeightMin, restrictions, h,
+                    parallelization_mode="serial")
         # Distribute the Green's functions among the ranks
         for r in range(ranks):
             gTmp = comm.bcast(g, root=r)
@@ -480,22 +498,25 @@ def getSpectra(hOp, tOps, psis, es, w, delta, restrictions=None,
             for i in range(n):
                 psi =  psis[i]
                 e = es[i]
-                psiR = applyOp(tOp, psi, slaterWeightMin, restrictions, t_big)
+                psiR = applyOp(n_spin_orbitals, tOp, psi, slaterWeightMin,
+                               restrictions, t_big)
                 if rank == 0: print("len(t_big) = {:d}".format(len(t_big)))
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
                 gs[i,t,:] = normalization**2*getGreen(
-                    e, psiR, hOp, w, delta, krylovSize, slaterWeightMin,
-                    restrictions, h, parallelization_mode=parallelization_mode)
+                    n_spin_orbitals, e, psiR, hOp, w, delta, krylovSize,
+                    slaterWeightMin, restrictions, h,
+                    parallelization_mode=parallelization_mode)
     else:
         sys.error("Incorrect value of variable parallelization_mode.")
     return gs
 
 
-def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
-               restrictions=None, krylovSize=150, slaterWeightMin=1e-7,
-               hGround=None, parallelization_mode='H_build_wIn'):
+def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
+               delta1, delta2, restrictions=None, krylovSize=150,
+               slaterWeightMin=1e-7, hGround=None,
+               parallelization_mode='H_build_wIn'):
     r"""
     Return RIXS Green's function for states.
 
@@ -529,6 +550,8 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     hOp : dict
         Operator
     tOpsIn : list
@@ -586,17 +609,17 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                 psi =  psis[iE]
                 e = es[iE]
                 # Core-hole state
-                psi1 = applyOp(tOpIn, psi, slaterWeightMin, restrictions,
-                               tIn_big)
+                psi1 = applyOp(n_spin_orbitals, tOpIn, psi, slaterWeightMin,
+                               restrictions, tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
                 h, basis_index = expand_basis_and_hamiltonian(
-                    hExcited, hOp, psi1.keys(), restrictions, 
+                    n_spin_orbitals, hExcited, hOp, psi1.keys(), restrictions,
                     parallelization_mode)
                 if rank == 0:
                     print("len(psi1), len(basis_index), len(hExcited), "
                           + "#elements added to hExcited: ",
-                          len(psi1), len(basis_index), len(hExcited), 
+                          len(psi1), len(basis_index), len(hExcited),
                           len(hExcited)-nTMP)
                 n = len(basis_index)
                 # Express psi1 as a vector
@@ -605,11 +628,11 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                     y[basis_index[ps]] = amp
                 # If one would like to store psi1 as a sparse vector
                 #y = scipy.sparse.csr_matrix(y)
-                
+
                 # Fast look-up of product states
                 basis_state = {index : ps for ps, index in basis_index.items()}
                 if rank == 0: print('Loop over in-coming photon energies...')
-                for iwIn,wIn in enumerate(wIns):
+                for iwIn, wIn in enumerate(wIns):
                     # A = (wIn+1j*delta1+e)*\hat{1} - hOp.
                     a = scipy.sparse.csr_matrix(
                         ([wIn+1j*delta1+e]*n,(range(n),range(n))), shape=(n,n))
@@ -636,20 +659,21 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                     for tOut,tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>
                         # This state has no core-hole.
-                        psi3 = applyOp(tOpOut, psi2, slaterWeightMin,
-                                       restrictions, tOut_big[tOut])
+                        psi3 = applyOp(n_spin_orbitals, tOpOut, psi2,
+                                       slaterWeightMin, restrictions,
+                                       tOut_big[tOut])
                         # Normalization factor
                         normalization = sqrt(norm2(psi3))
                         for state in psi3.keys():
                             psi3[state] /= normalization
                         # Remove product states with small weight
-                        for state,amp in list(psi3.items()):
+                        for state, amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
                         # Calculate Green's function
                         gs[iE,tIn,tOut,iwIn,:] = normalization**2*getGreen(
-                            e, psi3, hOp, wLoss, delta2, krylovSize,
-                            slaterWeightMin, restrictions, hGround,
+                            n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
+                            krylovSize, slaterWeightMin, restrictions, hGround,
                             parallelization_mode=parallelization_mode)
     elif parallelization_mode == 'wIn' or parallelization_mode == "H_build_wIn":
         # Loop over in-coming transition operators
@@ -660,22 +684,22 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                 psi =  psis[iE]
                 e = es[iE]
                 # Core-hole state
-                psi1 = applyOp(tOpIn, psi, slaterWeightMin, restrictions,
-                               tIn_big)
+                psi1 = applyOp(n_spin_orbitals, tOpIn, psi, slaterWeightMin,
+                               restrictions, tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 nTMP = len(hExcited)
                 if parallelization_mode == "wIn":
                     h, basis_index = expand_basis_and_hamiltonian(
-                        hExcited, hOp, psi1.keys(), restrictions,
-                        parallelization_mode="serial")
+                        n_spin_orbitals, hExcited, hOp, psi1.keys(),
+                        restrictions, parallelization_mode="serial")
                 elif parallelization_mode == "H_build_wIn":
                     h, basis_index = expand_basis_and_hamiltonian(
-                        hExcited, hOp, psi1.keys(), restrictions,
-                        parallelization_mode="H_build")
+                        n_spin_orbitals, hExcited, hOp, psi1.keys(),
+                        restrictions, parallelization_mode="H_build")
                 if rank == 0:
                     print("len(psi1), len(basis_index), len(hExcited), "
                           + "#elements added to hExcited: ",
-                          len(psi1), len(basis_index), len(hExcited), 
+                          len(psi1), len(basis_index), len(hExcited),
                           len(hExcited)-nTMP)
                 n = len(basis_index)
                 # Express psi1 as a vector
@@ -720,8 +744,9 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
                     for tOut, tOpOut in enumerate(tOpsOut):
                         # Calculate state |psi3> = tOpOut |psi2>
                         # This state has no core-hole.
-                        psi3 = applyOp(tOpOut, psi2, slaterWeightMin,
-                                       restrictions, tOut_big[tOut])
+                        psi3 = applyOp(n_spin_orbitals, tOpOut, psi2,
+                                       slaterWeightMin, restrictions,
+                                       tOut_big[tOut])
                         # Normalization factor
                         normalization = sqrt(norm2(psi3))
                         for state in psi3.keys():
@@ -735,10 +760,10 @@ def getRIXSmap(hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss, delta1, delta2,
 
                         # Calculate Green's function
                         g[iwIn][tOut,:] = normalization**2*getGreen(
-                            e, psi3, hOp, wLoss, delta2, krylovSize,
-                            slaterWeightMin, restrictions, hGround,
+                            n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
+                            krylovSize, slaterWeightMin, restrictions, hGround,
                             parallelization_mode="serial")
-                        
+
                         if rank == 0: print("dt = ", time.time() - t0)
 
                 # Distribute the Green's functions among the ranks
