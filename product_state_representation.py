@@ -23,20 +23,59 @@ The integer is a compact format. It is the integer representation of the binary 
 
 
 def binary2int(b):
+    """
+    Returns integer representation of product state.
+
+    Parameters
+    ----------
+    b : str
+
+    """
     return int(b, 2)
 
 
 def int2binary(i, n):
+    """
+    Returns binary string representation of product state.
+
+    Parameters
+    ----------
+    i : int
+        Product state.
+    n : int
+        Total number of spin-orbitals in the system.
+
+    """
     b = bin(i)[2:]
     b = "0"*(n - len(b)) + b
     return b
 
 
 def binary2tuple(b):
+    """
+    Returns tuple representation of product state.
+
+    Parameters
+    ----------
+    b : str
+        Product state.
+
+    """
     return tuple( pos for pos, char in enumerate(b) if char == "1" )
 
 
 def tuple2binary(t, n):
+    """
+    Returns binary string representation of product state.
+
+    Parameters
+    ----------
+    t : tuple
+        Product state.
+    n : int
+        Total number of spin-orbitals in the system.
+
+    """
     s = ""
     for i in range(n):
         if i in t:
@@ -47,8 +86,31 @@ def tuple2binary(t, n):
 
 
 def tuple2int(t, n):
+    """
+    Returns integer representation of product state.
+
+    Parameters
+    ----------
+    t : tuple
+        Product state.
+    n : int
+        Total number of spin-orbitals in the system.
+
+    """
     return binary2int(tuple2binary(t, n))
 
 
 def int2tuple(i, n):
+    """
+    Returns tuple representation of product state.
+
+    Parameters
+    ----------
+    i : int
+        Product state.
+    n : int
+        Total number of spin-orbitals in the system.
+
+    """
     return binary2tuple(int2binary(i, n))
+

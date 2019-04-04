@@ -74,7 +74,7 @@ def eigensystem(n_spin_orbitals, hOp, basis, nPsiMax, groundDiagMode='Lanczos',
         Total number of spin-orbitals in the system.
     hOp : dict
         tuple : float or complex
-        The Hamiltonain operator to diagonalize.
+        The Hamiltonian operator to diagonalize.
         Each keyword contains ordered instructions
         where to add or remove electrons.
         Values indicate the strengths of
@@ -109,7 +109,7 @@ def eigensystem(n_spin_orbitals, hOp, basis, nPsiMax, groundDiagMode='Lanczos',
         vecs = np.array([vecs[:,i] for i in indices]).T
     else:
         print('Wrong diagonalization mode')
-    if rank == 0: print('Proceed with {:d} eigenstates!'.format(len(es)))
+    if rank == 0: print("Proceed with {:d} eigenstates.\n".format(len(es)))
     psis = [({basis[i]:vecs[i,vi] for i in range(len(basis))
               if slaterWeightMin <= abs(vecs[i,vi])**2 })
             for vi in range(len(es))]
@@ -390,7 +390,7 @@ def inner(a,b):
     return acc
 
 
-def append_to_first(h1,h2):
+def append_to_first(h1, h2):
     r"""
     Update dictionary h1 by appending it with the elements from h2.
 
@@ -400,9 +400,7 @@ def append_to_first(h1,h2):
     Parameters
     ----------
     h1 : dict
-        tuple : dict.
     h2 : dict
-        tuple : dict.
 
     """
     for s, a in h2.items():
@@ -410,7 +408,7 @@ def append_to_first(h1,h2):
         h1[s] = a
 
 
-def addToFirst(psi1,psi2,mul=1):
+def addToFirst(psi1, psi2, mul=1):
     r"""
     To state :math:`|\psi_1\rangle`, add  :math:`mul * |\psi_2\rangle`.
 
@@ -419,14 +417,16 @@ def addToFirst(psi1,psi2,mul=1):
     Parameters
     ----------
     psi1 : dict
-        tuple : float or complex.
+        Multi-configurational state.
+        Product states as keys and amplitudes as values.
     psi2 : dict
-        tuple : float or complex.
+        Multi-configurational state.
+        Product states as keys and amplitudes as values.
     mul : int, float or complex
         Optional
 
     """
-    for s,a in psi2.items():
+    for s, a in psi2.items():
     	if s in psi1:
     		psi1[s] += a*mul
     	else:
@@ -1305,10 +1305,8 @@ def applySz3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1343,10 +1341,8 @@ def applySz3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1375,10 +1371,8 @@ def applyLz3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1413,10 +1407,8 @@ def applyLz3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1445,10 +1437,8 @@ def applySplus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1486,10 +1476,8 @@ def applySplus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1520,10 +1508,8 @@ def applyLplus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1560,10 +1546,8 @@ def applyLplus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1593,10 +1577,8 @@ def applySminus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1634,10 +1616,8 @@ def applySminus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1668,10 +1648,8 @@ def applyLminus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1708,10 +1686,8 @@ def applyLminus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state of
-        format tuple : amplitude
-        where each tuple describes a
-        Fock state.
+        Multi-configurational state. 
+        Product states as keys and amplitudes as values.
 
     Returns
     -------
@@ -1754,9 +1730,8 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         ((i,'c'),(j,'a'))  <-> c_i^dagger c_j
         ((i,'c'),(j,'c'),(k,'a'),(l,'a')) <-> c_i^dagger c_j^dagger c_k c_l
     psi : dict
-        Multi-configurational state of format
-        tuple : amplitude
-        where each tuple describes a Fock state.
+        Multi-configurational state.
+        Product states as keys and amplitudes as values.
     slaterWeightMin : float
         Restrict the number of product states by
         looking at `|amplitudes|^2`.
@@ -2046,9 +2021,12 @@ def get_hamiltonian_matrix_from_h_dict(h_big, basis,
     Parameters
     ----------
     h_big : dict
-        tuple : dict
-        Product states and the result of the Hamiltonian acting on them.
-        h_big may contain more product states than in the active basis.
+        Elements of the form `|PS> : {H|PS>}`,
+        where `|PS>` is a product state.
+        Thus, product states as keys.
+        The result of the Hamiltonian acting on each product state is
+        stored as the dictionary keys (in the format of dictionaries).
+        h_big may contain more product states keys than in the active basis.
     basis : tuple
         All product states included in the basis.
     parallelization_mode : str
@@ -2242,7 +2220,8 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_big, hOp, basis0,
     h : scipy sparse csr_matrix
         The Hamiltonian acting on the relevant product states.
     basis_index : dict
-        tuple : int
+        Elements of the form `|PS> : i`,
+        where `|PS>` is a product state and i and integer.
 
     """
     # Obtain tuple containing different product states.

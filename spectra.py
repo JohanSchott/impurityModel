@@ -284,7 +284,8 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
     e : float
         Total energy
     psi : dict
-        Multi state
+        Multi-configurational state.
+        Product states as keys and amplitudes as values.
     hOp : dict
         Operator
     omega : list
@@ -481,10 +482,15 @@ def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
+                # Measure time for calculating Green's function
+                t0 = time.time()
                 g[i][t,:] = normalization**2*getGreen(
                     n_spin_orbitals, e, psiR, hOp, w, delta, krylovSize,
                     slaterWeightMin, restrictions, h,
                     parallelization_mode="serial")
+                if rank == 0: 
+                    print("time(getGreen) = {:.5f} seconds.".format(
+                        time.time() - t0))
         # Distribute the Green's functions among the ranks
         for r in range(ranks):
             gTmp = comm.bcast(g, root=r)
@@ -500,14 +506,19 @@ def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
                 e = es[i]
                 psiR = applyOp(n_spin_orbitals, tOp, psi, slaterWeightMin,
                                restrictions, t_big)
-                if rank == 0: print("len(t_big) = {:d}".format(len(t_big)))
+                #if rank == 0: print("len(t_big) = {:d}".format(len(t_big)))
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
+                # Measure time for calculating Green's function
+                t0 = time.time()
                 gs[i,t,:] = normalization**2*getGreen(
                     n_spin_orbitals, e, psiR, hOp, w, delta, krylovSize,
                     slaterWeightMin, restrictions, h,
                     parallelization_mode=parallelization_mode)
+                if rank == 0: 
+                    print("time(getGreen) = {:.5f} seconds.".format(
+                        time.time() - t0))
     else:
         sys.error("Incorrect value of variable parallelization_mode.")
     return gs
@@ -670,11 +681,16 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                         for state, amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
+                        # Measure time for calculating Green's function
+                        t0 = time.time()
                         # Calculate Green's function
                         gs[iE,tIn,tOut,iwIn,:] = normalization**2*getGreen(
                             n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
                             krylovSize, slaterWeightMin, restrictions, hGround,
                             parallelization_mode=parallelization_mode)
+                        if rank == 0: 
+                            print("time(getGreen) = {:.5f} seconds.".format(
+                                time.time() - t0))
     elif parallelization_mode == 'wIn' or parallelization_mode == "H_build_wIn":
         # Loop over in-coming transition operators
         for tIn, tOpIn in enumerate(tOpsIn):
@@ -755,17 +771,16 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                         for state,amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
-
+                        # Measure time for calculating Green's function
                         t0 = time.time()
-
                         # Calculate Green's function
                         g[iwIn][tOut,:] = normalization**2*getGreen(
                             n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
                             krylovSize, slaterWeightMin, restrictions, hGround,
                             parallelization_mode="serial")
-
-                        if rank == 0: print("dt = ", time.time() - t0)
-
+                        if rank == 0: 
+                            print("time(getGreen) = {:.5f} seconds.".format(
+                                time.time() - t0))
                 # Distribute the Green's functions among the ranks
                 for r in range(ranks):
                     gTmp = comm.bcast(g, root=r)
