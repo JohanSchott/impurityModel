@@ -12,12 +12,14 @@ to another format. The possible formats are: tuple, str, int
 Here is one product state example, expressed in the different formats:
 (2, 5)
 "0010010"
-10
+18
 where there are two electrons and 7 spin-orbitals in total.
 The tuple expresses which spin-orbitals are occupied by electrons.
 The string shows the occupation of all spin-orbitals.
 The integer is a compact format. It is the integer representation of the binary string expressed in base 2.
 
+In the finite.py module, the ordering convention is such that this product state example represents |psi> = c2 c5 |0>, (and not c5 c2 |0>).
+ 
 """
 
 

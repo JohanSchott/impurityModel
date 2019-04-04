@@ -50,14 +50,21 @@ plotRIXS.plt
 ```
 
 ### Optimization notes
-MPI is used. 
-For finding the ground states, parallelization is done over the product states in the considered basis.
-For for the spectra, parallelization is done over eigenstates, except for RIXS where parallelization instead is done over the in-coming photon energies.
 
-A Fortran module exists but is at the moment not used. If one would like to used it, compilation of the source code is necessary:
-```
-f2py -c -m removecreate removecreate.f90
-```
+#### Computational speed
+MPI is used. 
+For finding the ground states and calculating the spectra (except for RIXS), parallelization is done over the product states in the many-body basis.
+For the RIXS simulations, parallelization is by default first done over product states of the core-hole excited system and then over the in-coming photon energies.
+
+#### RAM memory usage
+The memory goes primarly to storing the Hamiltonian in a basis of product states.
+This Hamiltonian is stored as a dictionary, with product states, |ps>, as dictionary-keys 
+and the Hamiltonian acting of each product state, H|ps>, as dictionary-values. 
+
+A product state with electrons in spin-orbitals with indices e.g. 2 and 5 can be described by the tuple: (2,5). 
+If the system has 7 spin-orbitals in total, the product state can also be described by the binary-string "0010010".
+The product state can also be translated into the base-2 integer 2^(7-1-2) + 2^(7-1-5) = 2^4 + 2^1 = 16+2 = 18.
+With many electrons the integer representation is the most memory efficient format, and is used in the current version.
 
 ### Documentation
 The documentation of this package is found in the directory `docs`.
