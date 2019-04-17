@@ -390,24 +390,6 @@ def inner(a,b):
     return acc
 
 
-def append_to_first(h1, h2):
-    r"""
-    Update dictionary h1 by appending it with the elements from h2.
-
-    If h1 and h2 contain same key, the value of h1 for this key
-    will be overwritten by the value of h2 for this key.
-
-    Parameters
-    ----------
-    h1 : dict
-    h2 : dict
-
-    """
-    for s, a in h2.items():
-        #assert s not in h1
-        h1[s] = a
-
-
 def addToFirst(psi1, psi2, mul=1):
     r"""
     To state :math:`|\psi_1\rangle`, add  :math:`mul * |\psi_2\rangle`.
@@ -431,6 +413,7 @@ def addToFirst(psi1, psi2, mul=1):
     		psi1[s] += a*mul
     	else:
     		psi1[s] = a*mul
+
 
 def binary_search(a, x):
     '''
@@ -2179,9 +2162,9 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
             # Add rank r's h_big_new_local to h_big.
             # The keys in h_big_new_local are unique for each rank, i.e.
             # ps_i for rank r does not exist as a key in h_big_new_local
-            # for any other rank than rank r.
+            # for any other rank other than rank r.
             # Neither does it exist in the initial h_big.
-            append_to_first(h_big, comm.bcast(h_big_new_local, root=r))
+            h_big.update(comm.bcast(h_big_new_local, root=r))
     else:
         sys.exit("Wrong parallelization parameter.")
     return tuple(basis)

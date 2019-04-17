@@ -360,14 +360,21 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
             w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
             #print('len(h_big) = ',len(h_big),', len(w[j]) = ',len(w[j]))
     elif mode == "sparse" or mode == "dense":
+        # Measure time for constructing H in matrix form
+        t0 = time.time()
         # Obtain Hamiltonian in matrix format.
-        # Possibly add new product state keys to h_big.
+        # Possibly also add new product state keys to h_big.
         h, basis_index = expand_basis_and_hamiltonian(
             n_spin_orbitals, h_big, hOp, psi.keys(), restrictions,
             parallelization_mode)
-        if rank == 0: print(("Hamiltonian basis sizes: len(basis_index) = {:d},"
-                             + " len(h_big) = {:d}").format(len(basis_index),
-                                                            len(h_big)))
+        if rank == 0: 
+            print(("Hamiltonian basis sizes: len(basis_index) = {:d},"
+                   + " len(h_big) = {:d}").format(len(basis_index),
+                                                  len(h_big)))
+            print("time(H_matrix) = {:.5f} seconds.".format(
+                time.time() - t0))
+            # Measure time for constructing Green's function given H.
+            t0 = time.time()
         # Number of basis states
         n = len(basis_index)
         # Unnecessary (and impossible) to find more than n Krylov basis vectors.
@@ -412,6 +419,9 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
             g = 1./(omegaP - alpha[i])
         else:
             g = 1./(omegaP-alpha[i]-beta[i]**2*g)
+    if rank == 0: 
+        print("time(G(w)) = {:.5f} seconds.".format(
+            time.time() - t0))
     return g
 
 
@@ -482,15 +492,10 @@ def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
-                # Measure time for calculating Green's function
-                t0 = time.time()
                 g[i][t,:] = normalization**2*getGreen(
                     n_spin_orbitals, e, psiR, hOp, w, delta, krylovSize,
                     slaterWeightMin, restrictions, h,
                     parallelization_mode="serial")
-                if rank == 0: 
-                    print("time(getGreen) = {:.5f} seconds.".format(
-                        time.time() - t0))
         # Distribute the Green's functions among the ranks
         for r in range(ranks):
             gTmp = comm.bcast(g, root=r)
@@ -510,15 +515,10 @@ def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
-                # Measure time for calculating Green's function
-                t0 = time.time()
                 gs[i,t,:] = normalization**2*getGreen(
                     n_spin_orbitals, e, psiR, hOp, w, delta, krylovSize,
                     slaterWeightMin, restrictions, h,
                     parallelization_mode=parallelization_mode)
-                if rank == 0: 
-                    print("time(getGreen) = {:.5f} seconds.".format(
-                        time.time() - t0))
     else:
         sys.error("Incorrect value of variable parallelization_mode.")
     return gs
@@ -681,16 +681,11 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                         for state, amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
-                        # Measure time for calculating Green's function
-                        t0 = time.time()
                         # Calculate Green's function
                         gs[iE,tIn,tOut,iwIn,:] = normalization**2*getGreen(
                             n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
                             krylovSize, slaterWeightMin, restrictions, hGround,
                             parallelization_mode=parallelization_mode)
-                        if rank == 0: 
-                            print("time(getGreen) = {:.5f} seconds.".format(
-                                time.time() - t0))
     elif parallelization_mode == 'wIn' or parallelization_mode == "H_build_wIn":
         # Loop over in-coming transition operators
         for tIn, tOpIn in enumerate(tOpsIn):
@@ -771,16 +766,11 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                         for state,amp in list(psi3.items()):
                             if abs(amp)**2 < slaterWeightMin:
                                 psi3.pop(state)
-                        # Measure time for calculating Green's function
-                        t0 = time.time()
                         # Calculate Green's function
                         g[iwIn][tOut,:] = normalization**2*getGreen(
                             n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
                             krylovSize, slaterWeightMin, restrictions, hGround,
                             parallelization_mode="serial")
-                        if rank == 0: 
-                            print("time(getGreen) = {:.5f} seconds.".format(
-                                time.time() - t0))
                 # Distribute the Green's functions among the ranks
                 for r in range(ranks):
                     gTmp = comm.bcast(g, root=r)
