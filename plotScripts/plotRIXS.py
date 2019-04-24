@@ -32,12 +32,14 @@ mask = tmp < plotCutOff
 tmp[mask] = np.nan
 
 fig = plt.figure()
-cs = plt.contourf(wIn,wLoss,tmp,cmap=plt.get_cmap('Blues'))
+# Choose a nice colormap, e.g. 'viridis' or 'Blues'
+cs = plt.contourf(wIn, wLoss, np.log10(tmp), cmap=plt.get_cmap('viridis'))
 cbar = fig.colorbar(cs)
-cbar.ax.set_ylabel('RIXS intensity')
-plt.grid(c='k', ls='-', alpha=0.3)
+cbar.ax.set_ylabel('log RIXS intensity')
+#plt.grid(c='k', ls='-', alpha=0.3)
 plt.xlabel(r'$\omega_{in}$')
 plt.ylabel(r'$\omega_{loss}$')
+plt.tight_layout()
 #plt.savefig('RIXSmap.pdf')
 plt.show()
 

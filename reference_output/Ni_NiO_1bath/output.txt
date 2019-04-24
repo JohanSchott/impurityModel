@@ -1,0 +1,4552 @@
+#spin-orbitals: 26
+Construct the Hamiltonian operator...
+Create basis...
+l= 1
+New partition occupations:
+nImp,nVal,nCon = 6,0,0
+l= 2
+New partition occupations:
+nImp,nVal,nCon = 8,10,0
+New partition occupations:
+nImp,nVal,nCon = 9,9,0
+New partition occupations:
+nImp,nVal,nCon = 10,8,0
+#basis states = 190
+Create Hamiltonian matrix...
+Filling the Hamiltonian...
+10% done
+20% done
+30% done
+40% done
+50% done
+60% done
+70% done
+80% done
+90% done
+100% done
+<#Hamiltonian elements/column> = 5
+Diagonalize the Hamiltonian...
+Proceed with 5 eigenstates.
+
+time(ground_state) = 1.71 seconds 
+
+<E-E0> = 0.000
+<N(3d)> = 8.135
+<N(egDn)> = 1.080
+<N(egUp)> = 1.075
+<N(t2gDn)> = 2.990
+<N(t2gUp)> = 2.990
+<Lz(3d)> = -0.001
+<Sz(3d)> = -0.002
+<L^2(3d)> = 11.189
+<S^2(3d)> = 1.830
+E0 = -756.4170
+  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d) L^2(3d+B) S^2(3d+B)
+  0  0.000  8.14  1.998   0.157    2.992   2.988   -0.38  -0.92   11.19    1.83    12.00     2.00
+  1  0.000  8.14  1.078   1.078    2.990   2.990   -0.00  -0.00   11.19    1.83    12.00     2.00
+  2  0.000  8.14  0.157   1.998    2.988   2.992    0.38   0.92   11.19    1.83    12.00     2.00
+  3  0.832  8.10  1.544   1.538    2.512   2.505   -0.01  -0.01   11.39    1.86    11.98     1.98
+  4  0.832  8.10  1.541   1.541    2.509   2.508    0.00  -0.00   11.39    1.86    11.98     1.98
+
+
+Slater determinants/product states and correspoinding weights
+Eigenstate 0.
+Consists of 38 product states.
+Highest (product state) weights:
+[0.51491887 0.34262605 0.0390298 ]
+Corresponding product states:
+[67091455 66830335 67107823]
+
+Eigenstate 1.
+Consists of 42 product states.
+Highest (product state) weights:
+[0.2260222  0.22602091 0.19881398]
+Corresponding product states:
+[67075071 66568191 67090431]
+
+Eigenstate 2.
+Consists of 38 product states.
+Highest (product state) weights:
+[0.51491384 0.34262444 0.03903043]
+Corresponding product states:
+[66551807 67074047 66584543]
+
+Eigenstate 3.
+Consists of 51 product states.
+Highest (product state) weights:
+[0.21260295 0.20942748 0.14088467]
+Corresponding product states:
+[67103743 66453503 66842623]
+
+Eigenstate 4.
+Consists of 44 product states.
+Highest (product state) weights:
+[0.18238663 0.1822991  0.10911258]
+Corresponding product states:
+[66568191 67075071 66813951]
+
+Density matrix (in cubic harmonics basis):
+Eigenstate 0
+#density matrix elements: 38
+Diagonal: (i,s) = (0, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (1, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (2, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (2, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (3, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (3, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (4, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (4, 1) , occupation = 0.99+0.00j
+
+Eigenstate 1
+#density matrix elements: 42
+Diagonal: (i,s) = (0, 0) , occupation = 0.54+0.00j
+Diagonal: (i,s) = (0, 1) , occupation = 0.54+0.00j
+Diagonal: (i,s) = (1, 0) , occupation = 0.54+0.00j
+Diagonal: (i,s) = (1, 1) , occupation = 0.54+0.00j
+Diagonal: (i,s) = (2, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (2, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (3, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (3, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (4, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (4, 1) , occupation = 1.00+0.00j
+
+Eigenstate 2
+#density matrix elements: 38
+Diagonal: (i,s) = (0, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (1, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (2, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (2, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (3, 0) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (3, 1) , occupation = 1.00+0.00j
+Diagonal: (i,s) = (4, 0) , occupation = 0.99+0.00j
+Diagonal: (i,s) = (4, 1) , occupation = 1.00+0.00j
+
+Eigenstate 3
+#density matrix elements: 42
+Diagonal: (i,s) = (0, 0) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (0, 1) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (1, 0) , occupation = 0.64+0.00j
+Diagonal: (i,s) = (1, 1) , occupation = 0.63+0.00j
+Diagonal: (i,s) = (2, 0) , occupation = 0.76+0.00j
+Diagonal: (i,s) = (2, 1) , occupation = 0.76+0.00j
+Diagonal: (i,s) = (3, 0) , occupation = 0.76+0.00j
+Diagonal: (i,s) = (3, 1) , occupation = 0.76+0.00j
+Diagonal: (i,s) = (4, 0) , occupation = 0.99+0.00j
+Diagonal: (i,s) = (4, 1) , occupation = 0.99+0.00j
+
+Eigenstate 4
+#density matrix elements: 42
+Diagonal: (i,s) = (0, 0) , occupation = 0.63+0.00j
+Diagonal: (i,s) = (0, 1) , occupation = 0.63+0.00j
+Diagonal: (i,s) = (1, 0) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (1, 1) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (2, 0) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (2, 1) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (3, 0) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (3, 1) , occupation = 0.91+0.00j
+Diagonal: (i,s) = (4, 0) , occupation = 0.68+0.00j
+Diagonal: (i,s) = (4, 1) , occupation = 0.68+0.00j
+
+time(expectation values) = 1.20 seconds 
+
+Consider 3 eigenstates for the spectra 
+
+Create 3d inverse photoemission and photoemission spectra...
+Inverse photoemission Green's function..
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 6
+time(H_matrix) = 0.02601 seconds.
+time(G(w)) = 0.00239 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 10
+time(H_matrix) = 0.02135 seconds.
+time(G(w)) = 0.00059 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 14
+time(H_matrix) = 0.01684 seconds.
+time(G(w)) = 0.00059 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 14
+time(H_matrix) = 0.00119 seconds.
+time(G(w)) = 0.00057 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 14
+time(H_matrix) = 0.00099 seconds.
+time(G(w)) = 0.00056 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.02691 seconds.
+time(G(w)) = 0.00085 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00092 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00092 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00099 seconds.
+time(G(w)) = 0.00079 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00093 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00118 seconds.
+time(G(w)) = 0.00081 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00092 seconds.
+time(G(w)) = 0.00080 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00091 seconds.
+time(G(w)) = 0.00059 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00136 seconds.
+time(G(w)) = 0.00083 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00098 seconds.
+time(G(w)) = 0.00081 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00090 seconds.
+time(G(w)) = 0.00079 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00088 seconds.
+time(G(w)) = 0.00079 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00095 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00092 seconds.
+time(G(w)) = 0.00079 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00092 seconds.
+time(G(w)) = 0.00085 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00099 seconds.
+time(G(w)) = 0.00056 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00098 seconds.
+time(G(w)) = 0.00120 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00099 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00091 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00114 seconds.
+time(G(w)) = 0.00081 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00089 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00115 seconds.
+time(G(w)) = 0.00066 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00090 seconds.
+time(G(w)) = 0.00055 seconds.
+Hamiltonian basis sizes: len(basis_index) = 4, len(h_big) = 20
+time(H_matrix) = 0.00120 seconds.
+time(G(w)) = 0.00058 seconds.
+Hamiltonian basis sizes: len(basis_index) = 6, len(h_big) = 20
+time(H_matrix) = 0.00114 seconds.
+time(G(w)) = 0.00080 seconds.
+Photoemission Green's function..
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 254
+time(H_matrix) = 1.05314 seconds.
+time(G(w)) = 0.02036 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 508
+time(H_matrix) = 0.94312 seconds.
+time(G(w)) = 0.02022 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 764
+time(H_matrix) = 0.99180 seconds.
+time(G(w)) = 0.02000 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.94100 seconds.
+time(G(w)) = 0.02061 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00368 seconds.
+time(G(w)) = 0.01975 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00372 seconds.
+time(G(w)) = 0.02004 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00360 seconds.
+time(G(w)) = 0.02018 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00345 seconds.
+time(G(w)) = 0.01996 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00374 seconds.
+time(G(w)) = 0.02020 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00387 seconds.
+time(G(w)) = 0.02011 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00360 seconds.
+time(G(w)) = 0.01986 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00355 seconds.
+time(G(w)) = 0.02033 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00351 seconds.
+time(G(w)) = 0.02002 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00371 seconds.
+time(G(w)) = 0.01952 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00375 seconds.
+time(G(w)) = 0.02003 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00357 seconds.
+time(G(w)) = 0.01998 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00398 seconds.
+time(G(w)) = 0.01954 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00346 seconds.
+time(G(w)) = 0.02037 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00353 seconds.
+time(G(w)) = 0.01980 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00354 seconds.
+time(G(w)) = 0.01991 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00497 seconds.
+time(G(w)) = 0.02025 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00352 seconds.
+time(G(w)) = 0.01974 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00366 seconds.
+time(G(w)) = 0.02022 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00353 seconds.
+time(G(w)) = 0.02080 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00402 seconds.
+time(G(w)) = 0.01967 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00364 seconds.
+time(G(w)) = 0.01962 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00362 seconds.
+time(G(w)) = 0.01959 seconds.
+Hamiltonian basis sizes: len(basis_index) = 256, len(h_big) = 1020
+time(H_matrix) = 0.00388 seconds.
+time(G(w)) = 0.01967 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00364 seconds.
+time(G(w)) = 0.01987 seconds.
+Hamiltonian basis sizes: len(basis_index) = 254, len(h_big) = 1020
+time(H_matrix) = 0.00391 seconds.
+time(G(w)) = 0.02005 seconds.
+#eigenstates = 3
+#spin orbitals = 10
+#mesh points = 3000
+Save spectra to disk...
+
+time(PS) = 4.82 seconds 
+
+Create core 2p x-ray photoemission spectra (XPS) ...
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 283
+time(H_matrix) = 1.04912 seconds.
+time(G(w)) = 0.03231 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 570
+time(H_matrix) = 1.19895 seconds.
+time(G(w)) = 0.02053 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 857
+time(H_matrix) = 1.05798 seconds.
+time(G(w)) = 0.02124 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 1.04581 seconds.
+time(G(w)) = 0.02035 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00425 seconds.
+time(G(w)) = 0.02057 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 1140
+time(H_matrix) = 0.00435 seconds.
+time(G(w)) = 0.02072 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00417 seconds.
+time(G(w)) = 0.02034 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00429 seconds.
+time(G(w)) = 0.02010 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 1140
+time(H_matrix) = 0.00443 seconds.
+time(G(w)) = 0.02084 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 1140
+time(H_matrix) = 0.00467 seconds.
+time(G(w)) = 0.02121 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00540 seconds.
+time(G(w)) = 0.02399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00668 seconds.
+time(G(w)) = 0.03388 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 1140
+time(H_matrix) = 0.00823 seconds.
+time(G(w)) = 0.02993 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00611 seconds.
+time(G(w)) = 0.03000 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00434 seconds.
+time(G(w)) = 0.02058 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 1140
+time(H_matrix) = 0.00489 seconds.
+time(G(w)) = 0.02072 seconds.
+Hamiltonian basis sizes: len(basis_index) = 287, len(h_big) = 1140
+time(H_matrix) = 0.00432 seconds.
+time(G(w)) = 0.01997 seconds.
+Hamiltonian basis sizes: len(basis_index) = 283, len(h_big) = 1140
+time(H_matrix) = 0.00437 seconds.
+time(G(w)) = 0.02080 seconds.
+#eigenstates = 3
+#spin orbitals = 6
+#mesh points = 3000
+Save spectra to disk...
+
+time(XPS) = 4.88 seconds 
+
+Create NIXS spectra...
+Monopole contribution not included in the expansion
+q = [1.15470054 1.15470054 1.15470054]
+Rintegral(k= 2 ) = 0.06931194874611417
+Rintegral(k= 4 ) = 0.0024194888780995167
+q = [4.04145188 4.04145188 4.04145188]
+Rintegral(k= 2 ) = 0.1783277037191155
+Rintegral(k= 4 ) = 0.08530206004884185
+Hamiltonian basis sizes: len(basis_index) = 190, len(h_big) = 190
+time(H_matrix) = 0.76680 seconds.
+time(G(w)) = 0.02238 seconds.
+Hamiltonian basis sizes: len(basis_index) = 190, len(h_big) = 190
+time(H_matrix) = 0.00259 seconds.
+time(G(w)) = 0.02774 seconds.
+Hamiltonian basis sizes: len(basis_index) = 190, len(h_big) = 190
+time(H_matrix) = 0.00268 seconds.
+time(G(w)) = 0.02243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 190, len(h_big) = 190
+time(H_matrix) = 0.00249 seconds.
+time(G(w)) = 0.02243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 190, len(h_big) = 190
+time(H_matrix) = 0.00307 seconds.
+time(G(w)) = 0.02196 seconds.
+Hamiltonian basis sizes: len(basis_index) = 190, len(h_big) = 190
+time(H_matrix) = 0.00249 seconds.
+time(G(w)) = 0.02232 seconds.
+#eigenstates = 3
+#q-points = 2
+#mesh points = 4000
+Save spectra to disk...
+
+time(NIXS) = 1.05 seconds 
+
+Create XAS spectra...
+Hamiltonian basis sizes: len(basis_index) = 60, len(h_big) = 60
+time(H_matrix) = 0.22537 seconds.
+time(G(w)) = 0.00926 seconds.
+Hamiltonian basis sizes: len(basis_index) = 60, len(h_big) = 120
+time(H_matrix) = 0.32615 seconds.
+time(G(w)) = 0.00760 seconds.
+Hamiltonian basis sizes: len(basis_index) = 60, len(h_big) = 120
+time(H_matrix) = 0.00162 seconds.
+time(G(w)) = 0.00745 seconds.
+Hamiltonian basis sizes: len(basis_index) = 60, len(h_big) = 120
+time(H_matrix) = 0.00159 seconds.
+time(G(w)) = 0.00745 seconds.
+Hamiltonian basis sizes: len(basis_index) = 60, len(h_big) = 120
+time(H_matrix) = 0.00149 seconds.
+time(G(w)) = 0.00749 seconds.
+Hamiltonian basis sizes: len(basis_index) = 60, len(h_big) = 120
+time(H_matrix) = 0.00149 seconds.
+time(G(w)) = 0.00745 seconds.
+Hamiltonian basis sizes: len(basis_index) = 30, len(h_big) = 120
+time(H_matrix) = 0.00150 seconds.
+time(G(w)) = 0.00379 seconds.
+Hamiltonian basis sizes: len(basis_index) = 32, len(h_big) = 120
+time(H_matrix) = 0.00130 seconds.
+time(G(w)) = 0.00429 seconds.
+Hamiltonian basis sizes: len(basis_index) = 30, len(h_big) = 120
+time(H_matrix) = 0.00160 seconds.
+time(G(w)) = 0.00400 seconds.
+#eigenstates = 3
+#polarizations = 3
+#mesh points = 3000
+Save spectra to disk...
+
+time(XAS) = 0.69 seconds 
+
+Create RIXS spectra...
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  44 60 60 60
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.41385 seconds.
+time(G(w)) = 0.01342 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01353 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01349 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01369 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01313 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01296 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01343 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01562 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00251 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01328 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01820 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00504 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01712 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00207 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01474 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01392 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00242 seconds.
+time(G(w)) = 0.01907 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.02011 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01298 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00341 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01241 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01284 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01303 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01277 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01322 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01233 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01289 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01336 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01324 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01315 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01233 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00165 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01292 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01252 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00211 seconds.
+time(G(w)) = 0.01662 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00262 seconds.
+time(G(w)) = 0.01363 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00256 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00244 seconds.
+time(G(w)) = 0.02130 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00407 seconds.
+time(G(w)) = 0.01790 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01876 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00241 seconds.
+time(G(w)) = 0.01287 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01320 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01277 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01248 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01224 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01275 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00220 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01241 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01230 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01277 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01321 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01366 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01331 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01333 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01370 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01301 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01324 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01290 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01301 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01234 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01284 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00244 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01367 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01286 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01308 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01310 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01308 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01241 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01339 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01494 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01237 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01303 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01307 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01314 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01374 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01615 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01296 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.03192 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00373 seconds.
+time(G(w)) = 0.02763 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00993 seconds.
+time(G(w)) = 0.01642 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01344 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01333 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01346 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01435 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01336 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01337 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01755 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01337 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01318 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01693 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01609 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00251 seconds.
+time(G(w)) = 0.01440 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00253 seconds.
+time(G(w)) = 0.01467 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00276 seconds.
+time(G(w)) = 0.01351 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00238 seconds.
+time(G(w)) = 0.01371 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01374 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00330 seconds.
+time(G(w)) = 0.01734 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01531 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01349 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01304 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01234 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01231 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 90
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01278 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  52 60 120 60
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.40046 seconds.
+time(G(w)) = 0.01492 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01389 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01368 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00386 seconds.
+time(G(w)) = 0.01725 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01584 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01632 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01760 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00270 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01383 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01929 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01420 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01464 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01676 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01386 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01416 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01375 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01407 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01449 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01377 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01421 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00235 seconds.
+time(G(w)) = 0.01974 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00391 seconds.
+time(G(w)) = 0.01788 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00445 seconds.
+time(G(w)) = 0.02131 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00427 seconds.
+time(G(w)) = 0.02305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00367 seconds.
+time(G(w)) = 0.02016 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01475 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01538 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00240 seconds.
+time(G(w)) = 0.01537 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01494 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00223 seconds.
+time(G(w)) = 0.01490 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01512 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01521 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01512 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01463 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00236 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00245 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01459 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01553 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01492 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01523 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00246 seconds.
+time(G(w)) = 0.01455 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01459 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01394 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01364 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01527 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01440 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01630 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01430 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01389 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01379 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00248 seconds.
+time(G(w)) = 0.01386 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01433 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01392 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01383 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00236 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01438 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01499 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00236 seconds.
+time(G(w)) = 0.01885 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00278 seconds.
+time(G(w)) = 0.02138 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00439 seconds.
+time(G(w)) = 0.02310 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00303 seconds.
+time(G(w)) = 0.02294 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00429 seconds.
+time(G(w)) = 0.02305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00441 seconds.
+time(G(w)) = 0.01438 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00251 seconds.
+time(G(w)) = 0.01562 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01519 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00237 seconds.
+time(G(w)) = 0.01496 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00243 seconds.
+time(G(w)) = 0.01491 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00235 seconds.
+time(G(w)) = 0.01449 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01529 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01491 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01499 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00281 seconds.
+time(G(w)) = 0.01640 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01502 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01429 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01424 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00231 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01378 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01475 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00189 seconds.
+time(G(w)) = 0.01461 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01437 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00232 seconds.
+time(G(w)) = 0.01464 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01433 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01503 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01514 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01416 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01430 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01587 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01519 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01436 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01403 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00243 seconds.
+time(G(w)) = 0.01474 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00261 seconds.
+time(G(w)) = 0.01930 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00418 seconds.
+time(G(w)) = 0.02293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01904 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01433 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01383 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01460 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00275 seconds.
+time(G(w)) = 0.01447 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01493 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.02237 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01386 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01556 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00272 seconds.
+time(G(w)) = 0.01481 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01416 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01421 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  44 60 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01326 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01308 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00189 seconds.
+time(G(w)) = 0.01295 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01307 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01232 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01299 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01324 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01302 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01518 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01315 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01496 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01355 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01238 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01309 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01328 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01229 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01316 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01287 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01296 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01296 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01317 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01313 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01290 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01477 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01275 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00165 seconds.
+time(G(w)) = 0.01248 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01326 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01258 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01264 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01301 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01323 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01239 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00218 seconds.
+time(G(w)) = 0.01377 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01233 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01348 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01275 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00188 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01234 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01309 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01258 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00266 seconds.
+time(G(w)) = 0.01377 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01567 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01283 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01245 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01291 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01248 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01285 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00188 seconds.
+time(G(w)) = 0.01236 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01276 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01275 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01277 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01338 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01239 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01346 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00330 seconds.
+time(G(w)) = 0.01332 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01463 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.02000 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00478 seconds.
+time(G(w)) = 0.02434 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01919 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00317 seconds.
+time(G(w)) = 0.02118 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00402 seconds.
+time(G(w)) = 0.01420 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00260 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00238 seconds.
+time(G(w)) = 0.01437 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.03060 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01252 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01304 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01286 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01287 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01444 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00246 seconds.
+time(G(w)) = 0.01594 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01512 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01347 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01252 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00244 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01276 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01740 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01264 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01341 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01234 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01229 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01279 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  44 60 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01303 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01286 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01314 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01474 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00248 seconds.
+time(G(w)) = 0.01626 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01301 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01317 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01343 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01287 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01286 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01713 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01354 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01297 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01269 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01308 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01303 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01289 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01286 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01302 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01296 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01269 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01248 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01331 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01320 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01289 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01276 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01313 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00246 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01289 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01264 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01352 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01252 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01356 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01341 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01298 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00232 seconds.
+time(G(w)) = 0.01321 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00238 seconds.
+time(G(w)) = 0.01484 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01326 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00188 seconds.
+time(G(w)) = 0.01234 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01303 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01304 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01318 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01481 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01284 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00188 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00189 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01290 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01310 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01297 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01319 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00261 seconds.
+time(G(w)) = 0.02073 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01448 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01316 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01236 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00260 seconds.
+time(G(w)) = 0.01586 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00235 seconds.
+time(G(w)) = 0.01342 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01563 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01347 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01373 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01238 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01299 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01290 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01245 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01248 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01236 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01232 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01287 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01238 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01317 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01247 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01236 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01259 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  52 60 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00244 seconds.
+time(G(w)) = 0.01445 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01462 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01388 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01469 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01468 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01609 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00218 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01423 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01409 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01437 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01603 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00243 seconds.
+time(G(w)) = 0.01576 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01535 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00234 seconds.
+time(G(w)) = 0.01594 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00302 seconds.
+time(G(w)) = 0.01467 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01474 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01450 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01480 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01427 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01430 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01440 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01383 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00234 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01450 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01435 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01447 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01409 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01430 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01418 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01407 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00239 seconds.
+time(G(w)) = 0.01449 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01389 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01526 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01617 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00262 seconds.
+time(G(w)) = 0.02436 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00235 seconds.
+time(G(w)) = 0.01847 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00277 seconds.
+time(G(w)) = 0.01530 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01637 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00311 seconds.
+time(G(w)) = 0.02331 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00346 seconds.
+time(G(w)) = 0.01744 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01916 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01664 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00255 seconds.
+time(G(w)) = 0.01638 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01559 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00262 seconds.
+time(G(w)) = 0.01617 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01649 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00236 seconds.
+time(G(w)) = 0.01626 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00246 seconds.
+time(G(w)) = 0.01687 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00249 seconds.
+time(G(w)) = 0.01683 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01641 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00299 seconds.
+time(G(w)) = 0.02259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00235 seconds.
+time(G(w)) = 0.01557 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00237 seconds.
+time(G(w)) = 0.01646 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00226 seconds.
+time(G(w)) = 0.01666 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00233 seconds.
+time(G(w)) = 0.01606 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01534 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00232 seconds.
+time(G(w)) = 0.01776 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00270 seconds.
+time(G(w)) = 0.01611 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01535 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00233 seconds.
+time(G(w)) = 0.01595 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00264 seconds.
+time(G(w)) = 0.01585 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01627 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00243 seconds.
+time(G(w)) = 0.01537 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00243 seconds.
+time(G(w)) = 0.01534 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00266 seconds.
+time(G(w)) = 0.01652 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00244 seconds.
+time(G(w)) = 0.01614 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01579 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01699 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00289 seconds.
+time(G(w)) = 0.01573 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00226 seconds.
+time(G(w)) = 0.01543 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00244 seconds.
+time(G(w)) = 0.01575 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00261 seconds.
+time(G(w)) = 0.01556 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01813 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00318 seconds.
+time(G(w)) = 0.01650 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00240 seconds.
+time(G(w)) = 0.01523 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00226 seconds.
+time(G(w)) = 0.01479 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00218 seconds.
+time(G(w)) = 0.01493 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01513 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00232 seconds.
+time(G(w)) = 0.01805 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00233 seconds.
+time(G(w)) = 0.01429 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01416 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01376 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01638 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00263 seconds.
+time(G(w)) = 0.01472 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01376 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01443 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01419 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00234 seconds.
+time(G(w)) = 0.01527 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00251 seconds.
+time(G(w)) = 0.01443 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01445 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01407 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01454 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01402 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01427 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00211 seconds.
+time(G(w)) = 0.01566 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00215 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00207 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01436 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01602 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00256 seconds.
+time(G(w)) = 0.01442 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01392 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01389 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  44 60 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01310 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01301 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01240 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01245 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01290 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01414 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00189 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01317 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01286 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01258 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01320 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01306 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01287 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01362 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01331 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01349 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01297 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00239 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01337 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01304 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01295 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01236 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01283 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01298 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01239 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00188 seconds.
+time(G(w)) = 0.01302 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01465 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00189 seconds.
+time(G(w)) = 0.01336 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01334 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01243 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01241 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01237 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01371 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01247 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01320 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01324 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01293 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01294 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01357 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01316 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01316 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01291 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01495 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01313 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01380 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01322 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00240 seconds.
+time(G(w)) = 0.01605 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00239 seconds.
+time(G(w)) = 0.01369 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01277 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01263 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01297 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00386 seconds.
+time(G(w)) = 0.01300 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01232 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01247 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01232 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01356 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01285 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00261 seconds.
+time(G(w)) = 0.01359 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  24 30 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00229 seconds.
+time(G(w)) = 0.01446 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01436 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01478 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01373 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01378 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01424 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01448 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00239 seconds.
+time(G(w)) = 0.01452 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00223 seconds.
+time(G(w)) = 0.01525 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01447 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01386 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01481 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01392 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00207 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01373 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01462 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00223 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00211 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00207 seconds.
+time(G(w)) = 0.01394 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01474 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01551 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00264 seconds.
+time(G(w)) = 0.01420 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01383 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.02131 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00252 seconds.
+time(G(w)) = 0.01691 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01442 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00463 seconds.
+time(G(w)) = 0.01582 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01599 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00383 seconds.
+time(G(w)) = 0.01533 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01389 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01402 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01462 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01457 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00236 seconds.
+time(G(w)) = 0.01574 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00245 seconds.
+time(G(w)) = 0.01464 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00220 seconds.
+time(G(w)) = 0.01421 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01403 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01420 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00237 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01423 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01434 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00237 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01453 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00215 seconds.
+time(G(w)) = 0.01402 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00222 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01465 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00239 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00223 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01392 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01409 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01434 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01436 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01430 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00215 seconds.
+time(G(w)) = 0.01448 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01416 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01360 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01497 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01421 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01606 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01427 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01468 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01383 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01380 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01438 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01428 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01373 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01407 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00211 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01423 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01366 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01421 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01455 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00220 seconds.
+time(G(w)) = 0.01421 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00234 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01456 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01414 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01414 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01434 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01441 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01419 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01440 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00211 seconds.
+time(G(w)) = 0.01466 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01394 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00276 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01453 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01431 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01424 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01373 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01409 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  24 32 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01447 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01777 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01264 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01269 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01249 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01240 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01294 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01390 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01260 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01269 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01259 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01278 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01321 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01242 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00173 seconds.
+time(G(w)) = 0.01272 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01364 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01314 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00212 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00190 seconds.
+time(G(w)) = 0.01247 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01302 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01311 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01284 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01265 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01312 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01292 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01309 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00165 seconds.
+time(G(w)) = 0.01353 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01288 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01244 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01295 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01298 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01304 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01419 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00369 seconds.
+time(G(w)) = 0.01485 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01305 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01269 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00248 seconds.
+time(G(w)) = 0.01394 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00182 seconds.
+time(G(w)) = 0.01313 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00174 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01761 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01321 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00188 seconds.
+time(G(w)) = 0.01238 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01247 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01262 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01282 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01264 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01235 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01283 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01253 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00181 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01292 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01294 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00263 seconds.
+time(G(w)) = 0.01417 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01333 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01275 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01564 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00171 seconds.
+time(G(w)) = 0.01252 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01298 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01267 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01277 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01273 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00185 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01229 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01653 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00249 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00379 seconds.
+time(G(w)) = 0.01388 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01361 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01551 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01283 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00184 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01294 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01250 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00178 seconds.
+time(G(w)) = 0.01298 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01363 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00207 seconds.
+time(G(w)) = 0.01270 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01246 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00187 seconds.
+time(G(w)) = 0.01245 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01269 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01251 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01271 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01281 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00175 seconds.
+time(G(w)) = 0.01320 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01275 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01295 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00177 seconds.
+time(G(w)) = 0.01233 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01493 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01266 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01274 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01256 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00183 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00168 seconds.
+time(G(w)) = 0.01297 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01238 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01294 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00176 seconds.
+time(G(w)) = 0.01359 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00180 seconds.
+time(G(w)) = 0.01247 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01233 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01279 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00186 seconds.
+time(G(w)) = 0.01268 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01280 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01255 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01320 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00170 seconds.
+time(G(w)) = 0.01257 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01261 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01296 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00167 seconds.
+time(G(w)) = 0.01254 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00169 seconds.
+time(G(w)) = 0.01321 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00179 seconds.
+time(G(w)) = 0.01284 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00172 seconds.
+time(G(w)) = 0.01245 seconds.
+Hamiltonian basis sizes: len(basis_index) = 90, len(h_big) = 190
+time(H_matrix) = 0.00166 seconds.
+time(G(w)) = 0.01233 seconds.
+len(psi1), len(basis_index), len(hExcited), #elements added to hExcited:  24 30 120 0
+Loop over in-coming photon energies...
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01483 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01398 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00237 seconds.
+time(G(w)) = 0.01371 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00215 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00207 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01439 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00226 seconds.
+time(G(w)) = 0.01469 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00218 seconds.
+time(G(w)) = 0.01422 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01443 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01421 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00218 seconds.
+time(G(w)) = 0.01389 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01430 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01403 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01426 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00264 seconds.
+time(G(w)) = 0.01442 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01489 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01373 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00249 seconds.
+time(G(w)) = 0.01459 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00224 seconds.
+time(G(w)) = 0.01378 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00220 seconds.
+time(G(w)) = 0.01378 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01518 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01478 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00210 seconds.
+time(G(w)) = 0.01381 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00222 seconds.
+time(G(w)) = 0.01437 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00228 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01371 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00192 seconds.
+time(G(w)) = 0.01446 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00208 seconds.
+time(G(w)) = 0.01960 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00268 seconds.
+time(G(w)) = 0.01443 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01374 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01432 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00218 seconds.
+time(G(w)) = 0.01441 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00213 seconds.
+time(G(w)) = 0.01424 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01407 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01393 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01429 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01472 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00211 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01399 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01442 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01388 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01392 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01445 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00225 seconds.
+time(G(w)) = 0.01445 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01414 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01427 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00239 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00219 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01394 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01499 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00216 seconds.
+time(G(w)) = 0.01414 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00202 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01492 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01403 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01402 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01452 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01418 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01391 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01452 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01437 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01437 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01423 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01412 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01446 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01424 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01507 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01564 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01388 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01445 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01442 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01387 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01429 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01386 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01425 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00220 seconds.
+time(G(w)) = 0.01405 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01449 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01443 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01460 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01401 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00214 seconds.
+time(G(w)) = 0.01444 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00241 seconds.
+time(G(w)) = 0.01386 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00249 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00199 seconds.
+time(G(w)) = 0.01394 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01375 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00241 seconds.
+time(G(w)) = 0.01384 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01410 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01403 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01413 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00194 seconds.
+time(G(w)) = 0.01446 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01455 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01395 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01397 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00230 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00265 seconds.
+time(G(w)) = 0.01475 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01419 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01385 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00221 seconds.
+time(G(w)) = 0.01382 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00200 seconds.
+time(G(w)) = 0.01400 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01418 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00198 seconds.
+time(G(w)) = 0.01396 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01510 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00205 seconds.
+time(G(w)) = 0.01388 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00193 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00195 seconds.
+time(G(w)) = 0.01406 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00204 seconds.
+time(G(w)) = 0.01429 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00201 seconds.
+time(G(w)) = 0.01389 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00196 seconds.
+time(G(w)) = 0.01415 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00217 seconds.
+time(G(w)) = 0.01376 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00209 seconds.
+time(G(w)) = 0.01404 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00191 seconds.
+time(G(w)) = 0.01414 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00206 seconds.
+time(G(w)) = 0.01635 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00373 seconds.
+time(G(w)) = 0.01474 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01411 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00203 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00197 seconds.
+time(G(w)) = 0.01408 seconds.
+Hamiltonian basis sizes: len(basis_index) = 100, len(h_big) = 190
+time(H_matrix) = 0.00227 seconds.
+time(G(w)) = 0.01389 seconds.
+#eigenstates = 3
+#in-polarizations = 3
+#out-polarizations = 3
+#mesh points of input energy = 50
+#mesh points of energy loss = 4000
+Save spectra to disk...
+
+time(RIXS) = 25.85 seconds 
+
+Script finished for rank: 0
