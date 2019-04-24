@@ -2,21 +2,21 @@
 
 ### Introduction 
 
-<figure>
-<div class="row"> 
-  <div class="column">
-  <img src="reference_output/Ni_NiO_1bath/ps.png" alt="Photoemission (PS)" width="170"/>
-  <img src="reference_output/Ni_NiO_1bath/xps.png" alt="X-ray photoemission (XPS)" width="170"/>
-  <img src="reference_output/Ni_NiO_1bath/xas.png" alt="X-ray absorption spectroscopy (XAS)" width="170"/>
-  <img src="reference_output/Ni_NiO_1bath/nixs.png" alt="Non-resonant inelastic x-ray scattering (NIXS)" width="170"/>
-  <img src="reference_output/Ni_NiO_1bath/rixs.png" alt="Resonant inelastic x-ray scattering (RIXS)" width="170"/>  </div>
-</div>
-<figcaption>Spectra of NiO using one bath orbital per 3d orbital.</figcaption>
-</figure>
-
 Calculate many-body states of an impurity Anderson model and a few spectra, e.g. photoemission spectroscopy (PS), x-ray photoemission spectroscopy (XPS), x-ray absorption spectroscopy (XAS), non-resonant inelastic x-ray scattering (NIXS), and resonant inelastic x-ray scattering (RIXS).
 
 Credits to Petter Saterskog for inspiration and for some of the key functionality.
+
+<figure>
+<div class="row"> 
+  <div class="column">
+  <img src="reference_output/Ni_NiO_1bath/ps.png" alt="Photoemission (PS)" width="150"/>
+  <img src="reference_output/Ni_NiO_1bath/xps.png" alt="X-ray photoemission (XPS)" width="150"/>
+  <img src="reference_output/Ni_NiO_1bath/xas.png" alt="X-ray absorption spectroscopy (XAS)" width="150"/>
+  <img src="reference_output/Ni_NiO_1bath/nixs.png" alt="Non-resonant inelastic x-ray scattering (NIXS)" width="150"/>
+  <img src="reference_output/Ni_NiO_1bath/rixs.png" alt="Resonant inelastic x-ray scattering (RIXS)" width="150"/>  </div>
+</div>
+<figcaption>Spectra of NiO using one bath orbital per 3d orbital.</figcaption>
+</figure>
 
 ### Get started
 - Python 3.x is needed with libraries `mpi4py`, `numpy`, `sympy`, and `scipy`. 
