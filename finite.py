@@ -21,6 +21,7 @@ from mpi4py import MPI
 
 
 from . import product_state_representation as psr
+from . import mpi_comm
 from .average import k_B, thermal_average
 
 
@@ -2090,7 +2091,8 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
         where `|PS>` is a product state.
         New product states might be added to this variable.
     hOp : dict
-        The Hamiltonian. With elements of the form process : h_value
+        The Hamiltonian. With elements of the form:
+        process : h_value
     basis0 : tuple
         List of product states.
         These product states are used to generate more basis states.
@@ -2139,7 +2141,7 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
             basis_new_local = set()
             for state_index in get_job_tasks(rank, ranks, range(i,n)):
                 state = basis[state_index]
-                # Obtain H|state>
+                # Obtain H|product state>
                 if state in h_big:
                     res = h_big[state]
                 else:
@@ -2153,18 +2155,12 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
                 basis_new.update(comm.bcast(basis_new_local, root=r))
             # Add basis_new to basis
             basis += list(basis_new)
-            # Updated total number of product states |ps> where know H|ps>
+            # Updated total number of product states |ps> in the basis where know H|ps>
             i = n
             # Updated total number of product states needed to consider.
             n = len(basis)
-        # Merge h_big_new_local into h_big.
-        for r in range(ranks):
-            # Add rank r's h_big_new_local to h_big.
-            # The keys in h_big_new_local are unique for each rank, i.e.
-            # ps_i for rank r does not exist as a key in h_big_new_local
-            # for any other rank other than rank r.
-            # Neither does it exist in the initial h_big.
-            h_big.update(comm.bcast(h_big_new_local, root=r))
+        # Distribute h_big_new_local from all ranks to all ranks into variable h_big.
+        mpi_comm.allgather(h_big_new_local, h_big)
     else:
         sys.exit("Wrong parallelization parameter.")
     return tuple(basis)
