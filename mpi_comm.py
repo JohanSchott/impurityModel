@@ -22,7 +22,7 @@ rank = comm.rank
 ranks = comm.size
 
 
-def chunks_from_one_MPI_rank(data, SIZE=10**7, root=0):
+def chunks_from_one_MPI_rank(data, chunk_maxsize=1*10**6, root=0):
     """
     Divide up date in chunks for one MPI rank.
     
@@ -35,23 +35,23 @@ def chunks_from_one_MPI_rank(data, SIZE=10**7, root=0):
     Parameters
     ----------
     data : dict 
-    SIZE : int
+    chunk_maxsize : int
     root : int
 
     """
     if rank == root:
         it = iter(data)
-        n_chunks = math.ceil(len(data)/SIZE)
+        n_chunks = math.ceil(len(data)/chunk_maxsize)
     else:
         n_chunks = None
     n_chunks = comm.bcast(n_chunks, root=root)
     for _ in range(n_chunks):
         if rank == root:
-            yield {k:data[k] for k in islice(it, SIZE)}
+            yield {k:data[k] for k in islice(it, chunk_maxsize)}
         else:
             yield None
 
-def allgather(data, total, chunk_maxsize=10**7):
+def allgather(data, total, chunk_maxsize=1*10**6):
     """
     Distribute data from all ranks to all ranks into variable total.
 
