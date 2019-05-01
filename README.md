@@ -6,6 +6,8 @@ Calculate many-body states of an impurity Anderson model and a few spectra, e.g.
 
 Credits to Petter Saterskog for inspiration and for some of the key functionality.
 
+Credits to Patrik Thunstrom for discussions about computational algorithms.
+
 <figure>
 <div class="row"> 
   <div class="column">
@@ -72,6 +74,12 @@ For the RIXS simulations, parallelization is by default first done over product 
 The memory goes primarly to storing the Hamiltonian in a basis of product states.
 This Hamiltonian is stored as a dictionary, with product states, |ps>, as dictionary-keys 
 and the Hamiltonian acting of each product state, H|ps>, as dictionary-values. 
+When several ranks are used, the information is distributed over the MPI ranks, such that one rank only stores
+some of all the product-state keys. This reduces memory usage for each MPI rank. 
+
+A sparse matrix format of the Hamiltonian is used when generating a spectrum. 
+This sparse matrix variable is also distributed in memory over the MPI ranks. 
+This is done to reduce memory usage per MPI rank.
 
 A product state with electrons in spin-orbitals with indices e.g. 2 and 5 can be described by the tuple: (2,5). 
 If the system has 7 spin-orbitals in total, the product state can also be described by the binary-string "0010010".

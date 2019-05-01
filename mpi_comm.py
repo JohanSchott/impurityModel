@@ -22,19 +22,19 @@ rank = comm.rank
 ranks = comm.size
 
 
-def chunks_from_one_MPI_rank(data, chunk_maxsize=1*10**6, root=0):
+def dict_chunks_from_one_MPI_rank(data, chunk_maxsize=1*10**6, root=0):
     """
     Divide up date in chunks for one MPI rank.
-    
+
     Yields chunks of data.
-    Each chunk will contain a maximum number of elements, 
+    Each chunk will contain a maximum number of elements,
     which is determined by the user.
-    The other MPI ranks yields the same number of chunks, 
+    The other MPI ranks yields the same number of chunks,
     but each such chunk is equal to None.
-    
+
     Parameters
     ----------
-    data : dict 
+    data : dict
     chunk_maxsize : int
     root : int
 
@@ -51,14 +51,14 @@ def chunks_from_one_MPI_rank(data, chunk_maxsize=1*10**6, root=0):
         else:
             yield None
 
-def allgather(data, total, chunk_maxsize=1*10**6):
+def allgather_dict(data, total, chunk_maxsize=1*10**6):
     """
     Distribute data from all ranks to all ranks into variable total.
 
-    The function performs "Allgather". 
-    However, since Allgather requires the same amount of data 
+    The function performs "Allgather".
+    However, since Allgather requires the same amount of data
     for all MPI ranks, it's done through simpler communications.
-   
+
     Parameters
     ----------
     data : dict
@@ -68,7 +68,7 @@ def allgather(data, total, chunk_maxsize=1*10**6):
         for any other rank other than rank r.
         Neither does it exist in the variable total.
     total : dict
-        Will be updated with data from all MPI ranks. 
+        Will be updated with data from all MPI ranks.
     chunk_maxsize : int
         The maximum number of dictionary elements to send at once.
 
@@ -91,10 +91,9 @@ def allgather(data, total, chunk_maxsize=1*10**6):
         # Therefore we send the data in chunks.
         #print('rank' + str(rank) +', h_big_new = ', h_big_new)
         for r in range(ranks):
-            # Data in rank r is broadcasted in chunks to all the other ranks.   
-            for chunk in chunks_from_one_MPI_rank(data, chunk_maxsize, r):
+            # Data in rank r is broadcasted in chunks to all the other ranks.
+            for chunk in dict_chunks_from_one_MPI_rank(data, chunk_maxsize, r):
                 #print('rank' + str(rank) + ': ', chunk)
                 total.update(comm.bcast(chunk, root=r))
-    if rank == 0: 
-        print("time(Allgather H_dict) = {:.5f} seconds.".format(time.time() - t0))
-
+    if rank == 0:
+        print("time(Allgather H_dict) = {:.5f} seconds.".format(time.time()-t0))

@@ -21,7 +21,6 @@ from mpi4py import MPI
 
 
 from . import product_state_representation as psr
-from . import mpi_comm
 from .average import k_B, thermal_average
 
 
@@ -1289,7 +1288,7 @@ def applySz3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1325,7 +1324,7 @@ def applySz3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1355,7 +1354,7 @@ def applyLz3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1391,7 +1390,7 @@ def applyLz3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1421,7 +1420,7 @@ def applySplus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1460,7 +1459,7 @@ def applySplus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1492,7 +1491,7 @@ def applyLplus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1530,7 +1529,7 @@ def applyLplus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1561,7 +1560,7 @@ def applySminus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1600,7 +1599,7 @@ def applySminus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1632,7 +1631,7 @@ def applyLminus3dWithBath(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1670,7 +1669,7 @@ def applyLminus3d(nBaths, psi):
     nBaths : dict
         angular momentum : number of bath sets
     psi : dict
-        Multi-configurational state. 
+        Multi-configurational state.
         Product states as keys and amplitudes as values.
 
     Returns
@@ -1992,8 +1991,9 @@ def get_hamiltonian_matrix(n_spin_orbitals, hOp, basis, mode='sparse_MPI'):
     return h
 
 
-def get_hamiltonian_matrix_from_h_dict(h_big, basis,
+def get_hamiltonian_matrix_from_h_dict(h_dict, basis,
                                        parallelization_mode='serial',
+                                       return_h_local=False,
                                        mode='sparse'):
     """
     Return Hamiltonian expressed in the provided basis of product states
@@ -2004,23 +2004,32 @@ def get_hamiltonian_matrix_from_h_dict(h_big, basis,
 
     Parameters
     ----------
-    h_big : dict
-        Elements of the form `|PS> : {H|PS>}`,
-        where `|PS>` is a product state.
-        Thus, product states as keys.
-        The result of the Hamiltonian acting on each product state is
-        stored as the dictionary keys (in the format of dictionaries).
-        h_big may contain more product states keys than in the active basis.
+    h_dict : dict
+        Elements of the form |PS> : {hOp|PS>},
+        where |PS> is a product state,
+        and {hOp|PS>} is a dictionary containing the result of
+        the (Hamiltonian) operator hOp acting on the product state |PS>.
+        The dictionary {hOp|PS>} has product states as keys.
+        h_dict may contain some product states (as keys) that are not
+        part of the active basis.
+        Also, if parallelization_mode == 'H_build', each product state in
+        the active basis exists as a key in h_dict for only one MPI rank.
     basis : tuple
         All product states included in the basis.
     parallelization_mode : str
         Parallelization mode. Either: "serial" or "H_build".
+    return_h_local : boolean
+        If parallelization_mode is not serial, whether to return the
+        MPI local Hamiltonian or the full Hamiltonian.
     mode : str
         Algorithm for calculating the Hamiltonian and type format of
         returned Hamiltonian.
         'dense' or 'sparse'.
 
     """
+    if parallelization_mode == 'serial':
+        # In serial mode, the full Hamiltonian is returned.
+        assert return_h_local == False
     # Number of basis states
     n = len(basis)
     basis_index = {basis[i]:i for i in range(n)}
@@ -2032,7 +2041,7 @@ def get_hamiltonian_matrix_from_h_dict(h_big, basis,
             #if rank == 0 and progress + 10 <= int(j*100./n):
             #    progress = int(j*100./n)
             #    print('{:d}% done'.format(progress))
-            res = h_big[basis[j]]
+            res = h_dict[basis[j]]
             for k, v in res.items():
                 h[basis_index[k], j] = v
     elif mode == 'sparse' and parallelization_mode == 'serial':
@@ -2043,41 +2052,40 @@ def get_hamiltonian_matrix_from_h_dict(h_big, basis,
             #if rank == 0 and progress + 10 <= int(j*100./n):
             #    progress = int(j*100./n)
             #    print('{:d}% done'.format(progress))
-            res = h_big[basis[j]]
+            res = h_dict[basis[j]]
             for k, v in res.items():
                 data.append(v)
                 col.append(j)
                 row.append(basis_index[k])
         h = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
     elif mode == 'sparse' and parallelization_mode == 'H_build':
-        h = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
-        data = []
-        row = []
-        col = []
-        for job in get_job_tasks(rank, ranks, range(n)):
-            res = h_big[basis[job]]
-            for k, v in res.items():
+        h_local = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
+        # Loop over product states from the basis
+        # which are also stored in h_dict.
+        for ps in set(basis).intersection(h_dict.keys()):
+            data = []
+            row = []
+            col = []
+            for k, v in h_dict[ps].items():
                 data.append(v)
-                col.append(job)
+                col.append(basis_index[ps])
                 row.append(basis_index[k])
-            #if rank == 0 and progress + 10 <= int((j+1)*100./len(jobs)):
-            #    progress = int((j+1)*100./len(jobs))
-            #    print('{:d}% done'.format(progress))
-        # Print out that the construction of Hamiltonian is done
-        #if rank == 0 and progress != 100:
-        #    progress = 100
-        #    print('{:d}% done'.format(progress))
-        hSparse = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
-        # Different ranks have information about different basis states.
-        # Therefor, need to broadcast and append sparse Hamiltonians
-        for r in range(ranks):
-            h += comm.bcast(hSparse, root=r)
+            h_local += scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
+
+        if return_h_local:
+            h = h_local
+        else:
+            h = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
+            # Different ranks have information about different basis states.
+            # Broadcast and append local sparse Hamiltonians.
+            for r in range(ranks):
+                h += comm.bcast(h_local, root=r)
     else:
         sys.exit("Wrong input parameters")
     return h, basis_index
 
 
-def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
+def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
                  parallelization_mode="serial"):
     """
     Return basis.
@@ -2086,10 +2094,17 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
     ----------
     n_spin_orbitals : int
         Total number of spin-orbitals in the system.
-    h_big : dict
-        Elements of the form `|PS> : {H|PS>}`,
-        where `|PS>` is a product state.
-        New product states might be added to this variable.
+    h_dict : dict
+        Elements of the form |PS> : {hOp|PS>},
+        where |PS> is a product state,
+        and {hOp|PS>} is a dictionary containing the result of
+        the (Hamiltonian) operator hOp acting on the product state |PS>.
+        The dictionary {hOp|PS>} has product states as keys.
+        New elements might be added to this variable.
+        h_dict may contain some product states (as keys) that will not
+        be part of the final active basis.
+        Also, if parallelization_mode == 'H_build', each product state in
+        the active basis exists as a key in h_dict for only one MPI rank.
     hOp : dict
         The Hamiltonian. With elements of the form:
         process : h_value
@@ -2099,7 +2114,7 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
     restrictions : dict
         Restriction the occupation of generated product states.
     parallelization_mode : str
-        Parallelization mode. Either: "serial", "serial_slow" or "H_build".
+        Parallelization mode. Either: "serial" or "H_build".
 
 
     Returns
@@ -2118,72 +2133,101 @@ def expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
             basis_new = set()
             for b in basis[i:n]:
                 res = applyOp(n_spin_orbitals, hOp, {b:1},
-                              restrictions=restrictions, opResult=h_big)
+                              restrictions=restrictions, opResult=h_dict)
                 basis_new.update(set(res.keys()).difference(basis_set))
-                #basis_new.update(basis_set.difference(res.keys()))
             i = n
             basis += list(basis_new)
             n = len(basis)
-    elif parallelization_mode == "serial_slow":
-        while i < n :
-            res = applyOp(n_spin_orbitals, hOp, {basis[i]:1},
-                          restrictions=restrictions, opResult=h_big)
-            for ps in res.keys():
-                if ps not in basis:
-                    basis.append(ps)
-            i += 1
-            n = len(basis)
     elif parallelization_mode == "H_build":
-        h_big_new_local = {}
+        h_dict_new_local = {}
         while i < n :
-            #if rank == 0: print("i=",i,", n=",n)
             basis_set = frozenset(basis)
             basis_new_local = set()
-            for state_index in get_job_tasks(rank, ranks, range(i,n)):
-                state = basis[state_index]
-                # Obtain H|product state>
-                if state in h_big:
-                    res = h_big[state]
-                else:
-                    res = applyOp(n_spin_orbitals, hOp, {state:1},
-                                  restrictions=restrictions)
-                    h_big_new_local[state] = res
+
+            #print('rank', rank, ', basis:', basis)
+
+            # Among the product states in basis[i:n], first consider
+            # the product states which exist in h_dict.
+            states_setA_local = set(basis[i:n]).intersection(h_dict.keys())
+            # Loop through these product states
+            for ps in states_setA_local:
+                res = h_dict[ps]
                 basis_new_local.update(set(res.keys()).difference(basis_set))
+
+            #print('rank', rank, ', states_setA_local:', states_setA_local)
+
+            # Now consider the product states in basis[i:n] which
+            # does not exist in h_dict.
+            if rank == 0:
+                states_setB = set(basis[i:n]) - states_setA_local
+                for r in range(1, ranks):
+                    states_setB.difference_update(comm.recv(source=r, tag=0))
+                states_tupleB = tuple(states_setB)
+            else:
+                # Send product states to rank 0.
+                comm.send(states_setA_local, dest=0, tag=0)
+                states_tupleB = None
+            states_tupleB = comm.bcast(states_tupleB, root=0)
+
+            #print('rank', rank, ', states_tupleB:', states_tupleB)
+
+            # Distribute and then loop through "unknown" product states
+            for ps_indexB in get_job_tasks(rank,ranks,range(len(states_tupleB))):
+                # One product state.
+                ps = states_tupleB[ps_indexB]
+                res = applyOp(n_spin_orbitals, hOp, {ps:1},
+                              restrictions=restrictions)
+                h_dict_new_local[ps] = res
+                basis_new_local.update(set(res.keys()).difference(basis_set))
+
             # Add unique elements of basis_new_local into basis_new
             basis_new = set()
             for r in range(ranks):
                 basis_new.update(comm.bcast(basis_new_local, root=r))
             # Add basis_new to basis
             basis += list(basis_new)
-            # Updated total number of product states |ps> in the basis where know H|ps>
+            # Updated total number of product states |PS> in
+            # the basis where know H|PS>.
             i = n
             # Updated total number of product states needed to consider.
             n = len(basis)
-        # Distribute h_big_new_local from all ranks to all ranks into variable h_big.
-        mpi_comm.allgather(h_big_new_local, h_big)
+        # Add new elements to h_dict, but only local contribution.
+        h_dict.update(h_dict_new_local)
+
+        #print('rank', rank, 'len(h_dict)=',len(h_dict))
+        #print('rank', rank, 'h_dict.keys():', h_dict.keys())
+
     else:
         sys.exit("Wrong parallelization parameter.")
     return tuple(basis)
 
 
-def expand_basis_and_hamiltonian(n_spin_orbitals, h_big, hOp, basis0,
-                                 restrictions, parallelization_mode="serial"):
+def expand_basis_and_hamiltonian(n_spin_orbitals, h_dict, hOp, basis0,
+                                 restrictions, parallelization_mode="serial",
+                                 return_h_local=False):
     """
     Return Hamiltonian in matrix format.
 
     Also return dictionary with product states in basis as keys,
     and basis indices as values.
 
-    Also possibly add new product state keys to h_big.
+    Also possibly to add new product state keys to h_dict.
 
     Parameters
     ----------
     n_spin_orbitals : int
         Total number of spin-orbitals in the system.
-    h_big : dict
-        Elements of the form `|PS> : {H|PS>}`,
-        where `|PS>` is a product state.
-        New product states might be added to this variable.
+    h_dict : dict
+        Elements of the form |PS> : {hOp|PS>},
+        where |PS> is a product state,
+        and {hOp|PS>} is a dictionary containing the result of
+        the (Hamiltonian) operator hOp acting on the product state |PS>.
+        The dictionary {hOp|PS>} has product states as keys.
+        New elements might be added to this variable.
+        h_dict may contain some product states (as keys) that will not
+        be part of the final active basis.
+        Also, if parallelization_mode == 'H_build', each product state in
+        the active basis exists as a key in h_dict for only one MPI rank.
     hOp : dict
         The Hamiltonian. With elements of the form process : h_value
     basis0 : tuple
@@ -2193,6 +2237,9 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_big, hOp, basis0,
         Restriction the occupation of generated product states.
     parallelization_mode : str
         Parallelization mode. Either: "serial" or "H_build".
+    return_h_local : boolean
+        If parallelization_mode is not serial, whether to return the
+        MPI local Hamiltonian or the full Hamiltonian.
 
     Returns
     -------
@@ -2204,12 +2251,29 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_big, hOp, basis0,
 
     """
     # Obtain tuple containing different product states.
-    # Possibly add new product state keys to h_big.
-    basis = expand_basis(n_spin_orbitals, h_big, hOp, basis0, restrictions,
+    # Possibly add new product state keys to h_dict.
+    basis = expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
                          parallelization_mode)
     # Obtain Hamiltonian in matrix format.
     h, basis_index = get_hamiltonian_matrix_from_h_dict(
-        h_big, basis, parallelization_mode)
+        h_dict, basis, parallelization_mode, return_h_local)
+
+    if parallelization_mode == 'H_build':
+        # Total Hamiltonian size. Only used for printing it.
+        len_h_dict_total = comm.reduce(len(h_dict))
+        if rank == 0:
+            print(("Hamiltonian basis sizes: "
+                   + "len(basis_index) = {:d}, ".format(len(basis_index))
+                   + "np.shape(h)[0] = {:d}, ".format(np.shape(h)[0])
+                   + "len(h_dict) = {:d}, ".format(len(h_dict))
+                   + "len(h_dict_total) = {:d}".format(len_h_dict_total)))
+    elif parallelization_mode == 'serial':
+        if rank == 0:
+            print(("Hamiltonian basis sizes: "
+                   + "len(basis_index) = {:d}, ".format(len(basis_index))
+                   + "np.shape(h)[0] = {:d}, ".format(np.shape(h)[0])
+                   + "len(h_dict) = {:d}, ".format(len(h_dict))))
+
     return h, basis_index
 
 

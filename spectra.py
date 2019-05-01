@@ -271,7 +271,7 @@ def getPhotoEmissionOperators(nBaths,l=2):
 
 
 def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
-             slaterWeightMin, restrictions=None, h_big=None, mode="sparse",
+             slaterWeightMin, restrictions=None, h_dict=None, mode="sparse",
              parallelization_mode="serial"):
     r'''
     return Green's function
@@ -301,12 +301,13 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
     restrictions : dict
         Restriction the occupation of generated
         product states.
-    h_big : dict
-        In and output argument.
-        If present, the results of the operator hOp acting on each
-        product state in the state psi is added and stored in this
-        variable. Format: `|PS> : H|PS>`,
-        where `|PS>` is a product state and `H|PS>` is stored as a dictionary.
+    h_dict : dict
+        Stores the result of the (Hamiltonian) operator hOp acting
+        on individual product states. Information is stored according to:
+        |product state> : H|product state>, where
+        each product state is represented by an integer, and the result is
+        a dictionary (of the format int : complex).
+        If present, it may also be updated by this function.
     mode : str
         'dict', 'dense', 'sparse'
         Determines which algorithm to use.
@@ -321,18 +322,18 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
     # In the exceptional case of an empty state psi, return zero.
     if len(psi) == 0: return g
     # Initialization
-    if h_big is None:
-        h_big = {}
+    if h_dict is None:
+        h_dict = {}
     if mode == 'dict':
         assert parallelization_mode == "serial"
         v = list(np.zeros(krylovSize))
         w = list(np.zeros(krylovSize))
         wp = list(np.zeros(krylovSize))
         v[0] = psi
-        #print('len(h_big) = ',len(h_big),', len(v[0]) = ',len(v[0]))
+        #print('len(h_dict) = ',len(h_dict),', len(v[0]) = ',len(v[0]))
         wp[0] = applyOp(n_spin_orbitals, hOp, v[0], slaterWeightMin,
-                        restrictions, h_big)
-        #print('#len(h_big) = ',len(h_big),', len(wp[0]) = ',len(wp[0]))
+                        restrictions, h_dict)
+        #print('#len(h_dict) = ',len(h_dict),', len(wp[0]) = ',len(wp[0]))
         alpha = np.zeros(krylovSize,dtype=np.float)
         beta = np.zeros(krylovSize-1,dtype=np.float)
         alpha[0] = inner(wp[0],v[0]).real
@@ -355,22 +356,25 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
                 print('Warning: beta==0, implementation missing!')
             #print('len(v[',j,'] =',len(v[j]))
             wp[j] = applyOp(n_spin_orbitals, hOp, v[j], slaterWeightMin,
-                            restrictions,h_big)
+                            restrictions,h_dict)
             alpha[j] = inner(wp[j],v[j]).real
             w[j] = add(add(wp[j],v[j],-alpha[j]),v[j-1],-beta[j-1])
-            #print('len(h_big) = ',len(h_big),', len(w[j]) = ',len(w[j]))
+            #print('len(h_dict) = ',len(h_dict),', len(w[j]) = ',len(w[j]))
     elif mode == "sparse" or mode == "dense":
+        # If we use a parallelized mode, we want to work with
+        # only the MPI local part of the Hamiltonian matrix h.
+        h_local = parallelization_mode == 'H_build'
         # Measure time for constructing H in matrix form
         t0 = time.time()
         # Obtain Hamiltonian in matrix format.
-        # Possibly also add new product state keys to h_big.
+        # Possibly also add new product state keys to h_dict.
+        # If h_local equals to True, the returning sparse matrix
+        # Hamiltonian will not contain all column in each MPI rank.
+        # Instead all matrix columns are distributed over all the MPI ranks.
         h, basis_index = expand_basis_and_hamiltonian(
-            n_spin_orbitals, h_big, hOp, psi.keys(), restrictions,
-            parallelization_mode)
-        if rank == 0: 
-            print(("Hamiltonian basis sizes: len(basis_index) = {:d},"
-                   + " len(h_big) = {:d}").format(len(basis_index),
-                                                  len(h_big)))
+            n_spin_orbitals, h_dict, hOp, psi.keys(), restrictions,
+            parallelization_mode, h_local)
+        if rank == 0:
             print("time(H_matrix) = {:.5f} seconds.".format(
                 time.time() - t0))
             # Measure time for constructing Green's function given H.
@@ -381,45 +385,95 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
         krylovSize = min(krylovSize,n)
         if mode == "dense":
             h = h.toarray()
-        # Allocate tri-diagonal matrix elements
-        alpha = np.zeros(krylovSize,dtype=np.float)
-        beta = np.zeros(krylovSize-1,dtype=np.float)
-        # Allocate space for Krylov state vectors.
-        # Do not save all Krylov vectors to save memory.
-        v = np.zeros((2,n), dtype=np.complex)
-        w = np.zeros(n, dtype=np.complex)
-        wp = np.zeros(n, dtype=np.complex)
-        # Express psi as a vector
-        for ps, amp in psi.items():
-            v[0,basis_index[ps]] = amp
-        wp = h.dot(v[0,:])
-        alpha[0] = np.dot(np.conj(wp),v[0,:]).real
-        w = wp - alpha[0]*v[0,:]
-        # Construct Krylov states,
-        # and more importantly the vectors alpha and beta
-        for j in range(1,krylovSize):
-            beta[j-1] = sqrt(np.sum(np.abs(w)**2))
-            if beta[j-1] != 0:
-                v[1,:] = w/beta[j-1]
-            else:
-                # Pick normalized state v[j],
-                # orthogonal to v[0],v[1],v[2],...,v[j-1]
-                raise ValueError('Warning: beta==0, implementation missing!')
-            wp = h.dot(v[1,:])
-            alpha[j] = np.dot(np.conj(wp),v[1,:]).real
-            w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
-            v[0,:] = v[1,:]
+
+        # Start with Krylov iterations.
+        if h_local:
+            if rank == 0: print('MPI parallelization in the Krylov loop...')
+            # The Hamiltonian matrix is distributed over MPI ranks,
+            # i.e. H = sum_r Hr
+            # This means a multiplication of the Hamiltonian matrix H
+            # with a vector x can be written as:
+            # y = H*x = sum_r Hr*x = sum_r y_r
+
+            # Allocate tri-diagonal matrix elements
+            alpha = np.zeros(krylovSize, dtype=np.float)
+            beta = np.zeros(krylovSize-1, dtype=np.float)
+            # Allocate space for Krylov state vectors.
+            # Do not save all Krylov vectors to save memory.
+            v = np.zeros((2,n), dtype=np.complex)
+            # Express psi as a vector
+            for ps, amp in psi.items():
+                v[0, basis_index[ps]] = amp
+            # Initialization...
+            wp_local = h.dot(v[0,:])
+            # Reduce vector wp_local to the vector wp at rank 0.
+            wp = np.zeros_like(wp_local)
+            comm.Reduce(wp_local, wp)
+            if rank == 0:
+                alpha[0] = np.dot(np.conj(wp),v[0,:]).real
+                w = wp - alpha[0]*v[0,:]
+            # Construct Krylov states,
+            # and more importantly the vectors alpha and beta
+            for j in range(1,krylovSize):
+                if rank == 0:
+                    beta[j-1] = sqrt(np.sum(np.abs(w)**2))
+                    if beta[j-1] != 0:
+                        v[1,:] = w/beta[j-1]
+                    else:
+                        # Pick normalized state v[j],
+                        # orthogonal to v[0],v[1],v[2],...,v[j-1]
+                        raise ValueError(('Warning: beta==0, '
+                                          + 'implementation absent!'))
+                # Broadcast vector v[1,:] from rank 0 to all ranks.
+                comm.Bcast(v[1,:], root=0)
+                wp_local = h.dot(v[1,:])
+                # Reduce vector wp_local to the vector wp at rank 0.
+                wp = np.zeros_like(wp_local)
+                comm.Reduce(wp_local, wp)
+                if rank == 0:
+                    alpha[j] = np.dot(np.conj(wp),v[1,:]).real
+                    w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
+                    v[0,:] = v[1,:]
+        else:
+            # Allocate tri-diagonal matrix elements
+            alpha = np.zeros(krylovSize, dtype=np.float)
+            beta = np.zeros(krylovSize-1, dtype=np.float)
+            # Allocate space for Krylov state vectors.
+            # Do not save all Krylov vectors to save memory.
+            v = np.zeros((2,n), dtype=np.complex)
+            # Express psi as a vector
+            for ps, amp in psi.items():
+                v[0, basis_index[ps]] = amp
+            # Initialization...
+            wp = h.dot(v[0,:])
+            alpha[0] = np.dot(np.conj(wp),v[0,:]).real
+            w = wp - alpha[0]*v[0,:]
+            # Construct Krylov states,
+            # and more importantly the vectors alpha and beta
+            for j in range(1,krylovSize):
+                beta[j-1] = sqrt(np.sum(np.abs(w)**2))
+                if beta[j-1] != 0:
+                    v[1,:] = w/beta[j-1]
+                else:
+                    # Pick normalized state v[j],
+                    # orthogonal to v[0],v[1],v[2],...,v[j-1]
+                    raise ValueError('Warning: beta==0, implementation absent!')
+                wp = h.dot(v[1,:])
+                alpha[j] = np.dot(np.conj(wp),v[1,:]).real
+                w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
+                v[0,:] = v[1,:]
     else:
         sys.exit("Value of variable 'mode' is incorrect.")
+
     # Construct Green's function from
     # continued fraction
-    omegaP = omega+1j*delta+e
-    for i in range(krylovSize-1,-1,-1):
-        if i == krylovSize-1:
+    omegaP = omega + 1j*delta + e
+    for i in range(krylovSize-1, -1, -1):
+        if i == krylovSize - 1:
             g = 1./(omegaP - alpha[i])
         else:
-            g = 1./(omegaP-alpha[i]-beta[i]**2*g)
-    if rank == 0: 
+            g = 1./(omegaP - alpha[i] - beta[i]**2*g)
+    if rank == 0:
         print("time(G(w)) = {:.5f} seconds.".format(
             time.time() - t0))
     return g
@@ -526,7 +580,7 @@ def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
 
 def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                delta1, delta2, restrictions=None, krylovSize=150,
-               slaterWeightMin=1e-7, hGround=None,
+               slaterWeightMin=1e-7, h_dict_ground=None,
                parallelization_mode='H_build_wIn'):
     r"""
     Return RIXS Green's function for states.
@@ -592,24 +646,27 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
     slaterWeightMin : float
         Restrict the number of product states by
         looking at `|amplitudes|^2`.
-    hGround : dict
-        Optional
-        tuple : dict, where dict is of the format tuple : float or complex
-        The Hamiltonian for product states with no core hole.
-        If present, it will be updated by this function.
+    h_dict_ground : dict
+        Stores the result of the (Hamiltonian) operator hOp acting
+        on individual product states. Information is stored according to:
+        |product state> : H|product state>, where
+        each product state is represented by an integer, and the result is
+        a dictionary (of the format int : complex).
+        Only product states without a core hole are stored in this variable.
+        If present, it may also be updated by this function.
     parallelization_mode : str
         "serial", "H_build", "wIn" or "H_build_wIn"
 
     """
-    if hGround is None:
-        hGround = {}
+    if h_dict_ground is None:
+        h_dict_ground = {}
     nE = len(es)
     # Green's functions
     gs = np.zeros((nE,len(tOpsIn),len(tOpsOut),len(wIns),len(wLoss)),
                   dtype=np.complex)
     # Hamiltonian dict of the form  |PS> : {H|PS>}
     # For product states with a core hole.
-    hExcited = {}
+    h_dict_excited = {}
     tOut_big = [{}]*len(tOpsOut)
     if parallelization_mode == 'serial' or parallelization_mode == "H_build":
         # Loop over in-coming transition operators
@@ -623,15 +680,14 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                 psi1 = applyOp(n_spin_orbitals, tOpIn, psi, slaterWeightMin,
                                restrictions, tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
-                nTMP = len(hExcited)
+                n_tmp = len(h_dict_excited)
+                if rank == 0: print('Construct H for core-hole excited system.')
                 h, basis_index = expand_basis_and_hamiltonian(
-                    n_spin_orbitals, hExcited, hOp, psi1.keys(), restrictions,
-                    parallelization_mode)
+                    n_spin_orbitals, h_dict_excited, hOp, psi1.keys(),
+                    restrictions, parallelization_mode, return_h_local=False)
                 if rank == 0:
-                    print("len(psi1), len(basis_index), len(hExcited), "
-                          + "#elements added to hExcited: ",
-                          len(psi1), len(basis_index), len(hExcited),
-                          len(hExcited)-nTMP)
+                    print("#elements added to local h_dict_excited: ",
+                          len(h_dict_excited) - n_tmp)
                 n = len(basis_index)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
@@ -684,7 +740,8 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                         # Calculate Green's function
                         gs[iE,tIn,tOut,iwIn,:] = normalization**2*getGreen(
                             n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
-                            krylovSize, slaterWeightMin, restrictions, hGround,
+                            krylovSize, slaterWeightMin, restrictions,
+                            h_dict_ground,
                             parallelization_mode=parallelization_mode)
     elif parallelization_mode == 'wIn' or parallelization_mode == "H_build_wIn":
         # Loop over in-coming transition operators
@@ -698,20 +755,21 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                 psi1 = applyOp(n_spin_orbitals, tOpIn, psi, slaterWeightMin,
                                restrictions, tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
-                nTMP = len(hExcited)
+                n_tmp = len(h_dict_excited)
+                if rank == 0: print('Construct H for core-hole excited system.')
                 if parallelization_mode == "wIn":
                     h, basis_index = expand_basis_and_hamiltonian(
-                        n_spin_orbitals, hExcited, hOp, psi1.keys(),
-                        restrictions, parallelization_mode="serial")
+                        n_spin_orbitals, h_dict_excited, hOp, psi1.keys(),
+                        restrictions, parallelization_mode="serial",
+                        return_h_local=False)
                 elif parallelization_mode == "H_build_wIn":
                     h, basis_index = expand_basis_and_hamiltonian(
-                        n_spin_orbitals, hExcited, hOp, psi1.keys(),
-                        restrictions, parallelization_mode="H_build")
+                        n_spin_orbitals, h_dict_excited, hOp, psi1.keys(),
+                        restrictions, parallelization_mode="H_build",
+                        return_h_local=False)
                 if rank == 0:
-                    print("len(psi1), len(basis_index), len(hExcited), "
-                          + "#elements added to hExcited: ",
-                          len(psi1), len(basis_index), len(hExcited),
-                          len(hExcited)-nTMP)
+                    print("#elements added to local h_dict_excited: ",
+                          len(h_dict_excited) - n_tmp)
                 n = len(basis_index)
                 # Express psi1 as a vector
                 y = np.zeros(n,dtype=np.complex)
@@ -769,8 +827,8 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                         # Calculate Green's function
                         g[iwIn][tOut,:] = normalization**2*getGreen(
                             n_spin_orbitals, e, psi3, hOp, wLoss, delta2,
-                            krylovSize, slaterWeightMin, restrictions, hGround,
-                            parallelization_mode="serial")
+                            krylovSize, slaterWeightMin, restrictions,
+                            h_dict_ground, parallelization_mode="serial")
                 # Distribute the Green's functions among the ranks
                 for r in range(ranks):
                     gTmp = comm.bcast(g, root=r)
