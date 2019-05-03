@@ -20,6 +20,7 @@ import time
 from .finite import gauntC, c2i, get_job_tasks
 from .finite import daggerOp, applyOp, inner, add, norm2
 from .finite import expand_basis_and_hamiltonian
+from .finite import get_tridiagonal_krylov_vectors
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -273,7 +274,7 @@ def getPhotoEmissionOperators(nBaths,l=2):
 def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
              slaterWeightMin, restrictions=None, h_dict=None, mode="sparse",
              parallelization_mode="serial"):
-    r'''
+    r"""
     return Green's function
     :math:`\langle psi|((omega+1j*delta+e)\hat{1} - hOp)^{-1} |psi \rangle`.
 
@@ -315,9 +316,8 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
     parallelization_mode : str
         Parallelization mode. Either: "serial" or "H_build".
 
-    '''
-
-    # Allocations
+    """
+    # Allocation of output vector.
     g = np.zeros(len(omega),dtype=np.complex)
     # In the exceptional case of an empty state psi, return zero.
     if len(psi) == 0: return g
@@ -338,13 +338,10 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
         beta = np.zeros(krylovSize-1,dtype=np.float)
         alpha[0] = inner(wp[0],v[0]).real
         w[0] = add(wp[0],v[0],-alpha[0])
-        #print('len(w[0]) = ',len(w[0]))
-
-        # Approximate position of spectrum
+        # Approximate position of spectrum.
         #print('alpha[0]-E_i = {:5.1f}'.format(alpha[0]-e))
-
         # Construct Krylov states,
-        # and elements alpha and beta
+        # and elements alpha and beta.
         for j in range(1,krylovSize):
             beta[j-1] = sqrt(norm2(w[j-1]))
             #print('beta[',j-1,'] = ',beta[j-1])
@@ -364,8 +361,6 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
         # If we use a parallelized mode, we want to work with
         # only the MPI local part of the Hamiltonian matrix h.
         h_local = parallelization_mode == 'H_build'
-        # Measure time for constructing H in matrix form
-        t0 = time.time()
         # Obtain Hamiltonian in matrix format.
         # Possibly also add new product state keys to h_dict.
         # If h_local equals to True, the returning sparse matrix
@@ -374,108 +369,24 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
         h, basis_index = expand_basis_and_hamiltonian(
             n_spin_orbitals, h_dict, hOp, psi.keys(), restrictions,
             parallelization_mode, h_local)
-        if rank == 0:
-            print("time(H_matrix) = {:.5f} seconds.".format(
-                time.time() - t0))
-            # Measure time for constructing Green's function given H.
-            t0 = time.time()
         # Number of basis states
         n = len(basis_index)
-        # Unnecessary (and impossible) to find more than n Krylov basis vectors.
-        krylovSize = min(krylovSize,n)
-        if mode == "dense":
-            h = h.toarray()
-
-        # Start with Krylov iterations.
-        if h_local:
-            if rank == 0: print('MPI parallelization in the Krylov loop...')
-            # The Hamiltonian matrix is distributed over MPI ranks,
-            # i.e. H = sum_r Hr
-            # This means a multiplication of the Hamiltonian matrix H
-            # with a vector x can be written as:
-            # y = H*x = sum_r Hr*x = sum_r y_r
-
-            # Allocate tri-diagonal matrix elements
-            alpha = np.zeros(krylovSize, dtype=np.float)
-            beta = np.zeros(krylovSize-1, dtype=np.float)
-            # Allocate space for Krylov state vectors.
-            # Do not save all Krylov vectors to save memory.
-            v = np.zeros((2,n), dtype=np.complex)
-            # Express psi as a vector
-            for ps, amp in psi.items():
-                v[0, basis_index[ps]] = amp
-            # Initialization...
-            wp_local = h.dot(v[0,:])
-            # Reduce vector wp_local to the vector wp at rank 0.
-            wp = np.zeros_like(wp_local)
-            comm.Reduce(wp_local, wp)
-            if rank == 0:
-                alpha[0] = np.dot(np.conj(wp),v[0,:]).real
-                w = wp - alpha[0]*v[0,:]
-            # Construct Krylov states,
-            # and more importantly the vectors alpha and beta
-            for j in range(1,krylovSize):
-                if rank == 0:
-                    beta[j-1] = sqrt(np.sum(np.abs(w)**2))
-                    if beta[j-1] != 0:
-                        v[1,:] = w/beta[j-1]
-                    else:
-                        # Pick normalized state v[j],
-                        # orthogonal to v[0],v[1],v[2],...,v[j-1]
-                        raise ValueError(('Warning: beta==0, '
-                                          + 'implementation absent!'))
-                # Broadcast vector v[1,:] from rank 0 to all ranks.
-                comm.Bcast(v[1,:], root=0)
-                wp_local = h.dot(v[1,:])
-                # Reduce vector wp_local to the vector wp at rank 0.
-                wp = np.zeros_like(wp_local)
-                comm.Reduce(wp_local, wp)
-                if rank == 0:
-                    alpha[j] = np.dot(np.conj(wp),v[1,:]).real
-                    w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
-                    v[0,:] = v[1,:]
-        else:
-            # Allocate tri-diagonal matrix elements
-            alpha = np.zeros(krylovSize, dtype=np.float)
-            beta = np.zeros(krylovSize-1, dtype=np.float)
-            # Allocate space for Krylov state vectors.
-            # Do not save all Krylov vectors to save memory.
-            v = np.zeros((2,n), dtype=np.complex)
-            # Express psi as a vector
-            for ps, amp in psi.items():
-                v[0, basis_index[ps]] = amp
-            # Initialization...
-            wp = h.dot(v[0,:])
-            alpha[0] = np.dot(np.conj(wp),v[0,:]).real
-            w = wp - alpha[0]*v[0,:]
-            # Construct Krylov states,
-            # and more importantly the vectors alpha and beta
-            for j in range(1,krylovSize):
-                beta[j-1] = sqrt(np.sum(np.abs(w)**2))
-                if beta[j-1] != 0:
-                    v[1,:] = w/beta[j-1]
-                else:
-                    # Pick normalized state v[j],
-                    # orthogonal to v[0],v[1],v[2],...,v[j-1]
-                    raise ValueError('Warning: beta==0, implementation absent!')
-                wp = h.dot(v[1,:])
-                alpha[j] = np.dot(np.conj(wp),v[1,:]).real
-                w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
-                v[0,:] = v[1,:]
+        # Express psi as a vector
+        psi0 = np.zeros(n, dtype=np.complex)
+        for ps, amp in psi.items():
+            psi0[basis_index[ps]] = amp
+        # Get tridiagonal elements of the Krylov Hamiltonian matrix. 
+        alpha, beta = get_tridiagonal_krylov_vectors(h, psi0, krylovSize,
+                                                     h_local, mode)    
     else:
         sys.exit("Value of variable 'mode' is incorrect.")
-
-    # Construct Green's function from
-    # continued fraction
+    # Construct Green's function from continued fraction.
     omegaP = omega + 1j*delta + e
     for i in range(krylovSize-1, -1, -1):
         if i == krylovSize - 1:
             g = 1./(omegaP - alpha[i])
         else:
             g = 1./(omegaP - alpha[i] - beta[i]**2*g)
-    if rank == 0:
-        print("time(G(w)) = {:.5f} seconds.".format(
-            time.time() - t0))
     return g
 
 

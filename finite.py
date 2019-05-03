@@ -18,6 +18,7 @@ from bisect import bisect_left
 from collections import OrderedDict
 import scipy.sparse
 from mpi4py import MPI
+import time
 
 
 from . import product_state_representation as psr
@@ -2059,19 +2060,17 @@ def get_hamiltonian_matrix_from_h_dict(h_dict, basis,
                 row.append(basis_index[k])
         h = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
     elif mode == 'sparse' and parallelization_mode == 'H_build':
-        h_local = scipy.sparse.csr_matrix(([],([],[])),shape=(n,n))
         # Loop over product states from the basis
         # which are also stored in h_dict.
+        data = []
+        row = []
+        col = []
         for ps in set(basis).intersection(h_dict.keys()):
-            data = []
-            row = []
-            col = []
             for k, v in h_dict[ps].items():
                 data.append(v)
                 col.append(basis_index[ps])
                 row.append(basis_index[k])
-            h_local += scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
-
+        h_local = scipy.sparse.csr_matrix((data,(row,col)),shape=(n,n))
         if return_h_local:
             h = h_local
         else:
@@ -2250,13 +2249,21 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_dict, hOp, basis0,
         where `|PS>` is a product state and i and integer.
 
     """
+    # Measure time to expand basis
+    if rank == 0: t0 = time.time()
     # Obtain tuple containing different product states.
     # Possibly add new product state keys to h_dict.
     basis = expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
                          parallelization_mode)
+    if rank == 0:
+        print('time(expand_basis) = {:.3f} seconds.'.format(time.time() - t0))
+        t0 = time.time()
     # Obtain Hamiltonian in matrix format.
     h, basis_index = get_hamiltonian_matrix_from_h_dict(
         h_dict, basis, parallelization_mode, return_h_local)
+    if rank == 0:
+        print('time(get_hamiltonian_matrix_from_h_dict) = {:.3f} seconds.'.format(time.time() - t0))
+        t0 = time.time()
 
     if parallelization_mode == 'H_build':
         # Total Hamiltonian size. Only used for printing it.
@@ -2275,6 +2282,109 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_dict, hOp, basis0,
                    + "len(h_dict) = {:d}, ".format(len(h_dict))))
 
     return h, basis_index
+
+
+def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False, 
+                                   mode='sparse'):    
+    r"""
+    return tridiagonal elements of the Krylov Hamiltonian matrix.
+
+    Parameters
+    ----------
+    h : sparse matrix (N,N)
+        Hamiltonian. 
+    psi0 : complex array(N)
+        Initial Krylov vector.
+    krylovSize : int
+        Size of the Krylov space.
+    mode : str
+        'dense' or 'sparse'
+        Option 'sparse' should be best.
+
+    """
+    if rank == 0:
+        # Measure time to get tridiagonal krylov vectors.
+        t0 = time.time()
+    # This is probably not a good idea in terms of computational speed
+    # since the Hamiltonians typically are extremely sparse.
+    if mode == "dense":
+        h = h.toarray()
+    # Number of basis states
+    n = len(psi0)
+    # Unnecessary (and impossible) to find more than n Krylov basis vectors.
+    krylovSize = min(krylovSize,n)
+        
+    # Allocate tri-diagonal matrix elements
+    alpha = np.zeros(krylovSize, dtype=np.float)
+    beta = np.zeros(krylovSize-1, dtype=np.float)
+    # Allocate space for Krylov state vectors.
+    # Do not save all Krylov vectors to save memory.
+    v = np.zeros((2,n), dtype=np.complex)
+    # Initialization...
+    v[0,:] = psi0
+
+    # Start with Krylov iterations.
+    if h_local:
+        if rank == 0: print('MPI parallelization in the Krylov loop...')
+        # The Hamiltonian matrix is distributed over MPI ranks,
+        # i.e. H = sum_r Hr
+        # This means a multiplication of the Hamiltonian matrix H
+        # with a vector x can be written as:
+        # y = H*x = sum_r Hr*x = sum_r y_r
+
+        # Initialization...
+        wp_local = h.dot(v[0,:])
+        # Reduce vector wp_local to the vector wp at rank 0.
+        wp = np.zeros_like(wp_local)
+        comm.Reduce(wp_local, wp)
+        if rank == 0:
+            alpha[0] = np.dot(np.conj(wp),v[0,:]).real
+            w = wp - alpha[0]*v[0,:]
+        # Construct Krylov states,
+        # and more importantly the vectors alpha and beta
+        for j in range(1,krylovSize):
+            if rank == 0:
+                beta[j-1] = sqrt(np.sum(np.abs(w)**2))
+                if beta[j-1] != 0:
+                    v[1,:] = w/beta[j-1]
+                else:
+                    # Pick normalized state v[j],
+                    # orthogonal to v[0],v[1],v[2],...,v[j-1]
+                    raise ValueError(('Warning: beta==0, '
+                                      + 'implementation absent!'))
+            # Broadcast vector v[1,:] from rank 0 to all ranks.
+            comm.Bcast(v[1,:], root=0)
+            wp_local = h.dot(v[1,:])
+            # Reduce vector wp_local to the vector wp at rank 0.
+            wp = np.zeros_like(wp_local)
+            comm.Reduce(wp_local, wp)
+            if rank == 0:
+                alpha[j] = np.dot(np.conj(wp),v[1,:]).real
+                w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
+                v[0,:] = v[1,:]
+    else:
+        # Initialization...
+        wp = h.dot(v[0,:])
+        alpha[0] = np.dot(np.conj(wp),v[0,:]).real
+        w = wp - alpha[0]*v[0,:]
+        # Construct Krylov states,
+        # and more importantly the vectors alpha and beta
+        for j in range(1,krylovSize):
+            beta[j-1] = sqrt(np.sum(np.abs(w)**2))
+            if beta[j-1] != 0:
+                v[1,:] = w/beta[j-1]
+            else:
+                # Pick normalized state v[j],
+                # orthogonal to v[0],v[1],v[2],...,v[j-1]
+                raise ValueError('Warning: beta==0, implementation absent!')
+            wp = h.dot(v[1,:])
+            alpha[j] = np.dot(np.conj(wp),v[1,:]).real
+            w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
+            v[0,:] = v[1,:]
+    if rank == 0: 
+        print('time(get_tridiagonal_krylov_vectors) = {:.5f} seconds.'.format(
+            time.time() - t0))
+    return alpha, beta
 
 
 def add(psi1,psi2,mul=1):
