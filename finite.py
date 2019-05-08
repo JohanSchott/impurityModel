@@ -14,7 +14,6 @@ from math import pi,sqrt
 import numpy as np
 from sympy.physics.wigner import gaunt
 import itertools
-from bisect import bisect_left
 from collections import OrderedDict
 import scipy.sparse
 from mpi4py import MPI
@@ -22,6 +21,8 @@ import time
 
 
 from . import product_state_representation as psr
+from . import create
+from . import remove
 from .average import k_B, thermal_average
 
 
@@ -416,207 +417,6 @@ def addToFirst(psi1, psi2, mul=1):
     		psi1[s] = a*mul
 
 
-def binary_search(a, x):
-    '''
-    Return index to the leftmost value exactly equal to x.
-
-    If x is not in the list, return -1.
-
-    '''
-    i = bisect_left(a, x)
-    return i if i != len(a) and a[i] == x else -1
-
-
-def binary_search_bigger(a, x):
-    '''
-    Return the index to the leftmost value bigger than x,
-    if x is not in the list.
-
-    If x is in the list, return -1.
-
-    '''
-    i = bisect_left(a, x)
-    return i if i == len(a) or a[i] != x else -1
-
-
-def remove_t(i, state):
-    '''
-    Remove electron at orbital i in state.
-
-    Parameters
-    ----------
-    i : int
-        Spin-orbital index
-    state : tuple
-        Product state.
-        Elements are indices of occupied orbitals.
-
-    Returns
-    -------
-    stateNew : tuple
-        Product state
-    amp : int
-        Amplitude
-
-    '''
-    j = binary_search(state,i)
-    if j != -1:
-        stateNew = state[:j] + state[j+1:]
-        amp = 1 if j%2 == 0 else -1
-        return stateNew, amp
-    else:
-        return (), 0
-
-
-def remove_i(n_spin_orbitals, i, state):
-    """
-    Remove electron at orbital i in state.
-
-    Parameters
-    ----------
-    n_spin_orbitals : int
-        Total number of spin-orbitals in the system.
-    i : int
-        Spin-orbital index
-    state : int
-        Product state.
-
-    Returns
-    -------
-    state_new : int
-        Product state
-    amp : int
-        Amplitude
-
-    """
-    binary = psr.int2binary(state, n_spin_orbitals)
-    if binary[i] == "0":
-        return -1, 0
-    elif binary[i] == "1":
-        state_new = state - 2**(n_spin_orbitals-i-1)
-        amp = 1 if binary[:i].count("1") % 2 == 0 else -1
-        return state_new, amp
-    else:
-        sys.exit("Binary representation of state is wrong.")
-
-def remove_b(i, state):
-    """
-    Remove electron at orbital i in state.
-
-    Parameters
-    ----------
-    i : int
-        Spin-orbital index
-    state : str
-        Product state.
-
-    Returns
-    -------
-    state_new : str
-        Product state
-    amp : int
-        Amplitude
-
-    """
-    if state[i] == "0":
-        return -1, 0
-    elif state[i] == "1":
-        state_new = state[:i] + "0" + state[i+1:]
-        amp = 1 if state[:i].count("1") % 2 == 0 else -1
-        return state_new, amp
-    else:
-        sys.exit("Binary representation of state is wrong.")
-
-
-def create_t(i, state):
-    '''
-    Create electron at orbital i in state.
-
-    Parameters
-    ----------
-    i : int
-        Spin-orbital index
-    state : tuple
-        Product state.
-        Elements are indices of occupied orbitals.
-
-    Returns
-    -------
-    stateNew : tuple
-        Product state
-    amp : int
-        Amplitude
-
-    '''
-    j = binary_search_bigger(state, i)
-    if j != -1:
-        amp = 1 if j%2==0 else -1
-        cstate = state[:j] + (i,) + state[j:]
-        return cstate, amp
-    else:
-        return (), 0
-
-
-def create_i(n_spin_orbitals, i, state):
-    """
-    Create electron at orbital i in state.
-
-    Parameters
-    ----------
-    n_spin_orbitals : int
-        Total number of spin-orbitals in the system.
-    i : int
-        Spin-orbital index.
-    state : int
-        Product state.
-
-    Returns
-    -------
-    stateNew : int
-        Product state.
-    amp : int
-        Amplitude.
-
-    """
-    binary = psr.int2binary(state, n_spin_orbitals)
-    if binary[i] == "1":
-        return -1, 0
-    elif binary[i] == "0":
-        state_new = state + 2**(n_spin_orbitals-i-1)
-        amp = 1 if binary[:i].count("1") % 2 == 0 else -1
-        return state_new, amp
-    else:
-        sys.exit("Binary representation of state is wrong.")
-
-def create_b(i, state):
-    """
-    Create electron at orbital i in state.
-
-    Parameters
-    ----------
-    i : int
-        Spin-orbital index.
-    state : str
-        Product state.
-
-    Returns
-    -------
-    stateNew : str
-        Product state.
-    amp : int
-        Amplitude.
-
-    """
-    if state[i] == "1":
-        return -1, 0
-    elif state[i] == "0":
-        state_new = state[:i] + "1" + state[i+1:]
-        amp = 1 if state[:i].count("1") % 2 == 0 else -1
-        return state_new, amp
-    else:
-        sys.exit("Binary representation of state is wrong.")
-
-
 def a(n_spin_orbitals, i, psi):
     r'''
     Return :math:`|psi' \rangle = c_i |psi \rangle`.
@@ -638,7 +438,7 @@ def a(n_spin_orbitals, i, psi):
     '''
     ret={}
     for state, amp in psi.items():
-        state_new, sign = remove_i(n_spin_orbitals, i, state)
+        state_new, sign = remove.uint(n_spin_orbitals, i, state)
         if sign != 0: ret[state_new] = amp*sign
     return ret
 
@@ -664,7 +464,7 @@ def c(n_spin_orbitals, i, psi):
     '''
     ret={}
     for state, amp in psi.items():
-        state_new, sign = create_i(n_spin_orbitals, i, state)
+        state_new, sign = create.uint(n_spin_orbitals, i, state)
         if sign != 0: ret[state_new] = amp*sign
     return ret
 
@@ -1120,12 +920,12 @@ def getTraceDensityMatrix(nBaths, psi, l=2):
     n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     n = 0
     for state, amp in psi.items():
-        binary = psr.int2binary(state, n_spin_orbitals)
+        s = psr.int2str(state, n_spin_orbitals)
         nState = 0
         for m in range(-l,l+1):
-            for s in range(2):
-                i = c2i(nBaths,(l,m,s))
-                if binary[i] == "1":
+            for spin in range(2):
+                i = c2i(nBaths,(l,m,spin))
+                if s[i] == "1":
                     nState += 1
         nState *= abs(amp)**2
         n += nState
@@ -1745,7 +1545,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
-            binary = psr.int2binary(state, n_spin_orbitals)
+            binary = psr.int2str(state, n_spin_orbitals)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
@@ -1753,20 +1553,20 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                 signTot = 1
                 for i, action in process[-1::-1]:
                     if action == 'a':
-                        stateB_binary, sign = remove_b(i, stateA_binary)
+                        stateB_binary, sign = remove.ustr(i, stateA_binary)
                     elif action == 'c':
-                        stateB_binary, sign = create_b(i, stateA_binary)
+                        stateB_binary, sign = create.ustr(i, stateA_binary)
                     if sign == 0:
                         break
                     stateA_binary = stateB_binary
                     signTot *= sign
                 else:
-                    stateB = psr.binary2int(stateB_binary)
+                    stateB = psr.str2int(stateB_binary)
                     if stateB in psiNew:
                         psiNew[stateB] += amp*h*signTot
                     else:
                         # Convert product state to the tuple representation.
-                        stateB_tuple = psr.binary2tuple(stateB_binary)
+                        stateB_tuple = psr.str2tuple(stateB_binary)
                         #sB_t = psr.int2tuple(sB, n_spin_orbitals)
                         # Check that product state sB fulfills
                         # occupation restrictions.
@@ -1781,7 +1581,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
-            binary = psr.int2binary(state, n_spin_orbitals)
+            binary = psr.int2str(state, n_spin_orbitals)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
@@ -1789,15 +1589,15 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                 signTot = 1
                 for i, action in process[-1::-1]:
                     if action == 'a':
-                        stateB_binary, sign = remove_b(i, stateA_binary)
+                        stateB_binary, sign = remove.ustr(i, stateA_binary)
                     elif action == 'c':
-                        stateB_binary, sign = create_b(i, stateA_binary)
+                        stateB_binary, sign = create.ustr(i, stateA_binary)
                     if sign == 0:
                         break
                     stateA_binary = stateB_binary
                     signTot *= sign
                 else:
-                    stateB = psr.binary2int(stateB_binary)
+                    stateB = psr.str2int(stateB_binary)
                     if stateB in psiNew:
                         psiNew[stateB] += amp*h*signTot
                     else:
@@ -1809,7 +1609,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             if state in opResult:
                 addToFirst(psiNew, opResult[state], amp)
             else:
-                binary = psr.int2binary(state, n_spin_orbitals)
+                binary = psr.int2str(state, n_spin_orbitals)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
@@ -1820,15 +1620,15 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                     signTot = 1
                     for i, action in process[-1::-1]:
                         if action == 'a':
-                            stateB_binary, sign = remove_b(i, stateA_binary)
+                            stateB_binary, sign = remove.ustr(i, stateA_binary)
                         elif action == 'c':
-                            stateB_binary, sign = create_b(i, stateA_binary)
+                            stateB_binary, sign = create.ustr(i, stateA_binary)
                         if sign == 0:
                             break
                         stateA_binary = stateB_binary
                         signTot *= sign
                     else:
-                        stateB = psr.binary2int(stateB_binary)
+                        stateB = psr.str2int(stateB_binary)
                         if stateB in psiNew:
                             # Occupations ok, so add contributions
                             psiNew[stateB] += amp*h*signTot
@@ -1838,7 +1638,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                                 opResult[state][stateB] = h*signTot
                         else:
                             # Convert product state to the tuple representation.
-                            stateB_tuple = psr.binary2tuple(stateB_binary)
+                            stateB_tuple = psr.str2tuple(stateB_binary)
                             # Check that product state sB fulfills the
                             # occupation restrictions.
                             for restriction,occupations in restrictions.items():
@@ -1856,7 +1656,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             if state in opResult:
                 addToFirst(psiNew, opResult[state], amp)
             else:
-                binary = psr.int2binary(state, n_spin_orbitals)
+                binary = psr.int2str(state, n_spin_orbitals)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
@@ -1867,15 +1667,15 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                     signTot = 1
                     for i, action in process[-1::-1]:
                         if action == 'a':
-                            stateB_binary, sign = remove_b(i, stateA_binary)
+                            stateB_binary, sign = remove.ustr(i, stateA_binary)
                         elif action == 'c':
-                            stateB_binary, sign = create_b(i, stateA_binary)
+                            stateB_binary, sign = create.ustr(i, stateA_binary)
                         if sign == 0:
                             break
                         stateA_binary = stateB_binary
                         signTot *= sign
                     else:
-                        stateB = psr.binary2int(stateB_binary)
+                        stateB = psr.str2int(stateB_binary)
                         if stateB in opResult[state]:
                             opResult[state][stateB] += h*signTot
                         else:
@@ -2423,3 +2223,4 @@ def norm2(psi):
 
     '''
     return sum(abs(a)**2 for a in psi.values())
+

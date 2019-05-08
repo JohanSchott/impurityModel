@@ -12,5 +12,7 @@ from . import finite
 from . import spectra
 from . import average
 from . import product_state_representation
+from . import create
+from . import remove
 from . import mpi_comm
 
