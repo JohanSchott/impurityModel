@@ -49,7 +49,7 @@ def utuple(i, state):
     stateNew : tuple
         Product state
     amp : int
-        Amplitude
+        Amplitude. 0, -1 or 1.
 
     '''
     j = binary_search(state,i)
@@ -79,7 +79,7 @@ def uint(n_spin_orbitals, i, state):
     state_new : int
         Product state
     amp : int
-        Amplitude
+        Amplitude. 0, -1 or 1.
 
     """
     # String representation of product state.
@@ -110,11 +110,11 @@ def ustr(i, state):
     state_new : str
         Product state
     amp : int
-        Amplitude
+        Amplitude. 0, -1 or 1.
 
     """
     if state[i] == "0":
-        return -1, 0
+        return "", 0
     elif state[i] == "1":
         state_new = state[:i] + "0" + state[i+1:]
         amp = 1 if state[:i].count("1") % 2 == 0 else -1
@@ -137,7 +137,7 @@ def ubitarray(i, state):
     Returns
     -------
     amp : int
-        Amplitude. Sign, i.e. -1 or 1.
+        Amplitude. 0, -1 or 1.
 
     """
     if state[i]:
@@ -147,4 +147,31 @@ def ubitarray(i, state):
         return 1 if state[:i].count() % 2 == 0 else -1
     else:
         return 0
+
+def ubytes(i, state):
+    """
+    Remove electron at orbital i in state.
+
+    Parameters
+    ----------
+    i : int
+        Spin-orbital index
+    state : bytes
+        Product state.
+
+    Returns
+    -------
+    state_new : bytes
+        Product state.
+    amp : int
+        Amplitude. 0, -1 or 1.
+
+    """
+    # bitarray representation of product state.
+    bits = psr.bytes2bitarray(state)
+    # remove an electron at spin-orbital index i.
+    amp = ubitarray(i, bits)
+    # Convert back the updated product state to bytes representation.
+    state_new = psr.bitarray2bytes(bits)
+    return state_new, amp
 

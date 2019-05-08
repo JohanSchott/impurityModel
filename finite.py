@@ -368,7 +368,9 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     # Two explicit loops is only valid for two impurity blocks
     for b1 in basisL[l1]:
         for b2 in basisL[l2]:
-            basis.append(psr.tuple2int(tuple(sorted(b1+b2)), n_spin_orbitals))
+            # Convert product state representation from a tuple to a object 
+            # of the class bytes. Then add this product state to the basis.
+            basis.append(psr.tuple2bytes(tuple(sorted(b1+b2)), n_spin_orbitals))
     return tuple(basis)
 
 
@@ -438,7 +440,7 @@ def a(n_spin_orbitals, i, psi):
     '''
     ret={}
     for state, amp in psi.items():
-        state_new, sign = remove.uint(n_spin_orbitals, i, state)
+        state_new, sign = remove.ubytes(i, state)
         if sign != 0: ret[state_new] = amp*sign
     return ret
 
@@ -464,7 +466,7 @@ def c(n_spin_orbitals, i, psi):
     '''
     ret={}
     for state, amp in psi.items():
-        state_new, sign = create.uint(n_spin_orbitals, i, state)
+        state_new, sign = create.ubytes(i, state)
         if sign != 0: ret[state_new] = amp*sign
     return ret
 
@@ -785,7 +787,7 @@ def getLz3d(nBaths, psi):
     Lz = 0
     for state, amp in psi.items():
         tmp = 0
-        for i in psr.int2tuple(state, n_spin_orbitals):
+        for i in psr.bytes2tuple(state):
             spinOrb = i2c(nBaths,i)
             if len(spinOrb)==3 and spinOrb[0]==2:
                 tmp += spinOrb[1]
@@ -810,7 +812,7 @@ def getSz3d(nBaths, psi):
     Sz = 0
     for state,amp in psi.items():
         tmp = 0
-        for i in psr.int2tuple(state, n_spin_orbitals):
+        for i in psr.bytes2tuple(state):
             spinOrb = i2c(nBaths,i)
             if len(spinOrb)==3 and spinOrb[0]==2:
                 tmp += -1/2. if spinOrb[2]==0 else 1/2.
@@ -920,7 +922,7 @@ def getTraceDensityMatrix(nBaths, psi, l=2):
     n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
     n = 0
     for state, amp in psi.items():
-        s = psr.int2str(state, n_spin_orbitals)
+        s = psr.bytes2str(state)
         nState = 0
         for m in range(-l,l+1):
             for spin in range(2):
@@ -1545,29 +1547,27 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
-            binary = psr.int2str(state, n_spin_orbitals)
+            bits = psr.bytes2bitarray(state)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
-                stateA_binary = binary
+                state_new = bits.copy()
                 signTot = 1
                 for i, action in process[-1::-1]:
                     if action == 'a':
-                        stateB_binary, sign = remove.ustr(i, stateA_binary)
+                        sign = remove.ubitarray(i, state_new)
                     elif action == 'c':
-                        stateB_binary, sign = create.ustr(i, stateA_binary)
+                        sign = create.ubitarray(i, state_new)
                     if sign == 0:
                         break
-                    stateA_binary = stateB_binary
                     signTot *= sign
                 else:
-                    stateB = psr.str2int(stateB_binary)
+                    stateB = psr.bitarray2bytes(state_new)
                     if stateB in psiNew:
                         psiNew[stateB] += amp*h*signTot
                     else:
                         # Convert product state to the tuple representation.
-                        stateB_tuple = psr.str2tuple(stateB_binary)
-                        #sB_t = psr.int2tuple(sB, n_spin_orbitals)
+                        stateB_tuple = psr.bitarray2tuple(state_new)
                         # Check that product state sB fulfills
                         # occupation restrictions.
                         for restriction, occupations in restrictions.items():
@@ -1581,23 +1581,22 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
-            binary = psr.int2str(state, n_spin_orbitals)
+            bits = psr.bytes2bitarray(state)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
-                stateA_binary = binary
+                state_new = bits.copy()
                 signTot = 1
                 for i, action in process[-1::-1]:
                     if action == 'a':
-                        stateB_binary, sign = remove.ustr(i, stateA_binary)
+                        sign = remove.ubitarray(i, state_new)
                     elif action == 'c':
-                        stateB_binary, sign = create.ustr(i, stateA_binary)
+                        sign = create.ubitarray(i, state_new)
                     if sign == 0:
                         break
-                    stateA_binary = stateB_binary
                     signTot *= sign
                 else:
-                    stateB = psr.str2int(stateB_binary)
+                    stateB = psr.bitarray2bytes(state_new)
                     if stateB in psiNew:
                         psiNew[stateB] += amp*h*signTot
                     else:
@@ -1609,26 +1608,25 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             if state in opResult:
                 addToFirst(psiNew, opResult[state], amp)
             else:
-                binary = psr.int2str(state, n_spin_orbitals)
+                bits = psr.bytes2bitarray(state)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
                 for process, h in op.items():
                     #assert h != 0
                     # Initialize state
-                    stateA_binary = binary
+                    state_new = bits.copy()
                     signTot = 1
                     for i, action in process[-1::-1]:
                         if action == 'a':
-                            stateB_binary, sign = remove.ustr(i, stateA_binary)
+                            sign = remove.ubitarray(i, state_new)
                         elif action == 'c':
-                            stateB_binary, sign = create.ustr(i, stateA_binary)
+                            sign = create.ubitarray(i, state_new)
                         if sign == 0:
                             break
-                        stateA_binary = stateB_binary
                         signTot *= sign
                     else:
-                        stateB = psr.str2int(stateB_binary)
+                        stateB = psr.bitarray2bytes(state_new)
                         if stateB in psiNew:
                             # Occupations ok, so add contributions
                             psiNew[stateB] += amp*h*signTot
@@ -1638,7 +1636,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                                 opResult[state][stateB] = h*signTot
                         else:
                             # Convert product state to the tuple representation.
-                            stateB_tuple = psr.str2tuple(stateB_binary)
+                            stateB_tuple = psr.bitarray2tuple(state_new)
                             # Check that product state sB fulfills the
                             # occupation restrictions.
                             for restriction,occupations in restrictions.items():
@@ -1656,26 +1654,25 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             if state in opResult:
                 addToFirst(psiNew, opResult[state], amp)
             else:
-                binary = psr.int2str(state, n_spin_orbitals)
+                bits = psr.bytes2bitarray(state)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
                 for process, h in op.items():
                     #assert h != 0
                     # Initialize state
-                    stateA_binary = binary
+                    state_new = bits.copy()
                     signTot = 1
                     for i, action in process[-1::-1]:
                         if action == 'a':
-                            stateB_binary, sign = remove.ustr(i, stateA_binary)
+                            sign = remove.ubitarray(i, state_new)
                         elif action == 'c':
-                            stateB_binary, sign = create.ustr(i, stateA_binary)
+                            sign = create.ubitarray(i, state_new)
                         if sign == 0:
                             break
-                        stateA_binary = stateB_binary
                         signTot *= sign
                     else:
-                        stateB = psr.str2int(stateB_binary)
+                        stateB = psr.bitarray2bytes(state_new)
                         if stateB in opResult[state]:
                             opResult[state][stateB] += h*signTot
                         else:
