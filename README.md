@@ -21,7 +21,7 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 </figure>
 
 ### Get started
-- Python 3.x is needed with libraries `mpi4py`, `numpy`, `sympy`, and `scipy`. 
+- Python 3.x is needed with libraries `mpi4py`, `bitarray`, `numpy`, `sympy`, and `scipy`. 
 The Python library `h5py` is recommended but not necessary. 
 For help in installing Python 3.x and/or Python libraries, please see e.g. 
 [https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
@@ -84,7 +84,10 @@ This is done to reduce memory usage per MPI rank.
 A product state with electrons in spin-orbitals with indices e.g. 2 and 5 can be described by the tuple: (2,5). 
 If the system has 7 spin-orbitals in total, the product state can also be described by the binary-string "0010010".
 The product state can also be translated into the base-2 integer 2^(7-1-2) + 2^(7-1-5) = 2^4 + 2^1 = 16+2 = 18.
-With many electrons the integer representation is the most memory efficient format, and is used in the current version.
+With many electrons the integer representation is a more memory efficient format.
+Bitarray is a class which also can be used to represent a product state. 
+It is mutable which enables fast modifications (adding and removing electrons), and is used in the current version.
+To keep the memory usage down, an imutable bytes class is also used in the current version.
 
 ### Documentation
 The documentation of this package is found in the directory `docs`.
