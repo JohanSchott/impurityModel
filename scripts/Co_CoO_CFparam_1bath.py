@@ -40,50 +40,50 @@ def main():
     # Angular momentum : initial impurity occupation
     n0imp = OrderedDict()
     n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
-    n0imp[l2] = 5 # 8 for Ni+2
+    n0imp[l2] = 7 # 8 for Ni+2
     # Angular momentum : max devation from initial impurity occupation
     dnTol = OrderedDict()
     dnTol[l1] = 0
     dnTol[l2] = 2
-    # Angular momentum : max number of electrons to leave 
-    # valence bath orbitals 
+    # Angular momentum : max number of electrons to leave
+    # valence bath orbitals
     dnValBaths = OrderedDict()
     dnValBaths[l1] = 0
-    dnValBaths[l2] = 2 
-    # Angular momentum : max number of electrons to enter 
-    # conduction bath orbitals 
+    dnValBaths[l2] = 2
+    # Angular momentum : max number of electrons to enter
+    # conduction bath orbitals
     dnConBaths = OrderedDict()
     dnConBaths[l1] = 0
     dnConBaths[l2] = 0
     # -----------------------
     # Hamiltonian parameters
     # Slater-Condon parameters
-    Fdd = [6.0, 0, 9.0, 0, 6.1]
+    Fdd = [7.0, 0, 9.6, 0, 6.4]
     Fpp = [0, 0, 0]
-    Fpd = [7.5, 0, 5.6]
-    Gpd = [0, 4.0, 0, 2.3] 
+    Fpd = [8.0, 0, 6.4]
+    Gpd = [0, 4.6, 0, 2.6] 
     # SOC values
-    xi_2p = 6.936
-    xi_3d = 0.051
+    xi_2p = 9.859
+    xi_3d = 0.079
     # Double counting parameter
     chargeTransferCorrection = 1.5
     # Onsite 3d energy parameters
-    eImp3d = -0.463
-    deltaO = 0.638
+    eImp3d = -0.802
+    deltaO = 0.612
     # Magnetic field
     hField = [0, 0, 0.0001] # 0.120*np.array([1,1,2])/np.sqrt(6) # [0,0,0.00001]
     # Bath energies and hoppings for 3d orbitals
-    eValEg = -4.8
-    eValT2g = -6.7
+    eValEg = -4.5
+    eValT2g = -6.5
     eConEg = 3
     eConT2g = 2
-    vValEg = 1.910
-    vValT2g = 1.408
+    vValEg = 1.919
+    vValT2g = 1.412
     vConEg = 0.6
     vConT2g = 0.4
     # -----------------------
     # Maximum number of eigenstates to consider
-    nPsiMax = 7
+    nPsiMax = 13
     # -----------------------
     # Printing parameters
     nPrintSlaterWeights = 3
@@ -140,7 +140,7 @@ def main():
     liNIXS,ljNIXS = 2,2
     # File name of file containing radial mesh and radial part of final 
     # and initial orbitals in the NIXS excitation process.
-    radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Mn3d.dat'
+    radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Co3d.dat'
     data = np.loadtxt(radialFileName)
     radialMesh = data[:,0]
     RiNIXS = data[:,1]
@@ -233,7 +233,7 @@ def main():
                             deltaRIXS=deltaRIXS,
                             deltaNIXS=deltaNIXS,
                             n_spin_orbitals=n_spin_orbitals,
-                            hOp=hOp) 
+                            hOp=hOp)
         # Save some of the arrays.
         if printH5:
             import h5py
@@ -247,7 +247,7 @@ def main():
             h5f.create_dataset('r',data=radialMesh)
             h5f.create_dataset('RiNIXS',data=RiNIXS)
             h5f.create_dataset('RjNIXS',data=RjNIXS)
-        else: 
+        else:
             np.savez_compressed('spectraInfo', E=es, w=w, wIn=wIn, wLoss=wLoss,
                                 qsNIXS=qsNIXS, r=radialMesh, RiNIXS=RiNIXS,
                                 RjNIXS=RjNIXS)
@@ -295,7 +295,6 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-
     if rank == 0: 
         print("time(PS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
@@ -329,7 +328,6 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-   
     if rank == 0: 
         print("time(XPS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
@@ -397,7 +395,6 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-
     if rank == 0: 
         print("time(XAS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
@@ -436,13 +433,13 @@ def main():
         tmp[1:,0] = wLoss
         tmp[1:,1:] = aSum.T
         tmp.tofile('RIXS.bin')
-
     if rank == 0: 
         print("time(RIXS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
     if rank == 0 and printH5: h5f.close()
     print('Script finished for rank:',rank)
+
 
 def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
                            DCinfo, impurityInfo, hField,
@@ -465,7 +462,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     impurityInfo : list
         Contains information of 3d single particle energies.
     hField : list
-        External magnetic field.  
+        External magnetic field.
         Elements hx,hy,hz
     vHoppings : list
         Contains information about hybridization hoppings.

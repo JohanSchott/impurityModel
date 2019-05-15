@@ -11,11 +11,11 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 <figure>
 <div class="row"> 
   <div class="column">
-  <img src="reference_output/Ni_NiO_1bath/ps.png" alt="Photoemission (PS)" width="150"/>
-  <img src="reference_output/Ni_NiO_1bath/xps.png" alt="X-ray photoemission (XPS)" width="150"/>
-  <img src="reference_output/Ni_NiO_1bath/xas.png" alt="X-ray absorption spectroscopy (XAS)" width="150"/>
-  <img src="reference_output/Ni_NiO_1bath/nixs.png" alt="Non-resonant inelastic x-ray scattering (NIXS)" width="150"/>
-  <img src="reference_output/Ni_NiO_1bath/rixs.png" alt="Resonant inelastic x-ray scattering (RIXS)" width="150"/>  </div>
+  <img src="referenceOutput/Ni_NiO_CFparam_1bath/ps.png" alt="Photoemission (PS)" width="150"/>
+  <img src="referenceOutput/Ni_NiO_CFparam_1bath/xps.png" alt="X-ray photoemission (XPS)" width="150"/>
+  <img src="referenceOutput/Ni_NiO_CFparam_1bath/xas.png" alt="X-ray absorption spectroscopy (XAS)" width="150"/>
+  <img src="referenceOutput/Ni_NiO_CFparam_1bath/nixs.png" alt="Non-resonant inelastic x-ray scattering (NIXS)" width="150"/>
+  <img src="referenceOutput/Ni_NiO_CFparam_1bath/rixs.png" alt="Resonant inelastic x-ray scattering (RIXS)" width="150"/>  </div>
 </div>
 <figcaption>Spectra of NiO using one bath orbital per 3d orbital.</figcaption>
 </figure>
@@ -39,12 +39,23 @@ export PATH=$PATH:path/to/folder/impurityModel/plotScripts
 
 - Create a directory somewhere and execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
 ```bash
-Ni_NiO_1bath.py 
+Ni_NiO_CFparam_1bath.py
 ```
 or for usage of more than one MPI process, type e.g.:
 ```bash
-mpirun -n 3 Ni_NiO_1bath.py 
+mpirun -n 25 Ni_NiO_CFparam_1bath.py
 ```
+The phrase `CFparam` in the filename `Ni_NiO_CFparam_1bath.py` indicates that the Hamiltonian is constructed by crystal-field parameters. 
+Using a crystal-field notation is convinient when doing fitting to experimental spectra. But when many bath states are used it is perhaps more convienient to read-in the non-interacting Hamiltonian from an external file. This non-interacting Hamiltonian can for example be constructed using DFT or DFT+DMFT calculations. 
+For example, to read an non-interacting Hamiltonian, with 10 bath states per impurity orbital, for NiO and simulate various spectra, type:
+```bash
+Ni_NiO_10bath.py
+```
+or for usage of more than one MPI process, type e.g.:
+```bash
+mpirun -n 25  Ni_NiO_10bath.py
+```
+
 
 #### Output files
 Input parameters used are saved and stored in `.npz` format.
