@@ -31,12 +31,12 @@ def main():
     with open(h0FileName, 'rb') as handle:
         h0_operator = pickle.loads(handle.read())
     # System specific information
-    l1,l2 = 1,2 # Angular momentum
-    # Number of bath sets
+    l1, l2 = 1, 2 # Angular momentum
+    # Number of bath states.
     nBaths = OrderedDict()
     nBaths[l1] = 0
     nBaths[l2] = 10
-    # Number of valence bath sets
+    # Number of valence bath states.
     valBaths = OrderedDict()
     valBaths[l1] = 0
     valBaths[l2] = 10
@@ -97,22 +97,17 @@ def main():
     l = 2
     restrictions = {}
     # Restriction on impurity orbitals
-    indices = frozenset(c2i(nBaths,(l,m,s)) for m in range(-l,l+1) for s in range(2))
+    indices = frozenset(c2i(nBaths,(l,s,m)) for s in range(2) for m in range(-l,l+1))
     restrictions[indices] = (n0imp[l] - 1, n0imp[l] + 3)
     # Restriction on valence bath orbitals
     indices = []
-    for m in range(-l,l+1):
-        for s in range(2):
-            for bathset in range(valBaths[l]):
-                indices.append(c2i(nBaths,(l,m,s,bathset)))
-    restrictions[frozenset(indices)] = (valBaths[l]*2*(2*l+1) - 2,
-                                        valBaths[l]*2*(2*l+1))
+    for b in range(valBaths[l]):
+        indices.append(c2i(nBaths, (l, b)))
+    restrictions[frozenset(indices)] = (valBaths[l] - 2, valBaths[l])
     # Restriction on conduction bath orbitals
     indices = []
-    for m in range(-l,l+1):
-        for s in range(2):
-            for bathset in range(valBaths[l],nBaths[l]):
-                indices.append(c2i(nBaths,(l,m,s,bathset)))
+    for b in range(valBaths[l], nBaths[l]):
+        indices.append(c2i(nBaths, (l, b)))
     restrictions[frozenset(indices)] = (0, 0)
     # XAS polarization vectors.
     epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
@@ -141,7 +136,7 @@ def main():
     # -----------------------
 
     # Total number of spin-orbitals in the system
-    n_spin_orbitals = sum(2*(2*ang+1)*(1+nset) for ang, nset in nBaths.items())
+    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
     if rank == 0: print("#spin-orbitals:",n_spin_orbitals)
 
     # Hamiltonian
@@ -150,6 +145,8 @@ def main():
                                    [xi_2p, xi_3d],
                                    [n0imp, chargeTransferCorrection],
                                    hField, h0_operator)
+    # Measure how many physical processes the Hamiltonian contains.
+    if rank == 0: print('{:d} processes in the Hamiltonian.'.format(len(hOp)))
     # Many body basis for the ground state
     if rank == 0: print('Create basis...')
     basis = finite.get_basis(nBaths, valBaths, dnValBaths, dnConBaths,
@@ -390,9 +387,9 @@ def main():
 
     if rank == 0: print('Create RIXS spectra...')
     # Dipole 2p -> 3d transition operators
-    tOpsIn = spectra.getDipoleOperators(nBaths,epsilonsRIXSin)
+    tOpsIn = spectra.getDipoleOperators(nBaths, epsilonsRIXSin)
     # Dipole 3d -> 2p transition operators
-    tOpsOut = spectra.getDaggeredDipoleOperators(nBaths,epsilonsRIXSout)
+    tOpsOut = spectra.getDaggeredDipoleOperators(nBaths, epsilonsRIXSout)
     # Green's function
     gs = spectra.getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es,
                             wIn, wLoss, delta, deltaRIXS, restrictions)
@@ -431,16 +428,16 @@ def main():
 
 
 def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
-                           DCinfo, hField, h0_operator):
+                             DCinfo, hField, h0_operator):
     """
     Return the Hamiltonian, in operator form.
 
     Parameters
     ----------
     nBaths : dict
-        Number of bath sets for each angular momentum.
+        Number of bath states for each angular momentum.
     nBaths : dict
-        Number of valence bath sets for each angular momentum.
+        Number of valence bath states for each angular momentum.
     slaterCondon : list
         List of Slater-Condon parameters.
     SOCs : list
@@ -455,8 +452,8 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
         tuple : complex,
         where each tuple describes a process of several steps.
         Each step is described by a tuple of the form:
-        (spin_orb,'c') or (spin_orb,'a'),
-        where spin_orb is a tuple of the form (l,m,s) or (l,m,s,bath_set).
+        (spin_orb, 'c') or (spin_orb, 'a'),
+        where spin_orb is a tuple of the form (l, s, m) or (l, b) or ((l_a, l_b), b).
 
     Returns
     -------
@@ -469,51 +466,50 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
 
     """
     # Divide up input parameters to more concrete variables
-    Fdd,Fpp,Fpd,Gpd = slaterCondon
-    xi_2p,xi_3d = SOCs
-    n0imp,chargeTransferCorrection = DCinfo
-    hx,hy,hz = hField
+    Fdd, Fpp, Fpd, Gpd = slaterCondon
+    xi_2p, xi_3d = SOCs
+    n0imp, chargeTransferCorrection = DCinfo
+    hx, hy, hz = hField
 
-    # Calculate U operator
-    uOperator = finite.get2p3dSlaterCondonUop(Fdd=Fdd,Fpp=Fpp,
-                                              Fpd=Fpd,Gpd=Gpd)
-    # Add SOC
-    SOC2pOperator = finite.getSOCop(xi_2p,l=1)
-    SOC3dOperator = finite.getSOCop(xi_3d,l=2)
+    # Calculate the U operator, in spherical harmonics basis. 
+    uOperator = finite.get2p3dSlaterCondonUop(Fdd=Fdd, Fpp=Fpp,
+                                              Fpd=Fpd, Gpd=Gpd)
+    # Add SOC, in spherical harmonics basis.
+    SOC2pOperator = finite.getSOCop(xi_2p, l=1)
+    SOC3dOperator = finite.getSOCop(xi_3d, l=2)
 
-    # Double counting (DC) correction
+    # Double counting (DC) correction values.
     # MLFT DC
-    dc = finite.dc_MLFT(n3d_i=n0imp[2],c=chargeTransferCorrection,Fdd=Fdd,
-                        n2p_i=n0imp[1],Fpd=Fpd,Gpd=Gpd)
+    dc = finite.dc_MLFT(n3d_i=n0imp[2], c=chargeTransferCorrection, Fdd=Fdd,
+                        n2p_i=n0imp[1], Fpd=Fpd, Gpd=Gpd)
     eDCOperator = {}
-    for il,l in enumerate([2,1]):
-        for m in range(-l,l+1):
-            for s in range(2):
-                eDCOperator[(((l,m,s),'c'),((l,m,s),'a'))] = -dc[il]
-
+    for il, l in enumerate([2,1]):
+        for s in range(2):
+            for m in range(-l, l+1):
+                eDCOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = -dc[il]
 
     # Magnetic field
     hHfieldOperator = {}
-    for m in range(-l,l+1):
-        hHfieldOperator[(((l,m,1),'c'),((l,m,0),'a'))] = hx*1/2.
-        hHfieldOperator[(((l,m,0),'c'),((l,m,1),'a'))] = hx*1/2.
-        hHfieldOperator[(((l,m,1),'c'),((l,m,0),'a'))] = -hy*1/2.*1j
-        hHfieldOperator[(((l,m,0),'c'),((l,m,1),'a'))] = hy*1/2.*1j
+    l = 2
+    for m in range(-l, l+1):
+        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = hx*1/2.
+        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hx*1/2.
+        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = -hy*1/2.*1j
+        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hy*1/2.*1j
         for s in range(2):
-            hHfieldOperator[(((l,m,s),'c'),((l,m,s),'a'))] = hz*1/2. if s==1 else -hz*1/2.
+            hHfieldOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = hz*1/2 if s==1 else -hz*1/2
 
-
-    # Add Hamiltonian terms to one operator
+    # Add Hamiltonian terms to one operator.
     hOperator = finite.addOps([uOperator,
                                hHfieldOperator,
                                SOC2pOperator,
                                SOC3dOperator,
                                eDCOperator,
                                h0_operator])
-    # Convert spin-orbital indices to a single index
+    # Convert spin-orbital and bath state indices to a single index notation.
     hOp = {}
     for process,value in hOperator.items():
-        hOp[tuple((c2i(nBaths,spinOrb),action) for spinOrb,action in process)] = value
+        hOp[tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)] = value
     return hOp
 
 

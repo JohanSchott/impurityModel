@@ -38,14 +38,14 @@ def getDipoleOperators(nBaths,ns):
     Parameters
     ----------
     nBaths : dict
-        angular momentum: number of bath sets
+        angular momentum: number of bath states.
     ns : list
         Each element contains a polarization vector n = [nx,ny,nz]
 
     '''
     tOps = []
     for n in ns:
-        tOps.append(getDipoleOperator(nBaths,n))
+        tOps.append(getDipoleOperator(nBaths, n))
     return tOps
 
 
@@ -56,14 +56,14 @@ def getDaggeredDipoleOperators(nBaths,ns):
     Parameters
     ----------
     nBaths : dict
-        angular momentum: number of bath sets
+        angular momentum: number of bath states.
     ns : list
         Each element contains a polarization vector n = [nx,ny,nz]
 
     '''
     tDaggerOps = []
     for n in ns:
-        tDaggerOps.append(daggerOp(getDipoleOperator(nBaths,n)))
+        tDaggerOps.append(daggerOp(getDipoleOperator(nBaths, n)))
     return tDaggerOps
 
 
@@ -78,17 +78,17 @@ def getDipoleOperator(nBaths,n):
     ----------
     nBaths : Ordered dict
         int : int,
-        where the keys are angular momenta and values are number of bath sets.
+        where the keys are angular momenta and values are number of bath states.
     n : list
         polarization vector n = [nx,ny,nz]
 
     '''
     tOp = {}
-    nDict = {-1:(n[0]+1j*n[1])/sqrt(2),0:n[2],1:(-n[0]+1j*n[1])/sqrt(2)}
+    nDict = {-1:(n[0]+1j*n[1])/sqrt(2), 0:n[2], 1:(-n[0]+1j*n[1])/sqrt(2)}
     # Angular momentum
-    l1,l2 = nBaths.keys()
-    for m in range(-l2,l2+1):
-        for mp in range(-l1,l1+1):
+    l1, l2 = nBaths.keys()
+    for m in range(-l2, l2+1):
+        for mp in range(-l1, l1+1):
             for s in range(2):
                 if abs(m-mp) <= 1:
                     # See Robert Eder's lecture notes:
@@ -98,16 +98,16 @@ def getDipoleOperator(nBaths,n):
                     # d - radial integral
                     # n - polarization vector
                     # c - Gaunt coefficient
-                    tij = gauntC(k=1,l=l2,m=m,lp=l1,mp=mp,prec=16)
+                    tij = gauntC(k=1, l=l2, m=m, lp=l1, mp=mp, prec=16)
                     tij *= nDict[m-mp]
                     if tij != 0:
-                        i = c2i(nBaths,(l2,m,s))
-                        j = c2i(nBaths,(l1,mp,s))
-                        tOp[((i,'c'),(j,'a'))] = tij
+                        i = c2i(nBaths, (l2, s, m))
+                        j = c2i(nBaths, (l1, s, mp))
+                        tOp[((i, 'c'), (j, 'a'))] = tij
     return tOp
 
 
-def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
+def getNIXSOperators(nBaths, qs, li, lj, Ri, Rj, r, kmin=1):
     r'''
     Return non-resonant inelastic x-ray scattering transition operators.
 
@@ -122,7 +122,7 @@ def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
     Parameters
     ----------
     nBaths : Ordered dict
-        angular momentum: number of bath sets
+        angular momentum: number of bath states.
     qs : list
         Each element contain a photon scattering vector q = [qx,qy,qz].
     li : int
@@ -154,11 +154,11 @@ def getNIXSOperators(nBaths,qs,li,lj,Ri,Rj,r,kmin=1):
     tOps = []
     for q in qs:
         if rank == 0: print('q =',q)
-        tOps.append(getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin))
+        tOps.append(getNIXSOperator(nBaths, q, li, lj, Ri, Rj, r, kmin))
     return tOps
 
 
-def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
+def getNIXSOperator(nBaths, q, li, lj, Ri, Rj, r, kmin=1):
     r'''
     Return non-resonant inelastic x-ray scattering transition
     operator :math:`\hat{T}`.
@@ -174,7 +174,7 @@ def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
     Parameters
     ----------
     nBaths : Ordered dict
-        angular momentum: number of bath sets
+        angular momentum: number of bath states.
     q : list
         Photon scattering vector q = [qx,qy,qz]
         The change in photon momentum.
@@ -221,53 +221,53 @@ def getNIXSOperator(nBaths,q,li,lj,Ri,Rj,r,kmin=1):
                         tij *= gauntC(k,li,mi,lj,mj,prec=16)
                         if tij != 0:
                             for s in range(2):
-                                i = c2i(nBaths,(li,mi,s))
-                                j = c2i(nBaths,(lj,mj,s))
-                                process = ((i,'c'),(j,'a'))
+                                i = c2i(nBaths, (li, s, mi))
+                                j = c2i(nBaths, (lj, s, mj))
+                                process = ((i, 'c'), (j, 'a'))
                                 if process in tOp:
-                                    tOp[((i,'c'),(j,'a'))] += tij
+                                    tOp[((i, 'c'), (j, 'a'))] += tij
                                 else:
-                                    tOp[((i,'c'),(j,'a'))] = tij
+                                    tOp[((i, 'c'), (j, 'a'))] = tij
     return tOp
 
 
-def getInversePhotoEmissionOperators(nBaths,l=2):
+def getInversePhotoEmissionOperators(nBaths, l=2):
     r'''
     Return inverse photo emission operators :math:`\{ c_i^\dagger \}`.
 
     Parameters
     ----------
     nBaths : dict
-        Angular momentum: number of bath sets
+        Angular momentum: number of bath states.
     l : int
         Angular momentum.
 
     '''
     # Transition operators
     tOpsIPS = []
-    for m in range(-l,l+1):
-        for s in range(2):
-            tOpsIPS.append({((c2i(nBaths,(l,m,s)),'c'),):1})
+    for s in range(2):
+        for m in range(-l,l+1):
+            tOpsIPS.append({((c2i(nBaths, (l, s, m)), 'c'),) : 1})
     return tOpsIPS
 
 
-def getPhotoEmissionOperators(nBaths,l=2):
+def getPhotoEmissionOperators(nBaths, l=2):
     r'''
     Return photo emission operators :math:`\{ c_i \}`.
 
     Parameters
     ----------
     nBaths : dict
-        Angular momentum: number of bath sets
+        Angular momentum: number of bath states.
     l : int
         Angular momentum.
 
     '''
     # Transition operators
     tOpsPS = []
-    for m in range(-l,l+1):
-        for s in range(2):
-            tOpsPS.append({((c2i(nBaths,(l,m,s)),'a'),):1})
+    for s in range(2):
+        for m in range(-l,l+1):
+            tOpsPS.append({((c2i(nBaths, (l, s, m)), 'a'),) : 1})
     return tOpsPS
 
 
@@ -748,3 +748,4 @@ def getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es, wIns, wLoss,
                     for iwIn, gValue in gTmp.items():
                         gs[iE,tIn,:,iwIn,:] = gValue
     return gs
+
