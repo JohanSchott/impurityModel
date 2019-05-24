@@ -1465,6 +1465,12 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                                 # Occupations ok, so add contributions
                                 psiNew[stateB] = amp*h*signTot
                                 opResult[state][stateB] = h*signTot
+                # Make sure amplitudes in opResult are bigger than 
+                # the slaterWeightMin cutoff.
+                for ps, amp in list(opResult[state].items()):
+                    # Remove product states with small weight
+                    if abs(amp)**2 < slaterWeightMin:
+                        opResult[state].pop(ps)
     elif restrictions == None:
         # Loop over product states in psi.
         for state, amp in psi.items():
@@ -1499,9 +1505,14 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                             psiNew[stateB] += amp*h*signTot
                         else:
                             psiNew[stateB] = amp*h*signTot
+                # Make sure amplitudes in opResult are bigger than 
+                # the slaterWeightMin cutoff.
+                for ps, amp in list(opResult[state].items()):
+                    # Remove product states with small weight
+                    if abs(amp)**2 < slaterWeightMin:
+                        opResult[state].pop(ps)
     else:
         print('Warning: method not implemented.')
-
     # Remove product states with small weight
     for state, amp in list(psiNew.items()):
         if abs(amp)**2 < slaterWeightMin:
@@ -1746,11 +1757,16 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
             basis_set = frozenset(basis)
             basis_new = set()
             for b in basis[i:n]:
-                res = applyOp(n_spin_orbitals, hOp, {b:1},
-                              restrictions=restrictions, opResult=h_dict)
+                if b in h_dict:
+                    res = h_dict[b]
+                else:
+                    res = applyOp(n_spin_orbitals, hOp, {b:1},
+                                  restrictions=restrictions)
+                    h_dict[b] = res
                 basis_new.update(set(res.keys()).difference(basis_set))
             i = n
-            basis += list(basis_new)
+            # Add basis_new to basis. 
+            basis += sorted(basis_new)
             n = len(basis)
     elif parallelization_mode == "H_build":
         h_dict_new_local = {}
@@ -1771,7 +1787,7 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
             #print('rank', rank, ', states_setA_local:', states_setA_local)
 
             # Now consider the product states in basis[i:n] which
-            # does not exist in h_dict.
+            # does not exist in h_dict for any MPI rank.
             if rank == 0:
                 states_setB = set(basis[i:n]) - states_setA_local
                 for r in range(1, ranks):
@@ -1782,9 +1798,6 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
                 comm.send(states_setA_local, dest=0, tag=0)
                 states_tupleB = None
             states_tupleB = comm.bcast(states_tupleB, root=0)
-
-            #print('rank', rank, ', states_tupleB:', states_tupleB)
-
             # Distribute and then loop through "unknown" product states
             for ps_indexB in get_job_tasks(rank,ranks,range(len(states_tupleB))):
                 # One product state.
@@ -1798,8 +1811,11 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
             basis_new = set()
             for r in range(ranks):
                 basis_new.update(comm.bcast(basis_new_local, root=r))
-            # Add basis_new to basis
-            basis += list(basis_new)
+            # Add basis_new to basis. 
+            # It is important that all ranks use the same order of the 
+            # product states. This is one way to ensure the same ordering.
+            # But any ordering is fine, as long it's the same for all MPI ranks.
+            basis += sorted(basis_new)
             # Updated total number of product states |PS> in
             # the basis where know H|PS>.
             i = n
@@ -1807,10 +1823,6 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
             n = len(basis)
         # Add new elements to h_dict, but only local contribution.
         h_dict.update(h_dict_new_local)
-
-        #print('rank', rank, 'len(h_dict)=',len(h_dict))
-        #print('rank', rank, 'h_dict.keys():', h_dict.keys())
-
     else:
         sys.exit("Wrong parallelization parameter.")
     return tuple(basis)
@@ -1861,7 +1873,7 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_dict, hOp, basis0,
         The Hamiltonian acting on the relevant product states.
     basis_index : dict
         Elements of the form `|PS> : i`,
-        where `|PS>` is a product state and i and integer.
+        where `|PS>` is a product state and i an integer.
 
     """
     # Measure time to expand basis
