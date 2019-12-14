@@ -14,7 +14,8 @@ import numpy as np
 from mpi4py import MPI
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.special import spherical_jn, sph_harm
+from scipy.special import spherical_jn
+from scipy.special import sph_harm
 import time
 
 from .finite import gauntC, c2i, get_job_tasks
@@ -29,7 +30,7 @@ ranks = comm.size
 
 
 def getDipoleOperators(nBaths,ns):
-    r'''
+    r"""
     Return dipole transition operators.
 
     Transitions between states of different angular momentum,
@@ -42,7 +43,7 @@ def getDipoleOperators(nBaths,ns):
     ns : list
         Each element contains a polarization vector n = [nx,ny,nz]
 
-    '''
+    """
     tOps = []
     for n in ns:
         tOps.append(getDipoleOperator(nBaths, n))
@@ -381,7 +382,7 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
         alpha, beta = get_tridiagonal_krylov_vectors(h, psi0, krylovSize,
                                                      h_local, mode)
     else:
-        sys.exit("Value of variable 'mode' is incorrect.")
+        raise Exception("Value of variable 'mode' is incorrect.")
     # Construct Green's function from continued fraction.
     omegaP = omega + 1j*delta + e
     for i in range(krylovSize-1, -1, -1):
@@ -487,7 +488,7 @@ def getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w, delta,
                     slaterWeightMin, restrictions, h,
                     parallelization_mode=parallelization_mode)
     else:
-        sys.error("Incorrect value of variable parallelization_mode.")
+        raise Exception("Incorrect value of variable parallelization_mode.")
     return gs
 
 

@@ -554,7 +554,7 @@ def printGaunt(l=2, lp=2):
 
 
 def getNoSpinUop(l1,l2,l3,l4,R):
-    '''
+    r"""
     Return non-spin polarized U operator.
 
     Scattering processes:
@@ -565,16 +565,14 @@ def getNoSpinUop(l1,l2,l3,l4,R):
 
     No spin polarization considered, thus basis is: (l,m)
 
-    '''
-    #uMatrix = np.zeros((2*l1+1,2*l2+1,2*l3+1,2*l4+1))
+    """
     uDict = {}
-    for i1,m1 in enumerate(range(-l1,l1+1)):
-        for i2,m2 in enumerate(range(-l2,l2+1)):
-            for i3,m3 in enumerate(range(-l3,l3+1)):
-                for i4,m4 in enumerate(range(-l4,l4+1)):
+    for m1 in range(-l1,l1+1):
+        for m2 in range(-l2,l2+1):
+            for m3 in range(-l3,l3+1):
+                for m4 in range(-l4,l4+1):
                     u = getU(l1,m1,l2,m2,l3,m3,l4,m4,R)
                     if u != 0:
-                        #uMatrix[i1,i2,i3,i4] = u
                         uDict[((l1,m1),(l2,m2),(l3,m3),(l4,m4))] = u/2.
     return uDict
 
@@ -824,22 +822,20 @@ def getLz3d(nBaths, psi):
         Multi configurational state.
 
     '''
-    # Total number of spin-orbitals in the system
-    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
     Lz = 0
     for state, amp in psi.items():
         tmp = 0
         for i in psr.bytes2tuple(state):
             spinOrb = i2c(nBaths, i)
             # Look for spin-orbitals of the shape: spinOrb = (l, s, ml), with l=2.
-            if len(spinOrb)==3 and spinOrb[0]==2:
+            if len(spinOrb) == 3 and spinOrb[0] == 2:
                 tmp += spinOrb[2]
-        Lz += tmp*abs(amp)**2
+        Lz += tmp * abs(amp)**2
     return Lz
 
 
 def getSz3d(nBaths, psi):
-    r'''
+    r"""
     Return expectation value :math:`\langle psi| Sz_{3d} |psi \rangle`.
 
     Parameters
@@ -849,40 +845,17 @@ def getSz3d(nBaths, psi):
     psi : dict
         Multi configurational state.
 
-    '''
-    # Total number of spin-orbitals in the system
-    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
+    """
     Sz = 0
     for state,amp in psi.items():
         tmp = 0
         for i in psr.bytes2tuple(state):
             spinOrb = i2c(nBaths,i)
             # Look for spin-orbitals of the shape: spinOrb = (l, s, ml), with l=2.
-            if len(spinOrb)==3 and spinOrb[0]==2:
+            if len(spinOrb) == 3 and spinOrb[0] == 2:
                 tmp += -1/2 if spinOrb[1]==0 else 1/2
-        Sz += tmp*abs(amp)**2
+        Sz += tmp * abs(amp)**2
     return Sz
-
-
-def getSsqr3dWithBath(nBaths, psi, tol=1e-8):
-    r'''
-    Return expectation value :math:`\langle psi| S^2 |psi \rangle`.
-
-    Parameters
-    ----------
-    nBaths : dict
-        angular momentum : number of bath states.
-    psi : dict
-        normalized multi configurational state.
-
-    '''
-    psi1 = applySz3dWithBath(nBaths, psi)
-    psi2 = applySplus3dWithBath(nBaths, psi)
-    psi3 = applySminus3dWithBath(nBaths, psi)
-    S2 = norm2(psi1) + 1/2*(norm2(psi2)+norm2(psi3))
-    if S2.imag > tol:
-        print('Warning: <S^2> complex valued!')
-    return S2.real
 
 
 def getSsqr3d(nBaths, psi, tol=1e-8):
@@ -904,27 +877,6 @@ def getSsqr3d(nBaths, psi, tol=1e-8):
     if S2.imag > tol:
         print('Warning: <S^2> complex valued!')
     return S2.real
-
-
-def getLsqr3dWithBath(nBaths, psi, tol=1e-8):
-    r'''
-    Return expectation value :math:`\langle psi| L^2 |psi \rangle`.
-
-    Parameters
-    ----------
-    nBaths : dict
-        angular momentum : number of bath states.
-    psi : dict
-        normalized multi configurational state.
-
-    '''
-    psi1 = applyLz3dWithBath(nBaths, psi)
-    psi2 = applyLplus3dWithBath(nBaths, psi)
-    psi3 = applyLminus3dWithBath(nBaths, psi)
-    L2 = norm2(psi1) + 1/2*(norm2(psi2)+norm2(psi3))
-    if L2.imag > tol:
-        print('Warning: <L^2> complex valued!')
-    return L2.real
 
 
 def getLsqr3d(nBaths, psi, tol=1e-8):
@@ -949,7 +901,7 @@ def getLsqr3d(nBaths, psi, tol=1e-8):
 
 
 def getTraceDensityMatrix(nBaths, psi, l=2):
-    r'''
+    r"""
     Return  :math:`\langle psi| \sum_i c_i^\dagger c_i |psi \rangle`.
 
     Parameters
@@ -961,9 +913,7 @@ def getTraceDensityMatrix(nBaths, psi, l=2):
     l : int (optional)
         Angular momentum
 
-    '''
-    # Total number of spin-orbitals in the system
-    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
+    """
     n = 0
     for state, amp in psi.items():
         s = psr.bytes2str(state)
