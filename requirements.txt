@@ -1,7 +1,7 @@
 # Needed python modules
-mpi4py
 bitarray
 numpy
 sympy
 scipy
 h5py
+# mpi4py is also needed. It requires MPI.
