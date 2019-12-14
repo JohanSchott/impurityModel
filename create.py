@@ -11,7 +11,7 @@ Depending on the representation type of the product state, different functions s
 Supported types are: tuple, str, int, bitarray and bytes.
 
 The ordering convention is such that the normal ordering of a product state is |psi> = c2 c5 |0>, (and not c5 c2 |0>).
- 
+
 """
 
 

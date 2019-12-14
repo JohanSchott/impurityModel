@@ -1,4 +1,4 @@
-#!/usr/bin/env gnuplot --persist -c 
+#!/usr/bin/env gnuplot --persist -c
 
 # Gnuplot plot script of RIXS spectra
 

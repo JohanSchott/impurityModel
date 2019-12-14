@@ -9,7 +9,7 @@ subroutine remove(i)
     implicit none
     integer, intent(in) ::  i  ! input
     integer ::  j,k
-    integer, allocatable :: tmp(:) 
+    integer, allocatable :: tmp(:)
     if (allocated(s)) then
         ! Check if "i" is in state s
         if ( any(s == i) ) then

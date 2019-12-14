@@ -25,7 +25,7 @@ def main():
     if rank == 0: t0 = time.time()
 
     # -----------------------
-    # System specific information  
+    # System specific information
     l1, l2 = 1, 2 # Angular momentum
     # Number of bath states.
     nBaths = OrderedDict()
@@ -133,7 +133,7 @@ def main():
     deltaNIXS = 0.100
     # Angular momentum of final and initial orbitals in the NIXS excitation process.
     liNIXS,ljNIXS = 2,2
-    # File name of file containing radial mesh and radial part of final 
+    # File name of file containing radial mesh and radial part of final
     # and initial orbitals in the NIXS excitation process.
     radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Ni3d.dat'
     data = np.loadtxt(radialFileName)
@@ -164,7 +164,7 @@ def main():
     # Diagonalization of restricted active space Hamiltonian
     es, psis = finite.eigensystem(n_spin_orbitals, hOp, basis, nPsiMax)
 
-    if rank == 0: 
+    if rank == 0:
         print("time(ground_state) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -173,7 +173,7 @@ def main():
     finite.printExpValues(nBaths, es, psis)
 
     # Print Slater determinants and weights
-    if rank == 0: 
+    if rank == 0:
         print('Slater determinants/product states and correspoinding weights')
         weights = []
         for i, psi in enumerate(psis):
@@ -193,7 +193,7 @@ def main():
                 print('')
 
     # Calculate density matrix
-    if rank == 0: 
+    if rank == 0:
         print('Density matrix (in cubic harmonics basis):')
         for i, psi in enumerate(psis):
             print('Eigenstate {:d}'.format(i))
@@ -249,7 +249,7 @@ def main():
                                 qsNIXS=qsNIXS, r=radialMesh, RiNIXS=RiNIXS,
                                 RjNIXS=RjNIXS)
 
-    if rank == 0: 
+    if rank == 0:
         print("time(expectation values) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -292,7 +292,7 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-    if rank == 0: 
+    if rank == 0:
         print("time(PS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -325,24 +325,24 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-    if rank == 0: 
+    if rank == 0:
         print("time(XPS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
-    if rank == 0: print('Create NIXS spectra...')    
-    # Transition operator: exp(iq*r) 
+    if rank == 0: print('Create NIXS spectra...')
+    # Transition operator: exp(iq*r)
     tOps = spectra.getNIXSOperators(nBaths,qsNIXS,liNIXS,ljNIXS,
                                     RiNIXS,RjNIXS,radialMesh)
-    # Green's function 
+    # Green's function
     gs = spectra.getSpectra(n_spin_orbitals, hOp, tOps, psis, es, wLoss,
                             deltaNIXS, restrictions)
-    if rank == 0: 
+    if rank == 0:
         print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#q-points = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
     a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
+    if rank == 0:
         if printH5:
             h5f.create_dataset('NIXS',data=-gs.imag)
             h5f.create_dataset('NIXSthermal',data=a)
@@ -359,7 +359,7 @@ def main():
         np.savetxt('NIXS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
 
-    if rank == 0: 
+    if rank == 0:
         print("time(NIXS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -392,7 +392,7 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-    if rank == 0: 
+    if rank == 0:
         print("time(XAS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -430,7 +430,7 @@ def main():
         tmp[1:,0] = wLoss
         tmp[1:,1:] = aSum.T
         tmp.tofile('RIXS.bin')
-    if rank == 0: 
+    if rank == 0:
         print("time(RIXS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -443,8 +443,8 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
                              vHoppings, eBaths, bath_state_basis = 'spherical'):
     """
     Return the Hamiltonian, in operator form.
-    
-    The impurity orbitals are spherical harmonics orbitals. 
+
+    The impurity orbitals are spherical harmonics orbitals.
     The bath states can be expressed in different basis.
 
     Parameters
@@ -481,8 +481,8 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     hx, hy, hz = hField
     vValEg, vValT2g, vConEg, vConT2g = vHoppings
     eValEg, eValT2g, eConEg, eConT2g = eBaths
-     
-    # Calculate the U operator, in spherical harmonics basis. 
+
+    # Calculate the U operator, in spherical harmonics basis.
     uOperator = finite.get2p3dSlaterCondonUop(Fdd=Fdd, Fpp=Fpp,
                                               Fpd=Fpd, Gpd=Gpd)
     # Add SOC, in spherical harmonics basis.
@@ -499,14 +499,14 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
             for m in range(-l,l+1):
                 eDCOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = -dc[il]
 
-    # Calculate impurity 3d Hamiltonian. 
-    # First formulate in cubic harmonics basis and then rotate to 
+    # Calculate impurity 3d Hamiltonian.
+    # First formulate in cubic harmonics basis and then rotate to
     # the spherical harmonics basis.
-    l = 2 
+    l = 2
     eImpEg = eImp3d + 3/5*deltaO
-    eImpT2g = eImp3d - 2/5*deltaO  
+    eImpT2g = eImp3d - 2/5*deltaO
     hImp3d = np.zeros((2*l+1, 2*l+1))
-    np.fill_diagonal(hImp3d, (eImpEg, eImpEg, eImpT2g, eImpT2g, eImpT2g)) 
+    np.fill_diagonal(hImp3d, (eImpEg, eImpEg, eImpT2g, eImpT2g, eImpT2g))
     # Convert to spherical harmonics basis
     u = finite.get_spherical_2_cubic_matrix(spinpol=False, l=l)
     hImp3d = np.dot(u, np.dot(hImp3d, np.conj(u.T)))
@@ -518,7 +518,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
             if hImp3d[i,j] != 0:
                 for s in range(2):
                     hImp3dOperator[(((l, s, mi), 'c'), ((l, s, mj), 'a'))] = hImp3d[i,j]
-    
+
     # Magnetic field
     l = 2
     hHfieldOperator = {}
@@ -545,11 +545,11 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     np.fill_diagonal(eBathVal3d, (eValEg, eValEg, eValT2g, eValT2g, eValT2g))
     np.fill_diagonal(eBathCon3d, (eConEg, eConEg, eConT2g, eConT2g, eConT2g))
     # For the bath states, we can rotate to any basis.
-    # Which bath state basis to use is determined selected here. 
+    # Which bath state basis to use is determined selected here.
     if bath_state_basis == 'spherical':
         # One example is to use spherical harmonics basis for the bath states.
         # This implies the following rotation matrix:
-        u_bath = u  
+        u_bath = u
     elif bath_state_basis == 'cubic':
         # One example is to keep the cubic harmonics basis for the bath states.
         # This implies the following rotation matrix:
@@ -587,7 +587,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
                     hHoppOperator[(((l, s, mj), 'c'), ((l, bi_val), 'a'))] = vHopp.conjugate()
                 if eBath != 0:
                     eBath3dOperator[(((l, bi_val), 'c'), ((l, bj_val),'a'))] = eBath
-                # Only add the processes related to the conduction bath states if they are 
+                # Only add the processes related to the conduction bath states if they are
                 # in the basis.
                 if nBaths[l]-valBaths[l] == 10:
                     # Hamiltonian values related to conduction bath states.
@@ -598,7 +598,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
                         hHoppOperator[(((l, s, mj), 'c'), ((l, bi_con), 'a'))] = vHopp.conjugate()
                     if eBath != 0:
                         eBath3dOperator[(((l, bi_con), 'c'), ((l, bj_con),'a'))] = eBath
-        
+
     # Add Hamiltonian terms to one operator.
     hOperator = finite.addOps([uOperator,
                                hImp3dOperator,

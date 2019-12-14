@@ -129,7 +129,7 @@ if 'xas' in locals():
         print('Fluorescence yield spectrum')
         plt.plot(wIn,(wLoss[1]-wLoss[0])*np.sum(rixs,axis=(0,1,3))*scaleFY,
                  '-r',label='FY')
-        mask = wLoss < 0.2 
+        mask = wLoss < 0.2
         y = np.sum(rixs[:,:,:,mask],axis=(0,1,3))
         plt.plot(wIn,(wLoss[1]-wLoss[0])*y*scaleFY,'-b',label='quasi-elastic FY')
     plt.legend()
@@ -158,9 +158,9 @@ if 'nixs' in locals():
 if 'rixs' in locals():
     print('Energy loss spectra')
     fig,axes = plt.subplots(nrows=2,sharex=True)
-    # L3-edge energies. 
+    # L3-edge energies.
     # Adjust these energies to the current material.
-    es = np.arange(-7,2,1) 
+    es = np.arange(-7,2,1)
     plotOffset = 1.5
     print('Chosen L3 energies: ',es)
     print('Chosen plotOffset: ',plotOffset)
@@ -168,7 +168,7 @@ if 'rixs' in locals():
         i = np.argmin(np.abs(wIn-e))
         axes[0].plot(wLoss,plotOffset*(len(es)-1-n) + np.sum(rixs,axis=(0,1))[i,:],
                      label=r'$\omega_{in}$' + '={:3.1f}'.format(e))
-    # L2-edge energies. 
+    # L2-edge energies.
     # Adjust these energies to the current material.
     es = np.arange(11,16,1)
     plotOffset = 1
@@ -200,8 +200,8 @@ if 'rixs' in locals():
     mask = tmp < plotCutOff
     tmp[mask] = np.nan
     # Choose a nice colormap, e.g. 'viridis' or 'Blues'
-    cs = plt.contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('viridis'))  
-    #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis')) 
+    cs = plt.contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('viridis'))
+    #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis'))
     # Make a colorbar for the ContourSet returned by the contourf call.
     cbar = fig.colorbar(cs)
     cbar.ax.set_ylabel('log RIXS intensity')
@@ -223,8 +223,8 @@ if 'rixs' in locals():
         mask = tmp < plotCutOff
         tmp[mask] = np.nan
         # Choose a nice colormap, e.g. 'viridis' or 'Blues'
-        cs = axes.contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('viridis')) 
-        #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis')) 
+        cs = axes.contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('viridis'))
+        #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis'))
         # Make a colorbar for the ContourSet returned by the contourf call.
         cbar = fig.colorbar(cs, ax=axes)
         cbar.ax.set_ylabel('log RIXS intensity')
@@ -242,8 +242,8 @@ if 'rixs' in locals():
                 mask = tmp < plotCutOff
                 tmp[mask] = np.nan
                 # Choose a nice colormap, e.g. 'viridis' or 'Blues'
-                cs = axes[i,j].contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('viridis')) 
-                #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis')) 
+                cs = axes[i,j].contourf(wIn,wLoss,np.log10(tmp),cmap=plt.get_cmap('viridis'))
+                #cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis'))
                 # Make a colorbar for the ContourSet returned by the contourf call.
                 cbar = fig.colorbar(cs, ax=axes[i,j])
                 cbar.ax.set_ylabel('log RIXS intensity')

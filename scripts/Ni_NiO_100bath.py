@@ -126,7 +126,7 @@ def main():
     deltaNIXS = 0.100
     # Angular momentum of final and initial orbitals in the NIXS excitation process.
     liNIXS,ljNIXS = 2,2
-    # File name of file containing radial mesh and radial part of final 
+    # File name of file containing radial mesh and radial part of final
     # and initial orbitals in the NIXS excitation process.
     radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Ni3d.dat'
     data = np.loadtxt(radialFileName)
@@ -155,7 +155,7 @@ def main():
     # Diagonalization of restricted active space Hamiltonian
     es, psis = finite.eigensystem(n_spin_orbitals, hOp, basis, nPsiMax)
 
-    if rank == 0: 
+    if rank == 0:
         print("time(ground_state) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -164,7 +164,7 @@ def main():
     finite.printExpValues(nBaths, es, psis)
 
     # Print Slater determinants and weights
-    if rank == 0: 
+    if rank == 0:
         print('Slater determinants/product states and correspoinding weights')
         weights = []
         for i, psi in enumerate(psis):
@@ -184,7 +184,7 @@ def main():
                 print('')
 
     # Calculate density matrix
-    if rank == 0: 
+    if rank == 0:
         print('Density matrix (in cubic harmonics basis):')
         for i, psi in enumerate(psis):
             print('Eigenstate {:d}'.format(i))
@@ -238,7 +238,7 @@ def main():
                                 qsNIXS=qsNIXS, r=radialMesh, RiNIXS=RiNIXS,
                                 RjNIXS=RjNIXS)
 
-    if rank == 0: 
+    if rank == 0:
         print("time(expectation values) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -281,7 +281,7 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-    if rank == 0: 
+    if rank == 0:
         print("time(PS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -314,24 +314,24 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-    if rank == 0: 
+    if rank == 0:
         print("time(XPS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
-    if rank == 0: print('Create NIXS spectra...')    
-    # Transition operator: exp(iq*r) 
+    if rank == 0: print('Create NIXS spectra...')
+    # Transition operator: exp(iq*r)
     tOps = spectra.getNIXSOperators(nBaths,qsNIXS,liNIXS,ljNIXS,
                                     RiNIXS,RjNIXS,radialMesh)
-    # Green's function 
+    # Green's function
     gs = spectra.getSpectra(n_spin_orbitals, hOp, tOps, psis, es, wLoss,
                             deltaNIXS, restrictions)
-    if rank == 0: 
+    if rank == 0:
         print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
         print('#q-points = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
     a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
-    if rank == 0: 
+    if rank == 0:
         if printH5:
             h5f.create_dataset('NIXS',data=-gs.imag)
             h5f.create_dataset('NIXSthermal',data=a)
@@ -348,7 +348,7 @@ def main():
         np.savetxt('NIXS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
 
-    if rank == 0: 
+    if rank == 0:
         print("time(NIXS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -381,7 +381,7 @@ def main():
         print("Save spectra to disk...\n")
         np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
-    if rank == 0: 
+    if rank == 0:
         print("time(XAS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -419,7 +419,7 @@ def main():
         tmp[1:,0] = wLoss
         tmp[1:,1:] = aSum.T
         tmp.tofile('RIXS.bin')
-    if rank == 0: 
+    if rank == 0:
         print("time(RIXS) = {:.2f} seconds \n".format(time.time()-t0))
         t0 = time.time()
 
@@ -471,7 +471,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     n0imp, chargeTransferCorrection = DCinfo
     hx, hy, hz = hField
 
-    # Calculate the U operator, in spherical harmonics basis. 
+    # Calculate the U operator, in spherical harmonics basis.
     uOperator = finite.get2p3dSlaterCondonUop(Fdd=Fdd, Fpp=Fpp,
                                               Fpd=Fpd, Gpd=Gpd)
     # Add SOC, in spherical harmonics basis.

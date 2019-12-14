@@ -377,9 +377,9 @@ def getGreen(n_spin_orbitals, e, psi, hOp, omega, delta, krylovSize,
             psi0[basis_index[ps]] = amp
         # Unnecessary (and impossible) to find more than n Krylov basis vectors.
         krylovSize = min(krylovSize,n)
-        # Get tridiagonal elements of the Krylov Hamiltonian matrix. 
+        # Get tridiagonal elements of the Krylov Hamiltonian matrix.
         alpha, beta = get_tridiagonal_krylov_vectors(h, psi0, krylovSize,
-                                                     h_local, mode)    
+                                                     h_local, mode)
     else:
         sys.exit("Value of variable 'mode' is incorrect.")
     # Construct Green's function from continued fraction.

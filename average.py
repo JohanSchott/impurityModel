@@ -2,16 +2,16 @@
 
 import numpy as np
 
-# Boltzmann constant. Unit: eV/K. E = k_B * T, 
+# Boltzmann constant. Unit: eV/K. E = k_B * T,
 # energy in eV and temperature in Kelvin.
-k_B = 8.61701580807947e-05    
+k_B = 8.61701580807947e-05
 
 def thermal_average(energies,observable,T=300):
     """
     Returns thermally averaged observables.
 
-    Assumes all relevant states are included. 
-    Thus, no not check e.g. if the Boltzmann weight 
+    Assumes all relevant states are included.
+    Thus, no not check e.g. if the Boltzmann weight
     of the last state is small.
 
     Parameters

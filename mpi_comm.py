@@ -51,6 +51,7 @@ def dict_chunks_from_one_MPI_rank(data, chunk_maxsize=1*10**6, root=0):
         else:
             yield None
 
+
 def allgather_dict(data, total, chunk_maxsize=1*10**6):
     """
     Distribute data from all ranks to all ranks into variable total.

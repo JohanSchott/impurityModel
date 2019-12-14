@@ -1,6 +1,6 @@
 # Impurity model
 
-### Introduction 
+### Introduction
 
 Calculate many-body states of an impurity Anderson model and a few spectra, e.g. photoemission spectroscopy (PS), x-ray photoemission spectroscopy (XPS), x-ray absorption spectroscopy (XAS), non-resonant inelastic x-ray scattering (NIXS), and resonant inelastic x-ray scattering (RIXS).
 
@@ -9,7 +9,7 @@ Credits to Petter Saterskog for inspiration and for some of the key functionalit
 Credits to Patrik Thunstrom for discussions about computational algorithms.
 
 <figure>
-<div class="row"> 
+<div class="row">
   <div class="column">
   <img src="referenceOutput/Ni_NiO_CFparam_1bath/ps.png" alt="Photoemission (PS)" width="150"/>
   <img src="referenceOutput/Ni_NiO_CFparam_1bath/xps.png" alt="X-ray photoemission (XPS)" width="150"/>
@@ -21,9 +21,9 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 </figure>
 
 ### Get started
-- Python 3.x is needed with libraries `mpi4py`, `bitarray`, `numpy`, `sympy`, and `scipy`. 
-The Python library `h5py` is recommended but not necessary. 
-For help in installing Python 3.x and/or Python libraries, please see e.g. 
+- Python 3.x is needed with libraries `mpi4py`, `bitarray`, `numpy`, `sympy`, and `scipy`.
+The Python library `h5py` is recommended but not necessary.
+For help in installing Python 3.x and/or Python libraries, please see e.g.
 [https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
 
 - Add the absolute parent path of the directory (`impurityModel`) to the `PYTHONPATH` environment variable, such that the Python module in this directory can be found. For example, if the path to the `impurityModel` folder is `path/to/folder/impurityModel`, put the following command in the `~/.bashrc` file:
@@ -45,8 +45,8 @@ or for usage of more than one MPI process, type e.g.:
 ```bash
 mpirun -n 25 Ni_NiO_CFparam_1bath.py
 ```
-The phrase `CFparam` in the filename `Ni_NiO_CFparam_1bath.py` indicates that the Hamiltonian is constructed by crystal-field parameters. 
-Using a crystal-field notation is convinient when doing fitting to experimental spectra. But when many bath states are used it is perhaps more convienient to read-in the non-interacting Hamiltonian from an external file. This non-interacting Hamiltonian can for example be constructed using DFT or DFT+DMFT calculations. 
+The phrase `CFparam` in the filename `Ni_NiO_CFparam_1bath.py` indicates that the Hamiltonian is constructed by crystal-field parameters.
+Using a crystal-field notation is convinient when doing fitting to experimental spectra. But when many bath states are used it is perhaps more convienient to read-in the non-interacting Hamiltonian from an external file. This non-interacting Hamiltonian can for example be constructed using DFT or DFT+DMFT calculations.
 For example, to read an non-interacting Hamiltonian, with 10 bath states per impurity orbital, for NiO and simulate various spectra, type:
 ```bash
 Ni_NiO_10bath.py
@@ -69,7 +69,7 @@ For only plotting the RIXS map, type:
 ```
 plotRIXS.py
 ```
-or plot using gnuplot: 
+or plot using gnuplot:
 ```
 plotRIXS.plt
 ```
@@ -77,26 +77,26 @@ plotRIXS.plt
 ### Optimization notes
 
 #### Computational speed
-MPI is used. 
+MPI is used.
 For finding the ground states and calculating the spectra (except for RIXS), parallelization is done over the product states in the many-body basis.
 For the RIXS simulations, parallelization is by default first done over product states of the core-hole excited system and then over the in-coming photon energies.
 
 #### RAM memory usage
 The memory goes primarly to storing the Hamiltonian in a basis of product states.
-This Hamiltonian is stored as a dictionary, with product states, |ps>, as dictionary-keys 
-and the Hamiltonian acting of each product state, H|ps>, as dictionary-values. 
+This Hamiltonian is stored as a dictionary, with product states, |ps>, as dictionary-keys
+and the Hamiltonian acting of each product state, H|ps>, as dictionary-values.
 When several ranks are used, the information is distributed over the MPI ranks, such that one rank only stores
-some of all the product-state keys. This reduces memory usage for each MPI rank. 
+some of all the product-state keys. This reduces memory usage for each MPI rank.
 
-A sparse matrix format of the Hamiltonian is used when generating a spectrum. 
-This sparse matrix variable is also distributed in memory over the MPI ranks. 
+A sparse matrix format of the Hamiltonian is used when generating a spectrum.
+This sparse matrix variable is also distributed in memory over the MPI ranks.
 This is done to reduce memory usage per MPI rank.
 
-A product state with electrons in spin-orbitals with indices e.g. 2 and 5 can be described by the tuple: (2,5). 
+A product state with electrons in spin-orbitals with indices e.g. 2 and 5 can be described by the tuple: (2,5).
 If the system has 7 spin-orbitals in total, the product state can also be described by the binary-string "0010010".
 The product state can also be translated into the base-2 integer 2^(7-1-2) + 2^(7-1-5) = 2^4 + 2^1 = 16+2 = 18.
 With many electrons the integer representation is a more memory efficient format.
-Bitarray is a class which also can be used to represent a product state. 
+Bitarray is a class which also can be used to represent a product state.
 It is mutable which enables fast modifications (adding and removing electrons), and is used in the current version.
 To keep the memory usage down, an imutable bytes class is also used in the current version.
 
@@ -116,8 +116,8 @@ make latex
 and follow the instructions.
 
 Note:
-- package `numpydoc` is required. If missing, e.g. type `conda install numpydoc` 
-- If a new module or subpackage is created, this information needs to be added to `docs/index.rst`. 
+- package `numpydoc` is required. If missing, e.g. type `conda install numpydoc`
+- If a new module or subpackage is created, this information needs to be added to `docs/index.rst`.
 
 
 

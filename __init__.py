@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 A package dealing with many-body impurity models.
-   
-    Examples of functionalities: 
+
+    Examples of functionalities:
         - Calculate spectra, e.g. XAS, XPS, PS.
         - Calculate static expectation values
 

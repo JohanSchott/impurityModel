@@ -7,7 +7,7 @@ product_state_representation
 ============================
 
 This module contains functions for translating a product state from one format
-to another format. The possible types are: 
+to another format. The possible types are:
 tuple, str, int, bitarray and bytes.
 
 Here is one product state example, expressed in the different formats:
@@ -29,7 +29,7 @@ The bytes type is, like tuple, str and int, immutable and uses about the same am
 However, from an bitarray, it takes less time to convert to a bytes representation than to an integer representation.
 
 In the finite.py module, the ordering convention is such that this product state example represents |psi> = c2 c5 |0>, (and not c5 c2 |0>).
- 
+
 """
 
 
@@ -243,7 +243,7 @@ def bitarray2tuple(bits):
     """
     return str2tuple(bitarray2str(bits))
 
-    
+
 def tuple2bytes(t, n):
     """
     Returns bytes representation of product state.
