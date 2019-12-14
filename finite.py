@@ -366,7 +366,7 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     # Two explicit loops is only valid for two impurity blocks
     for b1 in basisL[l1]:
         for b2 in basisL[l2]:
-            # Convert product state representation from a tuple to a object 
+            # Convert product state representation from a tuple to a object
             # of the class bytes. Then add this product state to the basis.
             basis.append(psr.tuple2bytes(tuple(sorted(b1+b2)), n_spin_orbitals))
     return tuple(basis)
@@ -679,7 +679,7 @@ def get2p3dSlaterCondonUop(Fdd=[9,0,8,0,6], Fpp=[20,0,8],
 def getSOCop(xi,l=2):
     '''
     Return SOC operator for one l-shell.
-    
+
     Returns
     -------
     uDict : dict
@@ -708,14 +708,14 @@ def c2i(nBaths, spinOrb):
     ----------
     nBaths : ordered dict
         An elements is either of the form:
-        angular momentum : number of bath spin-orbitals 
+        angular momentum : number of bath spin-orbitals
         or of the form:
-        (angular momentum_a, angular momentum_b, ...) : number of bath states. 
-        The latter form is used if impurity orbitals from different 
+        (angular momentum_a, angular momentum_b, ...) : number of bath states.
+        The latter form is used if impurity orbitals from different
         angular momenta share the same bath states.
     spinOrb : tuple
         (l, s, m), (l, b) or ((l_a, l_b, ...), b)
-    
+
     Returns
     -------
     i : int
@@ -760,10 +760,10 @@ def i2c(nBaths, i):
     ----------
     nBaths : ordered dict
         An elements is either of the form:
-        angular momentum : number of bath spin-orbitals 
+        angular momentum : number of bath spin-orbitals
         or of the form:
-        (angular momentum_a, angular momentum_b, ...) : number of bath states. 
-        The latter form is used if impurity orbitals from different 
+        (angular momentum_a, angular momentum_b, ...) : number of bath states.
+        The latter form is used if impurity orbitals from different
         angular momenta share the same bath states.
     i : int
         An index denoting a spin-orbital or a bath state.
@@ -1465,7 +1465,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                                 # Occupations ok, so add contributions
                                 psiNew[stateB] = amp*h*signTot
                                 opResult[state][stateB] = h*signTot
-                # Make sure amplitudes in opResult are bigger than 
+                # Make sure amplitudes in opResult are bigger than
                 # the slaterWeightMin cutoff.
                 for ps, amp in list(opResult[state].items()):
                     # Remove product states with small weight
@@ -1505,7 +1505,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                             psiNew[stateB] += amp*h*signTot
                         else:
                             psiNew[stateB] = amp*h*signTot
-                # Make sure amplitudes in opResult are bigger than 
+                # Make sure amplitudes in opResult are bigger than
                 # the slaterWeightMin cutoff.
                 for ps, amp in list(opResult[state].items()):
                     # Remove product states with small weight
@@ -1765,7 +1765,7 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
                     h_dict[b] = res
                 basis_new.update(set(res.keys()).difference(basis_set))
             i = n
-            # Add basis_new to basis. 
+            # Add basis_new to basis.
             basis += sorted(basis_new)
             n = len(basis)
     elif parallelization_mode == "H_build":
@@ -1811,8 +1811,8 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
             basis_new = set()
             for r in range(ranks):
                 basis_new.update(comm.bcast(basis_new_local, root=r))
-            # Add basis_new to basis. 
-            # It is important that all ranks use the same order of the 
+            # Add basis_new to basis.
+            # It is important that all ranks use the same order of the
             # product states. This is one way to ensure the same ordering.
             # But any ordering is fine, as long it's the same for all MPI ranks.
             basis += sorted(basis_new)
@@ -1911,15 +1911,15 @@ def expand_basis_and_hamiltonian(n_spin_orbitals, h_dict, hOp, basis0,
     return h, basis_index
 
 
-def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False, 
-                                   mode='sparse'):    
+def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False,
+                                   mode='sparse'):
     r"""
     return tridiagonal elements of the Krylov Hamiltonian matrix.
 
     Parameters
     ----------
     h : sparse matrix (N,N)
-        Hamiltonian. 
+        Hamiltonian.
     psi0 : complex array(N)
         Initial Krylov vector.
     krylovSize : int
@@ -1940,7 +1940,7 @@ def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False,
     n = len(psi0)
     # Unnecessary (and impossible) to find more than n Krylov basis vectors.
     krylovSize = min(krylovSize,n)
-        
+
     # Allocate tri-diagonal matrix elements
     alpha = np.zeros(krylovSize, dtype=np.float)
     beta = np.zeros(krylovSize-1, dtype=np.float)
@@ -2008,7 +2008,7 @@ def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False,
             alpha[j] = np.dot(np.conj(wp),v[1,:]).real
             w = wp - alpha[j]*v[1,:] - beta[j-1]*v[0,:]
             v[0,:] = v[1,:]
-    if rank == 0: 
+    if rank == 0:
         print('time(get_tridiagonal_krylov_vectors) = {:.5f} seconds.'.format(
             time.time() - t0))
     return alpha, beta
