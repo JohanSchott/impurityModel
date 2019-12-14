@@ -1,0 +1,7 @@
+# Needed python modules
+mpi4py
+bitarray
+numpy
+sympy
+scipy
+h5py
