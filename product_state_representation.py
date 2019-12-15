@@ -298,7 +298,7 @@ def bytes2str(bytestr):
     return bitarray2str(bytes2bitarray(bytestr))
 
 
-def int2bytes(i):
+def int2bytes(i, n):
     """
     Returns bytes representation of product state.
 
@@ -306,9 +306,11 @@ def int2bytes(i):
     ----------
     i : int
         Representation of a product state, in terms of an integer.
+    n : int
+        Total number of spin-orbitals in the system.
 
     """
-    return bitarray2bytes(int2bitarray(s))
+    return bitarray2bytes(int2bitarray(i, n))
 
 
 def bytes2int(bytestr):
