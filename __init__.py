@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 A package dealing with many-body impurity models.
 
@@ -8,11 +8,5 @@ A package dealing with many-body impurity models.
 
 """
 
-from . import finite
-from . import spectra
-from . import average
-from . import product_state_representation
-from . import create
-from . import remove
-from . import mpi_comm
+from . import ed 
 

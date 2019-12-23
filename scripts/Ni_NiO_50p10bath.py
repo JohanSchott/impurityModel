@@ -9,11 +9,11 @@ import sys,os
 from mpi4py import MPI
 import pickle
 import time
-
-from impurityModel import spectra
-from impurityModel import finite
-from impurityModel.finite import c2i
-from impurityModel.average import k_B, thermal_average
+# Local local stuff
+from impurityModel.ed import spectra
+from impurityModel.ed import finite
+from impurityModel.ed.finite import c2i
+from impurityModel.ed.average import k_B, thermal_average
 
 
 def main():

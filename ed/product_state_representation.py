@@ -28,7 +28,10 @@ The bytes representation is constructed from the bitarray representation by call
 The bytes type is, like tuple, str and int, immutable and uses about the same amount of memory as the integer representation.
 However, from an bitarray, it takes less time to convert to a bytes representation than to an integer representation.
 
-In the finite.py module, the ordering convention is such that this product state example represents |psi> = c2 c5 |0>, (and not c5 c2 |0>).
+Both the integer and the bytes representation needs to know the total number of spin-orbitals in the system.
+
+In the finite.py module, the ordering convention is such that this product state example represents:
+|psi> = c2 c5 |0>, (and not c5 c2 |0>).
 
 """
 
@@ -143,7 +146,7 @@ def bitarray2bytes(bits):
     return bits.tobytes()
 
 
-def bytes2bitarray(bytestr):
+def bytes2bitarray(bytestr, n):
     """
     Returns bitarray representation of product state.
 
@@ -151,6 +154,8 @@ def bytes2bitarray(bytestr):
     ----------
     bytestr : bytes
         Represenation of a product state, in terms of a bytes object.
+    n : int
+        Total number of spin-orbitals in the system.
 
     """
     # Generate a empty bitarray
@@ -158,7 +163,7 @@ def bytes2bitarray(bytestr):
     # Load this bitarray with the information stored in the byte string.
     bits.frombytes(bytestr)
     # Return the bitarray
-    return bits
+    return bits[:n]
 
 
 def int2bitarray(i, n):
@@ -259,7 +264,7 @@ def tuple2bytes(t, n):
     return tuple2bitarray(t, n).tobytes()
 
 
-def bytes2tuple(bytestr):
+def bytes2tuple(bytestr, n):
     """
     Returns byte string representation of product state.
 
@@ -267,9 +272,11 @@ def bytes2tuple(bytestr):
     ----------
     bytestr : bytes
         Represenation of a product state, in terms of a bytes object.
+    n : int
+        Total number of spin-orbitals in the system.
 
     """
-    return bitarray2tuple(bytes2bitarray(bytestr))
+    return bitarray2tuple(bytes2bitarray(bytestr, n))
 
 
 def str2bytes(s):
@@ -285,7 +292,7 @@ def str2bytes(s):
     return bitarray2bytes(str2bitarray(s))
 
 
-def bytes2str(bytestr):
+def bytes2str(bytestr, n):
     """
     Returns string representation of product state.
 
@@ -293,9 +300,11 @@ def bytes2str(bytestr):
     ----------
     bytestr : bytes
         Represenation of a product state, in terms of a bytes object.
+    n : int
+        Total number of spin-orbitals in the system.
 
     """
-    return bitarray2str(bytes2bitarray(bytestr))
+    return bitarray2str(bytes2bitarray(bytestr, n))
 
 
 def int2bytes(i, n):
@@ -313,7 +322,7 @@ def int2bytes(i, n):
     return bitarray2bytes(int2bitarray(i, n))
 
 
-def bytes2int(bytestr):
+def bytes2int(bytestr, n):
     """
     Returns integer representation of product state.
 
@@ -321,7 +330,8 @@ def bytes2int(bytestr):
     ----------
     bytestr : bytes
         Represenation of a product state, in terms of a bytes object.
+    n : int
+        Total number of spin-orbitals in the system.
 
     """
-    return bitarray2int(bytes2bitarray(bytestr))
-
+    return bitarray2int(bytes2bitarray(bytestr, n))

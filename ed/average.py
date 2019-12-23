@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 
+"""
+average
+=======
+
+Module containing functions for performing averaging.
+
+"""
+
 import numpy as np
 
 # Boltzmann constant. Unit: eV/K. E = k_B * T,

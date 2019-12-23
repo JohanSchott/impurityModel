@@ -4,4 +4,14 @@ numpy
 sympy
 scipy
 h5py
-# mpi4py is also needed. It requires MPI.
+numpydoc 
+itertools
+#
+# Requirements that (perhaps) can't be directly installed only with pip.
+# *) mpi4py
+# It requires MPI, which might be a bit tricky to install.
+# Therefore mpi4py, at the moment, has to be installed manually by the user.
+
+# *) sphinx 
+# Only required for the documentation generation.
+

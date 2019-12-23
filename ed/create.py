@@ -14,11 +14,10 @@ The ordering convention is such that the normal ordering of a product state is |
 
 """
 
-
 import sys
 from bisect import bisect_left
-
-from . import product_state_representation as psr
+# Local imports
+from impurityModel.ed import product_state_representation as psr
 
 
 def binary_search_bigger(a, x):
@@ -150,12 +149,14 @@ def ubitarray(i, state):
         # Amplitude
         return 1 if state[:i].count() % 2 == 0 else -1
 
-def ubytes(i, state):
+def ubytes(n_spin_orbitals, i, state):
     """
     Create electron at orbital i in state.
 
     Parameters
     ----------
+    n_spin_orbitals : int
+        Total number of spin-orbitals in the system.
     i : int
         Spin-orbital index
     state : bytes
@@ -171,7 +172,7 @@ def ubytes(i, state):
 
     """
     # bitarray representation of product state.
-    bits = psr.bytes2bitarray(state)
+    bits = psr.bytes2bitarray(state, n_spin_orbitals)
     # Create an electron at spin-orbital index i.
     amp = ubitarray(i, bits)
     # Convert back the updated product state to bytes representation.

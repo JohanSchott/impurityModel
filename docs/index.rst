@@ -10,13 +10,25 @@ Welcome to impurityModel's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: finite
+.. automodule:: ed.finite
    :members:
 
-.. automodule:: spectra
+.. automodule:: ed.spectra
    :members:
 
-.. automodule:: average
+.. automodule:: ed.average
+   :members:
+
+.. automodule:: ed.create
+   :members:
+
+.. automodule:: ed.remove
+   :members:
+
+.. automodule:: ed.product_state_representation
+   :members:
+
+.. automodule:: ed.mpi_comm
    :members:
 
 Indices and tables

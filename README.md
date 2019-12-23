@@ -21,9 +21,7 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 </figure>
 
 ### Get started
-- Python 3.x is needed with libraries `mpi4py`, `bitarray`, `numpy`, `sympy`, and `scipy`.
-The Python library `h5py` is recommended but not necessary.
-For help in installing Python 3.x and/or Python libraries, please see e.g.
+- For help in installing Python 3.x and/or Python libraries, please see e.g.
 [https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
 
 - Add the absolute parent path of the directory (`impurityModel`) to the `PYTHONPATH` environment variable, such that the Python module in this directory can be found. For example, if the path to the `impurityModel` folder is `path/to/folder/impurityModel`, put the following command in the `~/.bashrc` file:
@@ -105,20 +103,16 @@ The documentation of this package is found in the directory `docs`.
 
 To update the manual, go to directory `docs` and simply type:
 
-```
+```bash
 make html
 ```
 to generate a html-page.
+
 To instead generate a pdf-file, type:
-```
+```bash
 make latex
 ```
 and follow the instructions.
 
 Note:
-- package `numpydoc` is required. If missing, e.g. type `conda install numpydoc`
 - If a new module or subpackage is created, this information needs to be added to `docs/index.rst`.
-
-
-
-

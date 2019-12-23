@@ -17,11 +17,12 @@ import scipy.sparse.linalg
 from scipy.special import spherical_jn
 from scipy.special import sph_harm
 import time
+# Local imports
+from impurityModel.ed.finite import gauntC, c2i, get_job_tasks
+from impurityModel.ed.finite import daggerOp, applyOp, inner, add, norm2
+from impurityModel.ed.finite import expand_basis_and_hamiltonian
+from impurityModel.ed.finite import get_tridiagonal_krylov_vectors
 
-from .finite import gauntC, c2i, get_job_tasks
-from .finite import daggerOp, applyOp, inner, add, norm2
-from .finite import expand_basis_and_hamiltonian
-from .finite import get_tridiagonal_krylov_vectors
 
 # MPI variables
 comm = MPI.COMM_WORLD

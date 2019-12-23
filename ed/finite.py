@@ -10,7 +10,7 @@ This module contains functions doing the bulk of the calculations.
 """
 
 import sys
-from math import pi,sqrt
+from math import pi, sqrt
 import numpy as np
 from sympy.physics.wigner import gaunt
 import itertools
@@ -18,12 +18,11 @@ from collections import OrderedDict
 import scipy.sparse
 from mpi4py import MPI
 import time
-
-
-from . import product_state_representation as psr
-from . import create
-from . import remove
-from .average import k_B, thermal_average
+# Local imports
+from impurityModel.ed import product_state_representation as psr
+from impurityModel.ed import create
+from impurityModel.ed import remove
+from impurityModel.ed.average import k_B, thermal_average
 
 
 # MPI variables
@@ -438,7 +437,7 @@ def a(n_spin_orbitals, i, psi):
     '''
     ret={}
     for state, amp in psi.items():
-        state_new, sign = remove.ubytes(i, state)
+        state_new, sign = remove.ubytes(n_spin_orbitals, i, state)
         if sign != 0: ret[state_new] = amp*sign
     return ret
 
@@ -464,7 +463,7 @@ def c(n_spin_orbitals, i, psi):
     '''
     ret={}
     for state, amp in psi.items():
-        state_new, sign = create.ubytes(i, state)
+        state_new, sign = create.ubytes(n_spin_orbitals, i, state)
         if sign != 0: ret[state_new] = amp*sign
     return ret
 
@@ -822,10 +821,12 @@ def getLz3d(nBaths, psi):
         Multi configurational state.
 
     '''
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
     Lz = 0
     for state, amp in psi.items():
         tmp = 0
-        for i in psr.bytes2tuple(state):
+        for i in psr.bytes2tuple(state, n_spin_orbitals):
             spinOrb = i2c(nBaths, i)
             # Look for spin-orbitals of the shape: spinOrb = (l, s, ml), with l=2.
             if len(spinOrb) == 3 and spinOrb[0] == 2:
@@ -846,10 +847,12 @@ def getSz3d(nBaths, psi):
         Multi configurational state.
 
     """
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
     Sz = 0
     for state,amp in psi.items():
         tmp = 0
-        for i in psr.bytes2tuple(state):
+        for i in psr.bytes2tuple(state, n_spin_orbitals):
             spinOrb = i2c(nBaths,i)
             # Look for spin-orbitals of the shape: spinOrb = (l, s, ml), with l=2.
             if len(spinOrb) == 3 and spinOrb[0] == 2:
@@ -914,9 +917,11 @@ def getTraceDensityMatrix(nBaths, psi, l=2):
         Angular momentum
 
     """
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
     n = 0
     for state, amp in psi.items():
-        s = psr.bytes2str(state)
+        s = psr.bytes2str(state, n_spin_orbitals)
         nState = 0
         for spin in range(2):
             for m in range(-l,l+1):
@@ -1277,12 +1282,18 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
     op : dict
         Operator of the format
         tuple : amplitude,
+
         where each tuple describes a scattering
+
         process. Examples of possible tuples (and their meanings) are:
-        ((i,'c'))  <-> c_i^dagger
-        ((i,'a'))  <-> c_i
-        ((i,'c'),(j,'a'))  <-> c_i^dagger c_j
-        ((i,'c'),(j,'c'),(k,'a'),(l,'a')) <-> c_i^dagger c_j^dagger c_k c_l
+
+        ((i, 'c'))  <-> c_i^dagger
+
+        ((i, 'a'))  <-> c_i
+
+        ((i, 'c'), (j, 'a'))  <-> c_i^dagger c_j
+
+        ((i, 'c'), (j, 'c'), (k, 'a'), (l, 'a')) <-> c_i^dagger c_j^dagger c_k c_l
     psi : dict
         Multi-configurational state.
         Product states as keys and amplitudes as values.
@@ -1315,7 +1326,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
-            bits = psr.bytes2bitarray(state)
+            bits = psr.bytes2bitarray(state, n_spin_orbitals)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
@@ -1349,7 +1360,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
         # Loop over product states in psi.
         for state, amp in psi.items():
             #assert amp != 0
-            bits = psr.bytes2bitarray(state)
+            bits = psr.bytes2bitarray(state, n_spin_orbitals)
             for process, h in op.items():
                 #assert h != 0
                 # Initialize state
@@ -1376,7 +1387,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             if state in opResult:
                 addToFirst(psiNew, opResult[state], amp)
             else:
-                bits = psr.bytes2bitarray(state)
+                bits = psr.bytes2bitarray(state, n_spin_orbitals)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
@@ -1428,7 +1439,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
             if state in opResult:
                 addToFirst(psiNew, opResult[state], amp)
             else:
-                bits = psr.bytes2bitarray(state)
+                bits = psr.bytes2bitarray(state, n_spin_orbitals)
                 # Create new element in opResult
                 # Store H|PS> for product states |PS> not yet in opResult
                 opResult[state] = {}
@@ -1689,8 +1700,7 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
     restrictions : dict
         Restriction the occupation of generated product states.
     parallelization_mode : str
-        Parallelization mode. Either: "serial" or "H_build".
-
+        Parallelization mode. Either: 'serial' or 'H_build'.
 
     Returns
     -------
