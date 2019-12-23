@@ -148,6 +148,7 @@ def ubitarray(i, state):
     else:
         return 0
 
+
 def ubytes(n_spin_orbitals, i, state):
     """
     Remove electron at orbital i in state.
@@ -176,4 +177,3 @@ def ubytes(n_spin_orbitals, i, state):
     # Convert back the updated product state to bytes representation.
     state_new = psr.bitarray2bytes(bits)
     return state_new, amp
-

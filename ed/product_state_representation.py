@@ -30,7 +30,7 @@ However, from an bitarray, it takes less time to convert to a bytes representati
 
 Both the integer and the bytes representation needs to know the total number of spin-orbitals in the system.
 
-In the finite.py module, the ordering convention is such that this product state example represents:
+In the create.py and remove.py modules, the ordering convention is such that this product state example represents:
 |psi> = c2 c5 |0>, (and not c5 c2 |0>).
 
 """

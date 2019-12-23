@@ -149,6 +149,7 @@ def ubitarray(i, state):
         # Amplitude
         return 1 if state[:i].count() % 2 == 0 else -1
 
+
 def ubytes(n_spin_orbitals, i, state):
     """
     Create electron at orbital i in state.

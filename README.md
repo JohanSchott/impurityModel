@@ -98,6 +98,13 @@ Bitarray is a class which also can be used to represent a product state.
 It is mutable which enables fast modifications (adding and removing electrons), and is used in the current version.
 To keep the memory usage down, an imutable bytes class is also used in the current version.
 
+### Tests
+Type
+```bash
+pytest
+``` 
+to perform the unit tests in the `test`-folder.
+
 ### Documentation
 The documentation of this package is found in the directory `docs`.
 
