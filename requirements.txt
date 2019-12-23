@@ -5,7 +5,6 @@ sympy
 scipy
 h5py
 numpydoc 
-itertools
 #
 # Requirements that (perhaps) can't be directly installed only with pip.
 # *) mpi4py
