@@ -29,31 +29,20 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 export PYTHONPATH=$PYTHONPATH:path/to/folder
 ```
 
-- Optionally, for convienience add the absolute path of the sub directories `impurityModel/scripts` and `impurityModel/plotScripts` to the `PATH` environment variable. This enables the Python scripts to be found, without having to specify the absolute path to the scripts. If this is desired, add the following to the `~/.bashrc`:
-```bash
-export PATH=$PATH:path/to/folder/impurityModel/scripts
-export PATH=$PATH:path/to/folder/impurityModel/plotScripts
-```
-
 - Create a directory somewhere and execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
 ```bash
-Ni_NiO_CFparam_1bath.py
+path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh
 ```
 or for usage of more than one MPI process, type e.g.:
 ```bash
-mpirun -n 25 Ni_NiO_CFparam_1bath.py
+path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath_mpi.sh
 ```
-The phrase `CFparam` in the filename `Ni_NiO_CFparam_1bath.py` indicates that the Hamiltonian is constructed by crystal-field parameters.
-Using a crystal-field notation is convinient when doing fitting to experimental spectra. But when many bath states are used it is perhaps more convienient to read-in the non-interacting Hamiltonian from an external file. This non-interacting Hamiltonian can for example be constructed using DFT or DFT+DMFT calculations.
-For example, to read an non-interacting Hamiltonian, with 10 bath states per impurity orbital, for NiO and simulate various spectra, type:
-```bash
-Ni_NiO_10bath.py
-```
-or for usage of more than one MPI process, type e.g.:
-```bash
-mpirun -n 25  Ni_NiO_10bath.py
-```
+These examples will read an non-interacting Hamiltonian from file.
 
+The non-interacting Hamiltonian can instead be constructed by crystal-field parameters.
+This is done in the python scipts containing the phrase `CFparam` in the filename, e.g. `Ni_NiO_CFparam_10bath.py`.
+Using a crystal-field notation is convinient when doing fitting to experimental spectra.
+But for more accurate simulations it is better to read in the non-interacting Hamiltonian from file that has been constructed using e.g. DFT or DFT+DMFT simulations.
 
 #### Output files
 Input parameters used are saved and stored in `.npz` format.

@@ -157,10 +157,10 @@ def main(h0_filename, radial_filename,
     with open(h0_filename, 'rb') as handle:
         h0_operator = pickle.loads(handle.read())
     # Sanity check
-    for orbitals in h0_operator.keys():
-        for orbital in orbitals:
-            if len(orbital) == 2:
-                assert nBaths[orbital[0]] > orbital[1]
+    for process in h0_operator.keys():
+        for event in process:
+            if len(event[0]) == 2:
+                assert nBaths[event[0][0]] > event[0][1]
 
     # Total number of spin-orbitals in the system
     n_spin_orbitals = sum(2 * (2 * ang + 1) + nBath for ang, nBath in nBaths.items())
