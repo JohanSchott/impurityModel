@@ -11,7 +11,8 @@ import sys,os
 from mpi4py import MPI
 import pickle
 import time
-import parser
+import argparse
+import h5py
 # Local local stuff
 from impurityModel.ed import spectra
 from impurityModel.ed import finite
@@ -19,139 +20,164 @@ from impurityModel.ed.finite import c2i
 from impurityModel.ed.average import k_B, thermal_average
 
 
-def main():
+def main(h0_filename, radial_filename,
+         ls, nBaths, nValBaths,
+         n0imps, dnTols, dnValBaths, dnConBaths,
+         Fdd, Fpp, Fpd, Gpd,
+         xi_2p, xi_3d, chargeTransferCorrection,
+         hField, nPsiMax,
+         nPrintSlaterWeights, tolPrintOccupation,
+         T, energy_cut,
+         delta, deltaRIXS, deltaNIXS):
+    """
+    First find the lowest eigenstates and then use them to calculate various spectra.
+
+    Parameters
+    ----------
+    h0_filename : str
+        Filename of the non-relativistic non-interacting Hamiltonian operator.
+    radial_filename : str
+        File name of file containing radial mesh and radial part of final
+        and initial orbitals in the NIXS excitation process.
+    ls : tuple
+        Angular momenta of correlated orbitals.
+    nBaths : tuple
+        Number of bath states,
+        for each angular momentum.
+    nValBaths : tuple
+        Number of valence bath states,
+        for each angular momentum.
+    n0imps : tuple
+        Initial impurity occupation.
+    dnTols : tuple
+        Max devation from initial impurity occupation,
+        for each angular momentum.
+    dnValBaths : tuple
+        Max number of electrons to leave valence bath orbitals,
+        for each angular momentum.
+    dnConBaths : tuple
+        Max number of electrons to enter conduction bath orbitals,
+        for each angular momentum.
+    Fdd : tuple
+        Slater-Condon parameters Fdd. This assumes d-orbitals.
+    Fpp : tuple
+        Slater-Condon parameters Fpp. This assumes p-orbitals.
+    Fpd : tuple
+        Slater-Condon parameters Fpd. This assumes p- and d-orbitals.
+    Gpd : tuple
+        Slater-Condon parameters Gpd. This assumes p- and d-orbitals.
+    xi_2p : float
+        SOC value for p-orbitals. This assumes p-orbitals.
+    xi_3d : float
+        SOC value for d-orbitals. This assumes d-orbitals.
+    chargeTransferCorrection : float
+        Double counting parameter
+    hField : tuple
+        Magnetic field.
+    nPsiMax : int
+        Maximum number of eigenstates to consider.
+    nPrintSlaterWeights : int
+        Printing parameter.
+    tolPrintOccupation : float
+        Printing parameter.
+    T : float
+        Temperature (Kelvin)
+    energy_cut : float
+        How many k_B*T above lowest eigenenergy to consider.
+    delta : float
+        Smearing, half width half maximum (HWHM). Due to short core-hole lifetime.
+    deltaRIXS : float
+        Smearing, half width half maximum (HWHM).
+        Due to finite lifetime of excited states.
+    deltaNIXS : float
+        Smearing, half width half maximum (HWHM).
+        Due to finite lifetime of excited states.
+
+
+    """
 
     # MPI variables
     comm = MPI.COMM_WORLD
     rank = comm.rank
-    ranks = comm.size
 
     if rank == 0: t0 = time.time()
 
-    # -----------------------
-    # Read the non-relativistic non-interacting Hamiltonian operator from file.
-    h0FileName = os.path.dirname(sys.argv[0])[:-7] + 'h0/h0_NiO_10bath.pickle'
-    with open(h0FileName, 'rb') as handle:
-        h0_operator = pickle.loads(handle.read())
-    # System specific information
-    l1, l2 = 1, 2 # Angular momentum
-    # Number of bath states.
-    nBaths = OrderedDict()
-    nBaths[l1] = 0
-    nBaths[l2] = 10
-    # Number of valence bath states.
-    valBaths = OrderedDict()
-    valBaths[l1] = 0
-    valBaths[l2] = 10
-    # -----------------------
-    # Basis occupation information.
-    # Angular momentum : initial impurity occupation
-    n0imp = OrderedDict()
-    n0imp[l1] = 6 # 0 = empty, 2*(2*l1+1) = Full occupation
-    n0imp[l2] = 8 # 8 for Ni+2
-    # Angular momentum : max devation from initial impurity occupation
-    dnTol = OrderedDict()
-    dnTol[l1] = 0
-    dnTol[l2] = 2
-    # Angular momentum : max number of electrons to leave
-    # valence bath orbitals
-    dnValBaths = OrderedDict()
-    dnValBaths[l1] = 0
-    dnValBaths[l2] = 2
-    # Angular momentum : max number of electrons to enter
-    # conduction bath orbitals
-    dnConBaths = OrderedDict()
-    dnConBaths[l1] = 0
-    dnConBaths[l2] = 0
-    # -----------------------
-    # Hamiltonian parameters
-    # Slater-Condon parameters
-    Fdd = [7.5, 0, 9.9, 0, 6.6]
-    Fpp = [0, 0, 0]
-    Fpd = [8.9, 0, 6.8]
-    Gpd = [0, 5, 0, 2.8]
-    # SOC values
-    xi_2p = 11.629
-    xi_3d = 0.096
-    # Double counting parameter
-    chargeTransferCorrection = 1.5 # 3.5 gives good position of PS peaks
-    # Magnetic field
-    hField = [0, 0, 0.0001]
-    # -----------------------
-    # Maximum number of eigenstates to consider
-    nPsiMax = 5
-    # -----------------------
-    # Printing parameters
-    nPrintSlaterWeights = 3
-    tolPrintOccupation = 0.5
-    # -----------------------
-    # Spectra parameters
-    # Temperature (Kelvin)
-    T = 300
-    # How much above lowest eigenenergy to consider
-    energy_cut = 10*k_B*T
-    # energy-mesh
-    w = np.linspace(-25,25,3000)
-    # Smearing, half with half maximum (HWHM). Due to short core-hole lifetime
-    delta = 0.2
-    # Occupation restrictions, used when spectra are generated
+    # -- System information --
+    nBaths = OrderedDict({ang : nBath for ang, nBath in zip(ls, nBaths)})
+    nValBaths = OrderedDict({ang : nValBath for ang, nValBath in zip(ls, nValBaths)})
+
+    # -- Basis occupation information --
+    n0imps = OrderedDict({ang : n0imp for ang, n0imp in zip(ls, n0imps)})
+    dnTols = OrderedDict({ang : dnTol for ang, dnTol in zip(ls, dnTols)})
+    dnValBaths = OrderedDict({ang : dnValBath for ang, dnValBath in zip(ls, dnValBaths)})
+    dnConBaths = OrderedDict({ang : dnConBath for ang, dnConBath in zip(ls, dnConBaths)})
+
+    # -- Spectra information --
+    # Energy cut in eV.
+    energy_cut *= k_B*T
+    # XAS parameters
+    # Energy-mesh
+    w = np.linspace(-25, 25, 3000)
+    # Each element is a XAS polarization vector.
+    epsilons = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] # [[0,0,1]]
+    # RIXS parameters
+    # Polarization vectors, of in and outgoing photon.
+    epsilonsRIXSin = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]  # [[0,0,1]]
+    epsilonsRIXSout = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] # [[0,0,1]]
+    wIn = np.linspace(-10, 20, 50)
+    wLoss = np.linspace(-2, 12, 4000)
+    # NIXS parameters
+    qsNIXS = [2 * np.array([1, 1, 1]) / np.sqrt(3), 7 * np.array([1, 1, 1]) / np.sqrt(3)]
+    # Angular momentum of final and initial orbitals in the NIXS excitation process.
+    liNIXS,ljNIXS = 2, 2
+
+    # -- Occupation restrictions for excited states --
     l = 2
     restrictions = {}
     # Restriction on impurity orbitals
-    indices = frozenset(c2i(nBaths,(l,s,m)) for s in range(2) for m in range(-l,l+1))
-    restrictions[indices] = (n0imp[l] - 1, n0imp[l] + 3)
+    indices = frozenset(c2i(nBaths, (l, s, m)) for s in range(2) for m in range(-l, l + 1))
+    restrictions[indices] = (n0imps[l] - 1, n0imps[l] + dnTols[l] + 1)
     # Restriction on valence bath orbitals
     indices = []
-    for b in range(valBaths[l]):
+    for b in range(nValBaths[l]):
         indices.append(c2i(nBaths, (l, b)))
-    restrictions[frozenset(indices)] = (valBaths[l] - 2, valBaths[l])
+    restrictions[frozenset(indices)] = (nValBaths[l] - dnValBaths[l], nValBaths[l])
     # Restriction on conduction bath orbitals
     indices = []
-    for b in range(valBaths[l], nBaths[l]):
+    for b in range(nValBaths[l], nBaths[l]):
         indices.append(c2i(nBaths, (l, b)))
-    restrictions[frozenset(indices)] = (0, 0)
-    # XAS polarization vectors.
-    epsilons = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    # RIXS parameters
-    # Polarization vectors, of in and outgoing photon.
-    epsilonsRIXSin = [[1,0,0],[0,1,0],[0,0,1]]  # [[0,0,1]]
-    epsilonsRIXSout = [[1,0,0],[0,1,0],[0,0,1]] # [[0,0,1]]
-    wIn = np.linspace(-10,20,50)
-    wLoss = np.linspace(-2,12,4000)
-    # Smearing, half with half maximum (HWHM).
-    # Due to finite lifetime of excited states
-    deltaRIXS = 0.050
-    # NIXS parameters
-    qsNIXS = [2*np.array([1,1,1])/np.sqrt(3),7*np.array([1,1,1])/np.sqrt(3)]
-    # Smearing, half with half maximum (HWHM). Due to finite lifetime of excited states
-    deltaNIXS = 0.100
-    # Angular momentum of final and initial orbitals in the NIXS excitation process.
-    liNIXS,ljNIXS = 2,2
-    # File name of file containing radial mesh and radial part of final
-    # and initial orbitals in the NIXS excitation process.
-    radialFileName = os.path.dirname(sys.argv[0])[:-7] + 'radialOrbitals/Ni3d.dat'
-    data = np.loadtxt(radialFileName)
-    radialMesh = data[:,0]
-    RiNIXS = data[:,1]
+    restrictions[frozenset(indices)] = (0, dnConBaths[l])
+
+    # Read the radial part of correlated orbitals
+    data = np.loadtxt(radial_filename)
+    radialMesh, RiNIXS = data[:,0], data[:,1]
     RjNIXS = np.copy(RiNIXS)
-    # -----------------------
+
+    # Read the non-relativistic non-interacting Hamiltonian operator from file.
+    with open(h0_filename, 'rb') as handle:
+        h0_operator = pickle.loads(handle.read())
+    # Sanity check
+    for orbitals in h0_operator.keys():
+        for orbital in orbitals:
+            if len(orbital) == 2:
+                assert nBaths[orbital[0]] > orbital[1]
 
     # Total number of spin-orbitals in the system
-    n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
-    if rank == 0: print("#spin-orbitals:",n_spin_orbitals)
+    n_spin_orbitals = sum(2 * (2 * ang + 1) + nBath for ang, nBath in nBaths.items())
+    if rank == 0: print("#spin-orbitals:", n_spin_orbitals)
 
     # Hamiltonian
     if rank == 0: print('Construct the Hamiltonian operator...')
-    hOp = get_hamiltonian_operator(nBaths, valBaths, [Fdd, Fpp, Fpd, Gpd],
+    hOp = get_hamiltonian_operator(nBaths, nValBaths, [Fdd, Fpp, Fpd, Gpd],
                                    [xi_2p, xi_3d],
-                                   [n0imp, chargeTransferCorrection],
+                                   [n0imps, chargeTransferCorrection],
                                    hField, h0_operator)
     # Measure how many physical processes the Hamiltonian contains.
     if rank == 0: print('{:d} processes in the Hamiltonian.'.format(len(hOp)))
     # Many body basis for the ground state
     if rank == 0: print('Create basis...')
-    basis = finite.get_basis(nBaths, valBaths, dnValBaths, dnConBaths,
-                             dnTol, n0imp)
+    basis = finite.get_basis(nBaths, nValBaths, dnValBaths, dnConBaths,
+                             dnTols, n0imps)
     if rank == 0: print('#basis states = {:d}'.format(len(basis)))
     # Diagonalization of restricted active space Hamiltonian
     es, psis = finite.eigensystem(n_spin_orbitals, hOp, basis, nPsiMax)
@@ -202,9 +228,9 @@ def main():
     # Save some information to disk
     if rank == 0:
         # Most of the input parameters. Dictonaries can be stored in this file format.
-        np.savez_compressed('data', l1=l1, l2=l2, nBaths=nBaths,
-                            valBaths=valBaths,
-                            n0imp=n0imp, dnTol=dnTol,
+        np.savez_compressed('data', ls=ls, nBaths=nBaths,
+                            nValBaths=nValBaths,
+                            n0imps=n0imps, dnTols=dnTols,
                             dnValBaths=dnValBaths, dnConBaths=dnConBaths,
                             Fdd=Fdd, Fpp=Fpp, Fpd=Fpd, Gpd=Gpd,
                             xi_2p=xi_2p, xi_3d=xi_3d,
@@ -259,19 +285,19 @@ def main():
         print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
-    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
     if rank == 0:
-        h5f.create_dataset('PS',data=-gs.imag)
-        h5f.create_dataset('PSthermal',data=a)
+        h5f.create_dataset('PS', data=-gs.imag)
+        h5f.create_dataset('PSthermal', data=a)
     # Sum over transition operators
-    aSum = np.sum(a,axis=0)
+    aSum = np.sum(a, axis=0)
     # Save spectra to disk
     if rank == 0:
-        tmp = [w,aSum]
+        tmp = [w, aSum]
         # Each transition operator seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
         print("Save spectra to disk...\n")
-        np.savetxt('PS.dat',np.array(tmp).T,fmt='%8.4f',
+        np.savetxt('PS.dat', np.array(tmp).T, fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
     if rank == 0:
         print("time(PS) = {:.2f} seconds \n".format(time.time()-t0))
@@ -289,19 +315,19 @@ def main():
         print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
-    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
     if rank == 0:
-        h5f.create_dataset('XPS',data=-gs.imag)
-        h5f.create_dataset('XPSthermal',data=a)
+        h5f.create_dataset('XPS', data=-gs.imag)
+        h5f.create_dataset('XPSthermal', data=a)
     # Sum over transition operators
-    aSum = np.sum(a,axis=0)
+    aSum = np.sum(a, axis=0)
     # Save spectra to disk
     if rank == 0:
-        tmp = [w,aSum]
+        tmp = [w, aSum]
         # Each transition operator seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
         print("Save spectra to disk...\n")
-        np.savetxt('XPS.dat',np.array(tmp).T,fmt='%8.4f',
+        np.savetxt('XPS.dat', np.array(tmp).T, fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
     if rank == 0:
         print("time(XPS) = {:.2f} seconds \n".format(time.time()-t0))
@@ -319,19 +345,19 @@ def main():
         print('#q-points = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
-    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
     if rank == 0:
-        h5f.create_dataset('NIXS',data=-gs.imag)
-        h5f.create_dataset('NIXSthermal',data=a)
+        h5f.create_dataset('NIXS', data=-gs.imag)
+        h5f.create_dataset('NIXSthermal', data=a)
     # Sum over q-points
-    aSum = np.sum(a,axis=0)
+    aSum = np.sum(a, axis=0)
     # Save spectra to disk
     if rank == 0:
-        tmp = [wLoss,aSum]
+        tmp = [wLoss, aSum]
         # Each q-point seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
         print("Save spectra to disk...\n")
-        np.savetxt('NIXS.dat',np.array(tmp).T,fmt='%8.4f',
+        np.savetxt('NIXS.dat', np.array(tmp).T, fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
 
     if rank == 0:
@@ -350,19 +376,19 @@ def main():
         print('#polarizations = {:d}'.format(np.shape(gs)[1]))
         print('#mesh points = {:d}'.format(np.shape(gs)[2]))
     # Thermal average
-    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
     if rank == 0:
-        h5f.create_dataset('XAS',data=-gs.imag)
-        h5f.create_dataset('XASthermal',data=a)
+        h5f.create_dataset('XAS', data=-gs.imag)
+        h5f.create_dataset('XASthermal', data=a)
     # Sum over transition operators
-    aSum = np.sum(a,axis=0)
+    aSum = np.sum(a, axis=0)
     # Save spectra to disk
     if rank == 0:
-        tmp = [w,aSum]
+        tmp = [w, aSum]
         # Each transition operator seperatly
         for i in range(np.shape(a)[0]): tmp.append(a[i,:])
         print("Save spectra to disk...\n")
-        np.savetxt('XAS.dat',np.array(tmp).T,fmt='%8.4f',
+        np.savetxt('XAS.dat', np.array(tmp).T, fmt='%8.4f',
                    header='E  sum  T1  T2  T3 ...')
     if rank == 0:
         print("time(XAS) = {:.2f} seconds \n".format(time.time()-t0))
@@ -383,17 +409,17 @@ def main():
         print('#mesh points of input energy = {:d}'.format(np.shape(gs)[3]))
         print('#mesh points of energy loss = {:d}'.format(np.shape(gs)[4]))
     # Thermal average
-    a = thermal_average(es[:np.shape(gs)[0]],-gs.imag,T=T)
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
     if rank == 0:
-        h5f.create_dataset('RIXS',data=-gs.imag)
-        h5f.create_dataset('RIXSthermal',data=a)
+        h5f.create_dataset('RIXS', data=-gs.imag)
+        h5f.create_dataset('RIXSthermal', data=a)
     # Sum over transition operators
-    aSum = np.sum(a,axis=(0,1))
+    aSum = np.sum(a, axis=(0,1))
     # Save spectra to disk
     if rank == 0:
         print("Save spectra to disk...\n")
         # I[wLoss,wIn], with wLoss on first column and wIn on first row.
-        tmp = np.zeros((len(wLoss)+1,len(wIn)+1),dtype=np.float32)
+        tmp = np.zeros((len(wLoss) + 1, len(wIn) + 1), dtype=np.float32)
         tmp[0,0] = len(wIn)
         tmp[0,1:] = wIn
         tmp[1:,0] = wLoss
@@ -404,10 +430,10 @@ def main():
         t0 = time.time()
 
     if rank == 0: h5f.close()
-    print('Script finished for rank:',rank)
+    print('Script finished for rank:', rank)
 
 
-def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
+def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs,
                              DCinfo, hField, h0_operator):
     """
     Return the Hamiltonian, in operator form.
@@ -448,7 +474,7 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     # Divide up input parameters to more concrete variables
     Fdd, Fpp, Fpd, Gpd = slaterCondon
     xi_2p, xi_3d = SOCs
-    n0imp, chargeTransferCorrection = DCinfo
+    n0imps, chargeTransferCorrection = DCinfo
     hx, hy, hz = hField
 
     # Calculate the U operator, in spherical harmonics basis.
@@ -460,8 +486,8 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
 
     # Double counting (DC) correction values.
     # MLFT DC
-    dc = finite.dc_MLFT(n3d_i=n0imp[2], c=chargeTransferCorrection, Fdd=Fdd,
-                        n2p_i=n0imp[1], Fpd=Fpd, Gpd=Gpd)
+    dc = finite.dc_MLFT(n3d_i=n0imps[2], c=chargeTransferCorrection, Fdd=Fdd,
+                        n2p_i=n0imps[1], Fpd=Fpd, Gpd=Gpd)
     eDCOperator = {}
     for il, l in enumerate([2,1]):
         for s in range(2):
@@ -494,7 +520,93 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
 
 
 if __name__== "__main__":
-    parser.
+    # Parse input parameters
+    parser = argparse.ArgumentParser(description='Spectroscopy simulations')
+    parser.add_argument('h0_filename', type=str,
+                        help='Filename of non-interacting Hamiltonian.')
+    parser.add_argument('radial_filename', type=str,
+                        help='Filename of radial part of correlated orbitals.')
+    parser.add_argument('--ls', type=int, nargs='+', default=[1, 2],
+                        help='Angular momenta of correlated orbitals.')
+    parser.add_argument('--nBaths', type=int, nargs='+', default=[0, 10],
+                        help='Number of bath states, for each angular momentum.')
+    parser.add_argument('--nValBaths', type=int, nargs='+', default=[0, 10],
+                        help='Number of valence bath states, for each angular momentum.')
+    parser.add_argument('--n0imps', type=int, nargs='+', default=[6, 8],
+                        help='Initial impurity occupation, for each angular momentum.')
+    parser.add_argument('--dnTols', type=int, nargs='+', default=[0, 2],
+                        help=('Max devation from initial impurity occupation, '
+                              'for each angular momentum.'))
+    parser.add_argument('--dnValBaths', type=int, nargs='+', default=[0, 2],
+                        help=('Max number of electrons to leave valence bath orbitals, '
+                              'for each angular momentum.'))
+    parser.add_argument('--dnConBaths', type=int, nargs='+', default=[0, 0],
+                        help=('Max number of electrons to enter conduction bath orbitals, '
+                              'for each angular momentum.'))
+    parser.add_argument('--Fdd', type=float, nargs='+', default=[7.5, 0, 9.9, 0, 6.6],
+                        help='Slater-Condon parameters Fdd. d-orbitals are assumed.')
+    parser.add_argument('--Fpp', type=float, nargs='+', default=[0., 0., 0.],
+                        help='Slater-Condon parameters Fpp. p-orbitals are assumed.')
+    parser.add_argument('--Fpd', type=float, nargs='+', default=[8.9, 0, 6.8],
+                        help='Slater-Condon parameters Fpd. p- and d-orbitals are assumed.')
+    parser.add_argument('--Gpd', type=float, nargs='+', default=[0., 5., 0, 2.8],
+                        help='Slater-Condon parameters Gpd. p- and d-orbitals are assumed.')
+    parser.add_argument('--xi_2p', type=float, default=11.629,
+                        help='SOC value for p-orbitals. p-orbitals are assumed.')
+    parser.add_argument('--xi_3d', type=float, default=0.096,
+                        help='SOC value for d-orbitals. d-orbitals are assumed.')
+    parser.add_argument('--chargeTransferCorrection', type=float, default=1.5,
+                        help='Double counting parameter.')
+    parser.add_argument('--hField', type=float, nargs='+', default=[0, 0, 0.0001],
+                        help='Magnetic field. (h_x, h_y, h_z)')
+    parser.add_argument('--nPsiMax', type=int, default=5,
+                        help='Maximum number of eigenstates to consider.')
+    parser.add_argument('--nPrintSlaterWeights', type=int, default=3,
+                        help='Printing parameter.')
+    parser.add_argument('--tolPrintOccupation', type=float, default=0.5,
+                        help='Printing parameter.')
+    parser.add_argument('--T', type=float, default=300,
+                        help='Temperature (Kelvin).')
+    parser.add_argument('--energy_cut', type=float, default=10,
+                        help='How many k_B*T above lowest eigenenergy to consider.')
+    parser.add_argument('--delta', type=float, default=0.2,
+                        help=('Smearing, half width half maximum (HWHM). '
+                              'Due to short core-hole lifetime.'))
+    parser.add_argument('--deltaRIXS', type=float, default=0.050,
+                        help=('Smearing, half width half maximum (HWHM). '
+                              'Due to finite lifetime of excited states.'))
+    parser.add_argument('--deltaNIXS', type=float, default=0.100,
+                        help=('Smearing, half width half maximum (HWHM). '
+                              'Due to finite lifetime of excited states.'))
 
+    args = parser.parse_args()
 
-    main()
+    # Sanity checks
+    assert len(args.ls) == len(args.nBaths)
+    assert len(args.ls) == len(args.nValBaths)
+    for nBath, nValBath in zip(args.nBaths, args.nValBaths):
+        assert nBath >= nValBath
+    for ang, n0imp in zip(args.ls, args.n0imps):
+        assert n0imp <= 2 * (2 * ang + 1)  # Full occupation
+        assert n0imp >= 0
+    assert len(args.Fdd) == 5
+    assert len(args.Fpp) == 3
+    assert len(args.Fpd) == 3
+    assert len(args.Gpd) == 4
+    assert len(args.hField) == 3
+
+    main(h0_filename=args.h0_filename, radial_filename=args.radial_filename,
+         ls=tuple(args.ls), nBaths=tuple(args.nBaths),
+         nValBaths=tuple(args.nValBaths), n0imps=tuple(args.n0imps),
+         dnTols=tuple(args.dnTols), dnValBaths=tuple(args.dnValBaths),
+         dnConBaths=tuple(args.dnConBaths),
+         Fdd=tuple(args.Fdd), Fpp=tuple(args.Fpp),
+         Fpd=tuple(args.Fpd), Gpd=tuple(args.Gpd),
+         xi_2p=args.xi_2p, xi_3d=args.xi_3d,
+         chargeTransferCorrection=args.chargeTransferCorrection,
+         hField=tuple(args.hField), nPsiMax=args.nPsiMax,
+         nPrintSlaterWeights=args.nPrintSlaterWeights,
+         tolPrintOccupation=args.tolPrintOccupation,
+         T=args.T, energy_cut=args.energy_cut,
+         delta=args.delta, deltaRIXS=args.deltaRIXS, deltaNIXS=args.deltaNIXS)
+

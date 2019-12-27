@@ -494,9 +494,9 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
     dc = finite.dc_MLFT(n3d_i=n0imp[2], c=chargeTransferCorrection, Fdd=Fdd,
                         n2p_i=n0imp[1], Fpd=Fpd, Gpd=Gpd)
     eDCOperator = {}
-    for il,l in enumerate([2,1]):
+    for il, l in enumerate([2,1]):
         for s in range(2):
-            for m in range(-l,l+1):
+            for m in range(-l, l+1):
                 eDCOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = -dc[il]
 
     # Calculate impurity 3d Hamiltonian.
@@ -520,8 +520,8 @@ def get_hamiltonian_operator(nBaths, valBaths, slaterCondon, SOCs,
                     hImp3dOperator[(((l, s, mi), 'c'), ((l, s, mj), 'a'))] = hImp3d[i,j]
 
     # Magnetic field
-    l = 2
     hHfieldOperator = {}
+    l = 2
     for m in range(-l, l+1):
         hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = hx*1/2.
         hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hx*1/2.
