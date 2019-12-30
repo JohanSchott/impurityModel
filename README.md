@@ -55,16 +55,16 @@ Input parameters used are saved and stored in `.npz` format.
 Spectra are stored in either one `.h5` file or in many `.npz` files.
 Some small size spectra are also stored in `.dat` and `.bin` format, for easy and fast plotting with e.g. gnuplot.
 For plotting all generated spectra (using matplotlib), type:
-```
-plotSpectra.py
+```bash
+python -m impurityModel.plotScripts.plotSpectra
 ```
 For only plotting the RIXS map, type:
-```
-plotRIXS.py
+```bash
+python -m impurityModel.plotScripts.plotRIXS
 ```
 or plot using gnuplot:
-```
-plotRIXS.plt
+```bash
+path/to/folder/impurityModel/plotScripts/plotRIXS.plt
 ```
 
 ### Optimization notes
