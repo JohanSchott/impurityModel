@@ -29,13 +29,19 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 export PYTHONPATH=$PYTHONPATH:path/to/folder
 ```
 
-- Create a directory somewhere and execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
+- Create a directory anywhere on the system, 
+and execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
 ```bash
 path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh
 ```
-or for usage of more than one MPI process, type e.g.:
+This will create start a simulation with 10 bath states and one MPI rank.
+To have e.g. 20 bath states instead of 10, instead type:
 ```bash
-path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath_mpi.sh
+path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh 20
+```
+To have e.g. 20 bath states and 3 MPI ranks, instead type:
+```bash
+path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh 20 3
 ```
 These examples will read an non-interacting Hamiltonian from file.
 
