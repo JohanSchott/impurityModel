@@ -28,7 +28,7 @@ The bytes representation is constructed from the bitarray representation by call
 The bytes type is, like tuple, str and int, immutable and uses about the same amount of memory as the integer representation.
 However, from an bitarray, it takes less time to convert to a bytes representation than to an integer representation.
 
-Both the integer and the bytes representation needs to know the total number of spin-orbitals in the system.
+The tuple, integer, and the bytes representation needs to know the total number of spin-orbitals in the system.
 
 In the create.py and remove.py modules, the ordering convention is such that this product state example represents:
 |psi> = c2 c5 |0>, (and not c5 c2 |0>).
@@ -178,9 +178,7 @@ def int2bitarray(i, n):
         Total number of spin-orbitals in the system.
 
     """
-    b = bin(i)[2:]
-    b = "0"*(n - len(b)) + b
-    return bitarray(b)
+    return bitarray(int2str(i, n))
 
 
 def bitarray2int(bits):
