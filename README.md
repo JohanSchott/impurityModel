@@ -45,10 +45,13 @@ path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh 20 3
 ```
 These examples will read an non-interacting Hamiltonian from file.
 
-The non-interacting Hamiltonian can instead be constructed by crystal-field parameters.
-This is done in the python scipts containing the phrase `CFparam` in the filename, e.g. `Ni_NiO_CFparam_10bath.py`.
-Using a crystal-field notation is convinient when doing fitting to experimental spectra.
-But for more accurate simulations it is better to read in the non-interacting Hamiltonian from file that has been constructed using e.g. DFT or DFT+DMFT simulations.
+A simple non-interacting Hamiltonian can instead be constructed by crystal-field parameters.
+This is done for NiO by typing:
+```bash
+path/to/folder/impurityModel/scripts/run_Ni_NiO_CFparam.sh
+```
+Although using a crystal-field approach is a bigger approximation, it is convinient when doing fitting to experimental spectra.
+But for more accurate simulations it is better to read in a non-interacting Hamiltonian from file, that has been constructed from e.g. DFT or DFT+DMFT simulations.
 
 #### Output files
 Input parameters used are saved and stored in `.npz` format.
