@@ -20,7 +20,11 @@ from impurityModel.ed.finite import c2i
 from impurityModel.ed.average import k_B, thermal_average
 
 
-def main(h0_filename, 
+def main(e_imp, e_deltaO_imp,
+         e_val_eg, e_val_t2g,
+         e_con_eg, e_con_t2g,
+         v_val_eg, v_val_t2g,
+         v_con_eg, v_con_t2g,
          radial_filename,
          ls, nBaths, nValBaths,
          n0imps, dnTols, dnValBaths, dnConBaths,
@@ -35,8 +39,26 @@ def main(h0_filename,
 
     Parameters
     ----------
-    h0_filename : str
-        Filename of the non-relativistic non-interacting Hamiltonian operator.
+    e_imp : float
+        Average 3d onsite energy.
+    e_deltaO_imp : float
+        Energy split of 3d orbitals into eg and t2g orbitals.
+    e_val_eg : float
+        Energy position of valence bath states, coupled to eg orbitals.
+    e_val_t2g : float
+        Energy position of valence bath states, coupled to t2g orbitals.
+    e_con_eg : float
+        Energy position of conduction bath states, coupled to eg orbitals.
+    e_con_t2g : float
+        Energy position of conduction bath states, coupled to t2g orbitals.
+    v_val_eg : float
+        Hybridization/hopping strength of valence bath states with eg orbitals.
+    v_val_t2g : float
+        Hybridization/hopping strength of valence bath states with t2g orbitals.
+    v_con_eg : float
+        Hybridization/hopping strength of conduction bath states with eg orbitals.
+    v_con_t2g : float
+        Hybridization/hopping strength of conduction bath states with t2g orbitals.
     radial_filename : str
         File name of file containing radial mesh and radial part of final
         and initial orbitals in the NIXS excitation process.
@@ -159,11 +181,15 @@ def main(h0_filename,
 
     # Hamiltonian
     if rank == 0: print('Construct the Hamiltonian operator...')
-    hOp = get_hamiltonian_operator(nBaths, nValBaths, [Fdd, Fpp, Fpd, Gpd],
-                                   [xi_2p, xi_3d],
-                                   [n0imps, chargeTransferCorrection],
-                                   hField,
-                                   h0_filename)
+    hOp = get_hamiltonian_operator_using_CF(nBaths, nValBaths, [Fdd, Fpp, Fpd, Gpd],
+                                            [xi_2p, xi_3d],
+                                            [n0imps, chargeTransferCorrection],
+                                            hField,
+                                            e_imp, e_deltaO_imp,
+                                            e_val_eg, e_val_t2g,
+                                            e_con_eg, e_con_t2g,
+                                            v_val_eg, v_val_t2g,
+                                            v_con_eg, v_con_t2g)
     # Measure how many physical processes the Hamiltonian contains.
     if rank == 0: print('{:d} processes in the Hamiltonian.'.format(len(hOp)))
     # Many body basis for the ground state
@@ -228,7 +254,16 @@ def main(h0_filename,
                             xi_2p=xi_2p, xi_3d=xi_3d,
                             chargeTransferCorrection=chargeTransferCorrection,
                             hField=hField,
-                            h0_filename=h0_filename,
+                            e_imp=e_imp,
+                            e_deltaO_imp=e_deltaO_imp,
+                            e_val_eg=e_val_eg,
+                            e_val_t2g=e_val_t2g,
+                            e_con_eg=e_con_eg,
+                            e_con_t2g=e_con_t2g,
+                            v_val_eg=v_val_eg,
+                            v_val_t2g=v_val_t2g,
+                            v_con_eg=v_con_eg,
+                            v_con_t2g=v_con_t2g,
                             nPsiMax=nPsiMax,
                             T=T, energy_cut=energy_cut, delta=delta,
                             restrictions=restrictions,
@@ -425,9 +460,14 @@ def main(h0_filename,
     print('Script finished for rank:', rank)
 
 
-def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs,
-                             DCinfo, hField,
-                             h0_filename):
+def get_hamiltonian_operator_using_CF(nBaths, nValBaths, slaterCondon, SOCs,
+                                      DCinfo, hField,
+                                      e_imp, e_deltaO_imp,
+                                      e_val_eg, e_val_t2g,
+                                      e_con_eg, e_con_t2g,
+                                      v_val_eg, v_val_t2g,
+                                      v_con_eg, v_con_t2g,
+                                      bath_state_basis='spherical'):
     """
     Return the Hamiltonian, in operator form.
 
@@ -446,8 +486,29 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs,
     hField : list
         External magnetic field.
         Elements hx,hy,hz
-    h0_filename : str
-        Filename of non-interacting, non-relativistic operator.
+    e_imp : float
+        Average 3d onsite energy.
+    e_deltaO_imp : float
+        Energy split of 3d orbitals into eg and t2g orbitals.
+    e_val_eg : float
+        Energy position of valence bath states, coupled to eg orbitals.
+    e_val_t2g : float
+        Energy position of valence bath states, coupled to t2g orbitals.
+    e_con_eg : float
+        Energy position of conduction bath states, coupled to eg orbitals.
+    e_con_t2g : float
+        Energy position of conduction bath states, coupled to t2g orbitals.
+    v_val_eg : float
+        Hybridization/hopping strength of valence bath states with eg orbitals.
+    v_val_t2g : float
+        Hybridization/hopping strength of valence bath states with t2g orbitals.
+    v_con_eg : float
+        Hybridization/hopping strength of conduction bath states with eg orbitals.
+    v_con_t2g : float
+        Hybridization/hopping strength of conduction bath states with t2g orbitals.
+    bath_state_basis : str
+        'spherical' or 'cubic'.
+        Which basis to use for the bath states.
 
     Returns
     -------
@@ -493,8 +554,14 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs,
         for s in range(2):
             hHfieldOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = hz*1/2 if s==1 else -hz*1/2
 
-    # Read the non-relativistic non-interacting Hamiltonian operator from file.
-    h0_operator = get_h0_operator(h0_filename, nBaths)
+    # Construct non-relativistic and non-interacting Hamiltonian, from CF parameters.
+    h0_operator = get_CF_hamiltonian(nBaths, nValBaths,
+                                     e_imp, e_deltaO_imp,
+                                     e_val_eg, e_val_t2g,
+                                     e_con_eg, e_con_t2g,
+                                     v_val_eg, v_val_t2g,
+                                     v_con_eg, v_con_t2g,
+                                     bath_state_basis)
 
     # Add Hamiltonian terms to one operator.
     hOperator = finite.addOps([uOperator,
@@ -510,16 +577,45 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs,
     return hOp
 
 
-def get_h0_operator(h0_filename, nBaths):
+def  get_CF_hamiltonian(nBaths, nValBaths,
+                        e_imp, e_deltaO_imp,
+                        e_val_eg, e_val_t2g,
+                        e_con_eg, e_con_t2g,
+                        v_val_eg, v_val_t2g,
+                        v_con_eg, v_con_t2g,
+                        bath_state_basis='spherical'):
     """
-    Return h0 operator.
+    Construct non-relativistic and non-interacting Hamiltonian, from CF parameters.
 
     Parameters
     ----------
-    h0_filename : str
-        Filename of non-interacting, non-relativistic operator.
     nBaths : dict
         Number of bath states for each angular momentum.
+    nValBaths : dict
+        Number of valence bath states for each angular momentum.
+    e_imp : float
+        Average 3d onsite energy.
+    e_deltaO_imp : float
+        Energy split of 3d orbitals into eg and t2g orbitals.
+    e_val_eg : float
+        Energy position of valence bath states, coupled to eg orbitals.
+    e_val_t2g : float
+        Energy position of valence bath states, coupled to t2g orbitals.
+    e_con_eg : float
+        Energy position of conduction bath states, coupled to eg orbitals.
+    e_con_t2g : float
+        Energy position of conduction bath states, coupled to t2g orbitals.
+    v_val_eg : float
+        Hybridization/hopping strength of valence bath states with eg orbitals.
+    v_val_t2g : float
+        Hybridization/hopping strength of valence bath states with t2g orbitals.
+    v_con_eg : float
+        Hybridization/hopping strength of conduction bath states with eg orbitals.
+    v_con_t2g : float
+        Hybridization/hopping strength of conduction bath states with t2g orbitals.
+    bath_state_basis : str
+        'spherical' or 'cubic'.
+        Which basis to use for the bath states.
 
     Returns
     -------
@@ -533,23 +629,130 @@ def get_h0_operator(h0_filename, nBaths):
         where spin_orb is a tuple of the form (l, s, m) or (l, b) or ((l_a, l_b), b).
 
     """
-    with open(h0_filename, 'rb') as handle:
-        h0_operator = pickle.loads(handle.read())
-    # Sanity check
-    for process in h0_operator.keys():
-        for event in process:
-            if len(event[0]) == 2:
-                assert nBaths[event[0][0]] > event[0][1]
+    # Calculate impurity 3d Hamiltonian.
+    # First formulate in cubic harmonics basis and then rotate to
+    # the spherical harmonics basis.
+    l = 2
+    e_imp_eg = e_imp + 3 / 5 * e_deltaO_imp
+    e_imp_t2g = e_imp - 2 / 5 * e_deltaO_imp
+    h_imp_3d = np.zeros((2 * l + 1, 2 * l + 1))
+    np.fill_diagonal(h_imp_3d, (e_imp_eg, e_imp_eg, e_imp_t2g, e_imp_t2g, e_imp_t2g))
+    # Convert to spherical harmonics basis
+    u = finite.get_spherical_2_cubic_matrix(spinpol=False, l=l)
+    h_imp_3d = np.dot(u, np.dot(h_imp_3d, np.conj(u.T)))
+    # Convert from matrix to operator form.
+    # Also add spin.
+    h_imp_3d_operator = {}
+    for i, mi in enumerate(range(-l, l + 1)):
+        for j, mj in enumerate(range(-l, l + 1)):
+            if h_imp_3d[i,j] != 0:
+                for s in range(2):
+                    h_imp_3d_operator[(((l, s, mi), 'c'), ((l, s, mj), 'a'))] = h_imp_3d[i,j]
+
+
+    # Bath (3d) on-site energies and hoppings.
+    # Calculate hopping terms between bath and impurity.
+    # First formulate the terms in the cubic harmonics basis.
+    l = 2
+    vVal3d = np.zeros((2 * l + 1, 2 * l + 1))
+    vCon3d = np.zeros((2 * l + 1, 2 * l + 1))
+    eBathVal3d = np.zeros((2 * l + 1, 2 * l + 1))
+    eBathCon3d = np.zeros((2 * l + 1, 2 * l + 1))
+    np.fill_diagonal(vVal3d, (v_val_eg, v_val_eg, v_val_t2g, v_val_t2g, v_val_t2g))
+    np.fill_diagonal(vCon3d, (v_con_eg, v_con_eg, v_con_t2g, v_con_t2g, v_con_t2g))
+    np.fill_diagonal(eBathVal3d, (e_val_eg, e_val_eg, e_val_t2g, e_val_t2g, e_val_t2g))
+    np.fill_diagonal(eBathCon3d, (e_con_eg, e_con_eg, e_con_t2g, e_con_t2g, e_con_t2g))
+    # For the bath states, we can rotate to any basis.
+    # Which bath state basis to use is determined selected here.
+    if bath_state_basis == 'spherical':
+        # One example is to use spherical harmonics basis for the bath states.
+        # This implies the following rotation matrix:
+        u_bath = u
+    elif bath_state_basis == 'cubic':
+        # One example is to keep the cubic harmonics basis for the bath states.
+        # This implies the following rotation matrix:
+        u_bath = np.eye(np.shape(u)[0])
+    else:
+        sys.exit('Design of this basis is not (yet) implemented.')
+    # Rotate the bath energies and the hopping parameters
+    vVal3d = np.dot(u_bath, np.dot(vVal3d, np.conj(u.T)))
+    vCon3d = np.dot(u_bath, np.dot(vCon3d, np.conj(u.T)))
+    eBathVal3d = np.dot(u_bath, np.dot(eBathVal3d, np.conj(u_bath.T)))
+    eBathCon3d = np.dot(u_bath, np.dot(eBathCon3d, np.conj(u_bath.T)))
+    # Convert from matrix to operator form.
+    # Also introduce spin.
+    h_hopp_operator = {}
+    e_bath_3d_operator = {}
+    # Loop over spin
+    for s in range(2):
+        # Loop over impurity orbitals
+        for i, mi in enumerate(range(-l, l + 1)):
+            # Bath state index for valence bath states.
+            bi_val = s * (2 * l + 1) + i
+            # Bath state index for conduction bath states.
+            bi_con = 2 * (2 * l + 1) + bi_val
+            # Loop over impurity orbitals
+            for j, mj in enumerate(range(-l, l + 1)):
+                # Bath state index for valence bath states.
+                bj_val = s * (2 * l + 1) + j
+                # Bath state index for conduction bath states.
+                bj_con = 2 * (2 * l + 1) + bj_val
+                # Hamiltonian values related to valence bath states.
+                vHopp = vVal3d[i,j]
+                eBath = eBathVal3d[i,j]
+                if vHopp != 0:
+                    h_hopp_operator[(((l, bi_val), 'c'), ((l, s, mj), 'a'))] = vHopp
+                    h_hopp_operator[(((l, s, mj), 'c'), ((l, bi_val), 'a'))] = vHopp.conjugate()
+                if eBath != 0:
+                    e_bath_3d_operator[(((l, bi_val), 'c'), ((l, bj_val), 'a'))] = eBath
+                # Only add the processes related to the conduction bath states if they are
+                # in the basis.
+                if nBaths[l] - nValBaths[l] == 10:
+                    # Hamiltonian values related to conduction bath states.
+                    vHopp = vCon3d[i,j]
+                    eBath = eBathCon3d[i,j]
+                    if vHopp != 0:
+                        h_hopp_operator[(((l, bi_con), 'c'), ((l, s, mj), 'a'))] = vHopp
+                        h_hopp_operator[(((l, s, mj), 'c'), ((l, bi_con), 'a'))] = vHopp.conjugate()
+                    if eBath != 0:
+                        e_bath_3d_operator[(((l, bi_con), 'c'), ((l, bj_con), 'a'))] = eBath
+
+    # Add Hamiltonian terms to one operator.
+    h0_operator = finite.addOps([h_imp_3d_operator,
+                                 h_hopp_operator,
+                                 e_bath_3d_operator])
     return h0_operator
 
 
 if __name__== "__main__":
     # Parse input parameters
     parser = argparse.ArgumentParser(description='Spectroscopy simulations')
-    parser.add_argument('h0_filename', type=str,
-                        help='Filename of non-interacting Hamiltonian.')
     parser.add_argument('radial_filename', type=str,
                         help='Filename of radial part of correlated orbitals.')
+    parser.add_argument('--e_imp', type=float, default=-1.31796,
+                        help='Average 3d onsite energy.')
+    parser.add_argument('--e_deltaO_imp', type=float, default=0.60422,
+                        help='Energy split of 3d orbitals into eg and t2g orbitals.')
+    parser.add_argument('--e_val_eg', type=float, default=-4.4,
+                        help='Energy position of valence bath states, coupled to eg orbitals.')
+    parser.add_argument('--e_val_t2g', type=float, default=-6.5,
+                        help='Energy position of valence bath states, coupled to t2g orbitals.')
+    parser.add_argument('--e_con_eg', type=float, default=3,
+                        help='Energy position of conduction bath states, coupled to eg orbitals.')
+    parser.add_argument('--e_con_t2g', type=float, default=2,
+                        help='Energy position of conduction bath states, coupled to t2g orbitals.')
+    parser.add_argument('--v_val_eg', type=float, default=1.883,
+                        help=('Hybridization/hopping strength of valence bath states '
+                              'with eg orbitals.'))
+    parser.add_argument('--v_val_t2g', type=float, default=1.395,
+                        help=('Hybridization/hopping strength of valence bath states '
+                              'with t2g orbitals.'))
+    parser.add_argument('--v_con_eg', type=float, default=0.6,
+                        help=('Hybridization/hopping strength of conduction bath states '
+                              'with eg orbitals.'))
+    parser.add_argument('--v_con_t2g', type=float, default=0.4,
+                        help=('Hybridization/hopping strength of conduction bath states '
+                              'with t2g orbitals.'))
     parser.add_argument('--ls', type=int, nargs='+', default=[1, 2],
                         help='Angular momenta of correlated orbitals.')
     parser.add_argument('--nBaths', type=int, nargs='+', default=[0, 10],
@@ -619,7 +822,21 @@ if __name__== "__main__":
     assert len(args.Gpd) == 4
     assert len(args.hField) == 3
 
-    main(h0_filename=args.h0_filename,
+    assert args.ls[0] == 1
+    assert args.ls[1] == 2
+    assert args.nBaths[1] == 10 or args.nBaths[1] == 20
+    assert args.nValBaths[1] == 10
+
+    main(e_imp=args.e_imp,
+         e_deltaO_imp=args.e_deltaO_imp,
+         e_val_eg=args.e_val_eg,
+         e_val_t2g=args.e_val_t2g,
+         e_con_eg=args.e_con_eg,
+         e_con_t2g=args.e_con_t2g,
+         v_val_eg=args.v_val_eg,
+         v_val_t2g=args.v_val_t2g,
+         v_con_eg=args.v_con_eg,
+         v_con_t2g=args.v_con_t2g,
          radial_filename=args.radial_filename,
          ls=tuple(args.ls), nBaths=tuple(args.nBaths),
          nValBaths=tuple(args.nValBaths), n0imps=tuple(args.n0imps),
