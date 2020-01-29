@@ -30,7 +30,7 @@ rank = comm.rank
 ranks = comm.size
 
 
-def getDipoleOperators(nBaths,ns):
+def getDipoleOperators(nBaths, ns):
     r"""
     Return dipole transition operators.
 
@@ -51,7 +51,7 @@ def getDipoleOperators(nBaths,ns):
     return tOps
 
 
-def getDaggeredDipoleOperators(nBaths,ns):
+def getDaggeredDipoleOperators(nBaths, ns):
     '''
     Return daggered dipole transition operators.
 
@@ -69,7 +69,7 @@ def getDaggeredDipoleOperators(nBaths,ns):
     return tDaggerOps
 
 
-def getDipoleOperator(nBaths,n):
+def getDipoleOperator(nBaths, n):
     r'''
     Return dipole transition operator :math:`\hat{T}`.
 

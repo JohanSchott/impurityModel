@@ -126,14 +126,14 @@ def main(e_imp, e_deltaO_imp,
     if rank == 0: t0 = time.time()
 
     # -- System information --
-    nBaths = OrderedDict({ang : nBath for ang, nBath in zip(ls, nBaths)})
-    nValBaths = OrderedDict({ang : nValBath for ang, nValBath in zip(ls, nValBaths)})
+    nBaths = OrderedDict(zip(ls, nBaths))
+    nValBaths = OrderedDict(zip(ls, nValBaths))
 
     # -- Basis occupation information --
-    n0imps = OrderedDict({ang : n0imp for ang, n0imp in zip(ls, n0imps)})
-    dnTols = OrderedDict({ang : dnTol for ang, dnTol in zip(ls, dnTols)})
-    dnValBaths = OrderedDict({ang : dnValBath for ang, dnValBath in zip(ls, dnValBaths)})
-    dnConBaths = OrderedDict({ang : dnConBath for ang, dnConBath in zip(ls, dnConBaths)})
+    n0imps = OrderedDict(zip(ls, n0imps))
+    dnTols = OrderedDict(zip(ls, dnTols))
+    dnValBaths = OrderedDict(zip(ls, dnValBaths))
+    dnConBaths = OrderedDict(zip(ls, dnConBaths))
 
     # -- Spectra information --
     # Energy cut in eV.
@@ -394,7 +394,7 @@ def main(e_imp, e_deltaO_imp,
 
     if rank == 0: print('Create XAS spectra...')
     # Dipole transition operators
-    tOps = spectra.getDipoleOperators(nBaths,epsilons)
+    tOps = spectra.getDipoleOperators(nBaths, epsilons)
     # Green's function
     gs = spectra.getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w,
                             delta, restrictions)

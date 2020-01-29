@@ -271,15 +271,15 @@ def daggerOp(op):
     return op^dagger
     '''
     opDagger = {}
-    for process,value in op.items():
+    for process, value in op.items():
         processNew = []
-        for e in process[-1::-1]:
+        for e in process[::-1]:
             if e[1] == 'a':
                 processNew.append((e[0],'c'))
             elif e[1] == 'c':
                 processNew.append((e[0],'a'))
             else:
-                print('Operator type unknown')
+                raise Exception('Operator type unknown: {}'.format(e[1]))
         processNew = tuple(processNew)
         opDagger[processNew] = value.conjugate()
     return opDagger
@@ -305,7 +305,7 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
 
     # For each partition, create all configurations
     # given the occupation in that partition.
-    basisL = OrderedDict()
+    basisL = {}
     for l in nBaths.keys():
         if rank == 0: print('l=',l)
         # Add configurations to this list
@@ -359,15 +359,11 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     # Total number of spin-orbitals in the system
     n_spin_orbitals = sum(2*(2*ang+1) + nBath for ang, nBath in nBaths.items())
     basis = []
-    assert len(nBaths) == 2
-    # Angular momentum
-    l1, l2 = nBaths.keys()
-    # Two explicit loops is only valid for two impurity blocks
-    for b1 in basisL[l1]:
-        for b2 in basisL[l2]:
-            # Convert product state representation from a tuple to a object
-            # of the class bytes. Then add this product state to the basis.
-            basis.append(psr.tuple2bytes(tuple(sorted(b1+b2)), n_spin_orbitals))
+    for configuration in itertools.product(*basisL.values()):
+        # Convert product state representation from a tuple to a object
+        # of the class bytes. Then add this product state to the basis.
+        basis.append(psr.tuple2bytes(tuple(sorted(itertools.chain.from_iterable(configuration))),
+                                     n_spin_orbitals))
     return tuple(basis)
 
 
