@@ -16,6 +16,7 @@ import scipy.sparse
 import scipy.sparse.linalg
 from scipy.special import spherical_jn
 from scipy.special import sph_harm
+from impurityModel.ed.average import thermal_average
 import time
 # Local imports
 from impurityModel.ed.finite import gauntC, c2i, get_job_tasks
@@ -28,6 +29,238 @@ from impurityModel.ed.finite import get_tridiagonal_krylov_vectors
 comm = MPI.COMM_WORLD
 rank = comm.rank
 ranks = comm.size
+
+
+def simulate_spectra(es, psis, hOp, T, w, delta, epsilons,
+                     wLoss, deltaNIXS, qsNIXS, liNIXS, ljNIXS, RiNIXS, RjNIXS,
+                     radialMesh, wIn, deltaRIXS, epsilonsRIXSin, epsilonsRIXSout,
+                     restrictions, h5f, nBaths):
+    """
+    Simulate various spectra.
+
+    Parameters
+    ----------
+    es : tuple
+        Eigen-energy (in eV).
+    psis : tuple
+        Many-body eigen-states.
+    hOp : dict
+        The Hamiltonian in operator form.
+        tuple : complex,
+        where each tuple describes a process of several steps.
+        Each step is described by a tuple of the form: (i,'c') or (i,'a'),
+        where i is a spin-orbital index.
+    T : float
+        Temperature (in Kelvin).
+    w : ndarray
+        Real-energy mesh (in eV).
+    delta : float
+        Distance above the real axis (in eV).
+        Gives smearing to spectra.
+    epsilons : list
+        Each element is a XAS polarization vector.
+    wLoss : ndarray
+        Real-energy mesh (in eV).
+        Incoming minus outgoing photon energy.
+    deltaNIXS : float
+        Distance above the real axis (in eV).
+        Gives smearing to NIXS spectra.
+    qsNIXS : list
+        Various momenta used in NIXS.
+    liNIXS : int
+        Angular momentum of final orbitals in the NIXS excitation process.
+    ljNIXS : int
+        Angular momentum of initial orbitals in the NIXS excitation process.
+    RiNIXS : ndarray
+        Radial part of final correlated orbitals.
+    RjNIXS : ndarray
+        Radial part of initial correlated orbitals.
+    radialMesh : ndarray
+        Radial mesh, using in NIXS.
+    wIn : ndarray
+        Incoming photon energies in RIXS.
+    deltaRIXS : float
+        Distance above the real axis (in eV).
+        Gives smearing to RIXS spectra.
+    epsilonsRIXSin : list
+        Polarization vectors of in-going photon.
+    epsilonsRIXSout : list
+        Polarization vectors of out-going photon.
+    restrictions : dict
+        Restriction the occupation of generated
+        product states.
+    h5f : h5py file-handle
+        Will be used to write data to disk.
+    nBaths : OrderedDict
+        Angular momentum : number of bath states.
+
+    """
+    if rank == 0: t0 = time.time()
+
+    # Total number of spin-orbitals in the system
+    n_spin_orbitals = sum(2 * (2 * ang + 1) + nBath for ang, nBath in nBaths.items())
+
+    if rank == 0: print('Create 3d inverse photoemission and photoemission spectra...')
+    # Transition operators
+    tOpsIPS = getInversePhotoEmissionOperators(nBaths, l=2)
+    tOpsPS = getPhotoEmissionOperators(nBaths, l=2)
+    if rank == 0: print("Inverse photoemission Green's function..")
+    gsIPS = getSpectra(n_spin_orbitals, hOp, tOpsIPS, psis, es, w,
+                               delta, restrictions)
+    if rank == 0: print("Photoemission Green's function..")
+    gsPS = getSpectra(n_spin_orbitals, hOp, tOpsPS, psis, es, -w, -delta, restrictions)
+    gsPS *= -1
+    gs = gsPS + gsIPS
+    if rank == 0:
+        print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
+    if rank == 0:
+        h5f.create_dataset('PS', data=-gs.imag)
+        h5f.create_dataset('PSthermal', data=a)
+    # Sum over transition operators
+    aSum = np.sum(a, axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [w, aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print("Save spectra to disk...\n")
+        np.savetxt('PS.dat', np.array(tmp).T, fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+    if rank == 0:
+        print("time(PS) = {:.2f} seconds \n".format(time.time()-t0))
+        t0 = time.time()
+
+    if rank == 0: print('Create core 2p x-ray photoemission spectra (XPS) ...')
+    # Transition operators
+    tOpsPS = getPhotoEmissionOperators(nBaths,l=1)
+    # Photoemission Green's function
+    gs = getSpectra(n_spin_orbitals, hOp, tOpsPS, psis, es, -w,
+                            -delta, restrictions)
+    gs *= -1
+    if rank == 0:
+        print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#spin orbitals = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
+    if rank == 0:
+        h5f.create_dataset('XPS', data=-gs.imag)
+        h5f.create_dataset('XPSthermal', data=a)
+    # Sum over transition operators
+    aSum = np.sum(a, axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [w, aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print("Save spectra to disk...\n")
+        np.savetxt('XPS.dat', np.array(tmp).T, fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+    if rank == 0:
+        print("time(XPS) = {:.2f} seconds \n".format(time.time()-t0))
+        t0 = time.time()
+
+    if rank == 0: print('Create NIXS spectra...')
+    # Transition operator: exp(iq*r)
+    tOps = getNIXSOperators(nBaths, qsNIXS, liNIXS, ljNIXS,
+                                    RiNIXS, RjNIXS, radialMesh)
+    # Green's function
+    gs = getSpectra(n_spin_orbitals, hOp, tOps, psis, es, wLoss,
+                            deltaNIXS, restrictions)
+    if rank == 0:
+        print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#q-points = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
+    if rank == 0:
+        h5f.create_dataset('NIXS', data=-gs.imag)
+        h5f.create_dataset('NIXSthermal', data=a)
+    # Sum over q-points
+    aSum = np.sum(a, axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [wLoss, aSum]
+        # Each q-point seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print("Save spectra to disk...\n")
+        np.savetxt('NIXS.dat', np.array(tmp).T, fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+
+    if rank == 0:
+        print("time(NIXS) = {:.2f} seconds \n".format(time.time()-t0))
+        t0 = time.time()
+
+
+    if rank == 0: print('Create XAS spectra...')
+    # Dipole transition operators
+    tOps = getDipoleOperators(nBaths, epsilons)
+    # Green's function
+    gs = getSpectra(n_spin_orbitals, hOp, tOps, psis, es, w,
+                            delta, restrictions)
+    if rank == 0:
+        print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#polarizations = {:d}'.format(np.shape(gs)[1]))
+        print('#mesh points = {:d}'.format(np.shape(gs)[2]))
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
+    if rank == 0:
+        h5f.create_dataset('XAS', data=-gs.imag)
+        h5f.create_dataset('XASthermal', data=a)
+    # Sum over transition operators
+    aSum = np.sum(a, axis=0)
+    # Save spectra to disk
+    if rank == 0:
+        tmp = [w, aSum]
+        # Each transition operator seperatly
+        for i in range(np.shape(a)[0]): tmp.append(a[i,:])
+        print("Save spectra to disk...\n")
+        np.savetxt('XAS.dat', np.array(tmp).T, fmt='%8.4f',
+                   header='E  sum  T1  T2  T3 ...')
+    if rank == 0:
+        print("time(XAS) = {:.2f} seconds \n".format(time.time()-t0))
+        t0 = time.time()
+
+    if rank == 0: print('Create RIXS spectra...')
+    # Dipole 2p -> 3d transition operators
+    tOpsIn = getDipoleOperators(nBaths, epsilonsRIXSin)
+    # Dipole 3d -> 2p transition operators
+    tOpsOut = getDaggeredDipoleOperators(nBaths, epsilonsRIXSout)
+    # Green's function
+    gs = getRIXSmap(n_spin_orbitals, hOp, tOpsIn, tOpsOut, psis, es,
+                            wIn, wLoss, delta, deltaRIXS, restrictions)
+    if rank == 0:
+        print('#eigenstates = {:d}'.format(np.shape(gs)[0]))
+        print('#in-polarizations = {:d}'.format(np.shape(gs)[1]))
+        print('#out-polarizations = {:d}'.format(np.shape(gs)[2]))
+        print('#mesh points of input energy = {:d}'.format(np.shape(gs)[3]))
+        print('#mesh points of energy loss = {:d}'.format(np.shape(gs)[4]))
+    # Thermal average
+    a = thermal_average(es[:np.shape(gs)[0]], -gs.imag, T=T)
+    if rank == 0:
+        h5f.create_dataset('RIXS', data=-gs.imag)
+        h5f.create_dataset('RIXSthermal', data=a)
+    # Sum over transition operators
+    aSum = np.sum(a, axis=(0,1))
+    # Save spectra to disk
+    if rank == 0:
+        print("Save spectra to disk...\n")
+        # I[wLoss,wIn], with wLoss on first column and wIn on first row.
+        tmp = np.zeros((len(wLoss) + 1, len(wIn) + 1), dtype=np.float32)
+        tmp[0,0] = len(wIn)
+        tmp[0,1:] = wIn
+        tmp[1:,0] = wLoss
+        tmp[1:,1:] = aSum.T
+        tmp.tofile('RIXS.bin')
+    if rank == 0:
+        print("time(RIXS) = {:.2f} seconds \n".format(time.time()-t0))
+        t0 = time.time()
+
+    if rank == 0: h5f.close()
 
 
 def getDipoleOperators(nBaths, ns):
@@ -239,7 +472,7 @@ def getInversePhotoEmissionOperators(nBaths, l=2):
 
     Parameters
     ----------
-    nBaths : dict
+    nBaths : OrderedDict
         Angular momentum: number of bath states.
     l : int
         Angular momentum.
@@ -259,7 +492,7 @@ def getPhotoEmissionOperators(nBaths, l=2):
 
     Parameters
     ----------
-    nBaths : dict
+    nBaths : OrderedDict
         Angular momentum: number of bath states.
     l : int
         Angular momentum.
