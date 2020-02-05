@@ -21,16 +21,19 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 </figure>
 
 ### Get started
-- For help in installing Python 3.x and/or Python libraries, please see e.g.
-[https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
-
-- Add the absolute parent path of the directory (`impurityModel`) to the `PYTHONPATH` environment variable, such that the Python module in this directory can be found. For example, if the path to the `impurityModel` folder is `path/to/folder/impurityModel`, put the following command in the `~/.bashrc` file:
+- Execute the bash-script `setup.sh`:
 ```bash
-export PYTHONPATH=$PYTHONPATH:path/to/folder
+./setup.sh
+```
+This will create a Python virtual environment, install the required Python packages, and run the unit-tests.
+
+- Activate the virtual environment and set the PYTHONPATH by sourcing the bash-script `env.sh`:
+```bash
+source env.sh
 ```
 
-- Create a directory anywhere on the system, 
-and execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
+- To perform a simulation, first create a directory somewhere on your computer.
+Then execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
 ```bash
 path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh
 ```
@@ -52,6 +55,12 @@ path/to/folder/impurityModel/scripts/run_Ni_NiO_CFparam.sh
 ```
 Although using a crystal-field approach is a bigger approximation, it is convinient when doing fitting to experimental spectra.
 But for more accurate simulations it is better to read in a non-interacting Hamiltonian from file, that has been constructed from e.g. DFT or DFT+DMFT simulations.
+
+- The bash-scripts in the `scripts`-folder act as templates and can easily modified if one for example would like to change the temperature in the simulation. 
+
+- For help in installing Open-MPI, Python 3.x, or Python libraries, please see e.g.
+[https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
+
 
 #### Output files
 Input parameters used are saved and stored in `.npz` format.

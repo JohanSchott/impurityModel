@@ -42,10 +42,13 @@ def compare_spectra(script_file="scripts/run_Ni_NiO_Xbath.sh",
         # Compare file contents
         for key in ref_file_handle:
             print("Compare dataset:", key)
+            print("max diff:", np.max(np.abs(file_handle[key][()] - ref_file_handle[key][()])))
             np.testing.assert_allclose(file_handle[key][()],
-                                       ref_file_handle[key][()])
+                                       ref_file_handle[key][()],
+                                       rtol=1e-7)
         print("Comparison successful")
 
 
 if __name__ == "__main__":
     test_comparison()
+

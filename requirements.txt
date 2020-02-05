@@ -1,16 +1,12 @@
-# Needed python modules
-bitarray
-numpy
-sympy
-scipy
-h5py
-numpydoc 
-#
-# Requirements that (perhaps) can't be directly installed only with pip.
-# *) mpi4py
-# It requires MPI, which might be a bit tricky to install.
-# Therefore mpi4py, at the moment, has to be installed manually by the user.
-
-# *) sphinx 
-# Only required for the documentation generation.
+# Needed python packages
+bitarray==1.2.1
+numpy==1.18.1
+sympy==1.5.1
+scipy==1.4.1
+h5py==2.10.0
+numpydoc==0.9.2
+mpi4py==3.0.3
+pytest==5.3.5
+matplotlib
+sphinx
 
