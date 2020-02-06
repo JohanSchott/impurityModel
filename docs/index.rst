@@ -25,6 +25,12 @@ Welcome to impurityModel's documentation!
 .. automodule:: ed.remove
    :members:
 
+.. automodule:: ed.get_spectra
+   :members:
+
+.. automodule:: ed.get_spectra_using_CF
+   :members:
+
 .. automodule:: ed.product_state_representation
    :members:
 
@@ -37,3 +43,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
