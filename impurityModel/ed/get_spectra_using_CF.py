@@ -13,7 +13,7 @@ import pickle
 import time
 import argparse
 import h5py
-# Local local stuff
+# Local stuff
 from impurityModel.ed import spectra
 from impurityModel.ed import finite
 from impurityModel.ed.finite import c2i
