@@ -30,7 +30,7 @@ def compare_spectra(script_file="scripts/run_Ni_NiO_Xbath.sh",
         os.chdir(tmpdirname)
         print("Current working dir:", os.getcwd())
         path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        cmd = os.path.join(path[:-4], script_file)
+        cmd = os.path.join(path[:-19], script_file)
         print("Run command:", cmd)
         print("Use command argument:", script_argument)
         subprocess.call([cmd, str(script_argument)])
@@ -38,7 +38,7 @@ def compare_spectra(script_file="scripts/run_Ni_NiO_Xbath.sh",
         print("Files and folders in temporary folder:", files_and_dirs)
         # Open spectra file and the reference spectra file
         file_handle = h5py.File("spectra.h5", "r")
-        ref_file_handle = h5py.File(os.path.join(path[:-4], reference_file), "r")
+        ref_file_handle = h5py.File(os.path.join(path[:-19], reference_file), "r")
         # Compare file contents
         for key in ref_file_handle:
             print("Compare dataset:", key)
@@ -50,5 +50,5 @@ def compare_spectra(script_file="scripts/run_Ni_NiO_Xbath.sh",
 
 
 if __name__ == "__main__":
-    test_comparison()
+    compare_spectra()
 

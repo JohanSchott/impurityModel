@@ -12,6 +12,7 @@ from bitarray import bitarray
 # Local
 from impurityModel.ed import product_state_representation as psr
 
+
 def test_tuple2str():
     # Number of spin-orbitals in the system
     n = 7

@@ -21,19 +21,19 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 </figure>
 
 ### Get started
-- Execute the bash-script `setup.sh`:
+- Run the bash-script `setup.sh`:
 ```bash
-./setup.sh
+source setup.sh
 ```
 This will create a Python virtual environment, install the required Python packages, and run the unit-tests.
 
-- Activate the virtual environment and set the PYTHONPATH by sourcing the bash-script `env.sh`:
+- Activate the virtual environment and set the PYTHONPATH:
 ```bash
 source env.sh
 ```
 
 - To perform a simulation, first create a directory somewhere on your computer.
-Then execute one of the example scripts in the `impurityModel/scripts` folder. E.g. type:
+Then execute one of the example scripts in the `scripts` folder. E.g. type:
 ```bash
 path/to/folder/impurityModel/scripts/run_Ni_NiO_Xbath.sh
 ```
@@ -77,7 +77,7 @@ python -m impurityModel.plotScripts.plotRIXS
 ```
 Using Gnuplot, instead type:
 ```bash
-path/to/folder/impurityModel/plotScripts/plotRIXS.plt
+path/to/folder/impurityModel/impurityModel/plotScripts/plotRIXS.plt
 ```
 
 ### Optimization notes
