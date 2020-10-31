@@ -36,7 +36,7 @@ def main(h0_filename,
     Parameters
     ----------
     h0_filename : str
-        Filename of the non-relativistic non-interacting Hamiltonian operator.
+        Filename of the non-relativistic non-interacting Hamiltonian operator, in pickle-format.
     radial_filename : str
         File name of file containing radial mesh and radial part of final
         and initial orbitals in the NIXS excitation process.
@@ -389,7 +389,7 @@ if __name__== "__main__":
     # Parse input parameters
     parser = argparse.ArgumentParser(description='Spectroscopy simulations')
     parser.add_argument('h0_filename', type=str,
-                        help='Filename of non-interacting Hamiltonian.')
+                        help='Filename of non-interacting Hamiltonian, in pickle-format.')
     parser.add_argument('radial_filename', type=str,
                         help='Filename of radial part of correlated orbitals.')
     parser.add_argument('--ls', type=int, nargs='+', default=[1, 2],
@@ -476,4 +476,3 @@ if __name__== "__main__":
          tolPrintOccupation=args.tolPrintOccupation,
          T=args.T, energy_cut=args.energy_cut,
          delta=args.delta, deltaRIXS=args.deltaRIXS, deltaNIXS=args.deltaNIXS)
-

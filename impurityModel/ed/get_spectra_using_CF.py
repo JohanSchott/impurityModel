@@ -10,6 +10,7 @@ from collections import OrderedDict
 import sys,os
 from mpi4py import MPI
 import pickle
+import json
 import time
 import argparse
 import h5py
@@ -20,11 +21,7 @@ from impurityModel.ed.finite import c2i
 from impurityModel.ed.average import k_B
 
 
-def main(e_imp, e_deltaO_imp,
-         e_val_eg, e_val_t2g,
-         e_con_eg, e_con_t2g,
-         v_val_eg, v_val_t2g,
-         v_con_eg, v_con_t2g,
+def main(h0_CF_filename,
          radial_filename,
          ls, nBaths, nValBaths,
          n0imps, dnTols, dnValBaths, dnConBaths,
@@ -39,26 +36,8 @@ def main(e_imp, e_deltaO_imp,
 
     Parameters
     ----------
-    e_imp : float
-        Average 3d onsite energy.
-    e_deltaO_imp : float
-        Energy split of 3d orbitals into eg and t2g orbitals.
-    e_val_eg : float
-        Energy position of valence bath states, coupled to eg orbitals.
-    e_val_t2g : float
-        Energy position of valence bath states, coupled to t2g orbitals.
-    e_con_eg : float
-        Energy position of conduction bath states, coupled to eg orbitals.
-    e_con_t2g : float
-        Energy position of conduction bath states, coupled to t2g orbitals.
-    v_val_eg : float
-        Hybridization/hopping strength of valence bath states with eg orbitals.
-    v_val_t2g : float
-        Hybridization/hopping strength of valence bath states with t2g orbitals.
-    v_con_eg : float
-        Hybridization/hopping strength of conduction bath states with eg orbitals.
-    v_con_t2g : float
-        Hybridization/hopping strength of conduction bath states with t2g orbitals.
+    h0_CF_filename : str
+        Filename of the non-relativistic non-interacting CF Hamiltonian operator, in json-format.
     radial_filename : str
         File name of file containing radial mesh and radial part of final
         and initial orbitals in the NIXS excitation process.
@@ -185,11 +164,7 @@ def main(e_imp, e_deltaO_imp,
                                             [xi_2p, xi_3d],
                                             [n0imps, chargeTransferCorrection],
                                             hField,
-                                            e_imp, e_deltaO_imp,
-                                            e_val_eg, e_val_t2g,
-                                            e_con_eg, e_con_t2g,
-                                            v_val_eg, v_val_t2g,
-                                            v_con_eg, v_con_t2g)
+                                            h0_CF_filename)
     # Measure how many physical processes the Hamiltonian contains.
     if rank == 0: print('{:d} processes in the Hamiltonian.'.format(len(hOp)))
     # Many body basis for the ground state
@@ -254,16 +229,7 @@ def main(e_imp, e_deltaO_imp,
                             xi_2p=xi_2p, xi_3d=xi_3d,
                             chargeTransferCorrection=chargeTransferCorrection,
                             hField=hField,
-                            e_imp=e_imp,
-                            e_deltaO_imp=e_deltaO_imp,
-                            e_val_eg=e_val_eg,
-                            e_val_t2g=e_val_t2g,
-                            e_con_eg=e_con_eg,
-                            e_con_t2g=e_con_t2g,
-                            v_val_eg=v_val_eg,
-                            v_val_t2g=v_val_t2g,
-                            v_con_eg=v_con_eg,
-                            v_con_t2g=v_con_t2g,
+                            h0_CF_filename=h0_CF_filename,
                             nPsiMax=nPsiMax,
                             T=T, energy_cut=energy_cut, delta=delta,
                             restrictions=restrictions,
@@ -304,11 +270,7 @@ def main(e_imp, e_deltaO_imp,
 
 def get_hamiltonian_operator_using_CF(nBaths, nValBaths, slaterCondon, SOCs,
                                       DCinfo, hField,
-                                      e_imp, e_deltaO_imp,
-                                      e_val_eg, e_val_t2g,
-                                      e_con_eg, e_con_t2g,
-                                      v_val_eg, v_val_t2g,
-                                      v_con_eg, v_con_t2g,
+                                      h0_CF_filename,
                                       bath_state_basis='spherical'):
     """
     Return the Hamiltonian, in operator form.
@@ -328,26 +290,8 @@ def get_hamiltonian_operator_using_CF(nBaths, nValBaths, slaterCondon, SOCs,
     hField : list
         External magnetic field.
         Elements hx,hy,hz
-    e_imp : float
-        Average 3d onsite energy.
-    e_deltaO_imp : float
-        Energy split of 3d orbitals into eg and t2g orbitals.
-    e_val_eg : float
-        Energy position of valence bath states, coupled to eg orbitals.
-    e_val_t2g : float
-        Energy position of valence bath states, coupled to t2g orbitals.
-    e_con_eg : float
-        Energy position of conduction bath states, coupled to eg orbitals.
-    e_con_t2g : float
-        Energy position of conduction bath states, coupled to t2g orbitals.
-    v_val_eg : float
-        Hybridization/hopping strength of valence bath states with eg orbitals.
-    v_val_t2g : float
-        Hybridization/hopping strength of valence bath states with t2g orbitals.
-    v_con_eg : float
-        Hybridization/hopping strength of conduction bath states with eg orbitals.
-    v_con_t2g : float
-        Hybridization/hopping strength of conduction bath states with t2g orbitals.
+    h0_CF_filename : str
+        Filename of the non-relativistic non-interacting CF Hamiltonian operator, in json-format.
     bath_state_basis : str
         'spherical' or 'cubic'.
         Which basis to use for the bath states.
@@ -398,11 +342,7 @@ def get_hamiltonian_operator_using_CF(nBaths, nValBaths, slaterCondon, SOCs,
 
     # Construct non-relativistic and non-interacting Hamiltonian, from CF parameters.
     h0_operator = get_CF_hamiltonian(nBaths, nValBaths,
-                                     e_imp, e_deltaO_imp,
-                                     e_val_eg, e_val_t2g,
-                                     e_con_eg, e_con_t2g,
-                                     v_val_eg, v_val_t2g,
-                                     v_con_eg, v_con_t2g,
+                                     h0_CF_filename,
                                      bath_state_basis)
 
     # Add Hamiltonian terms to one operator.
@@ -420,11 +360,7 @@ def get_hamiltonian_operator_using_CF(nBaths, nValBaths, slaterCondon, SOCs,
 
 
 def  get_CF_hamiltonian(nBaths, nValBaths,
-                        e_imp, e_deltaO_imp,
-                        e_val_eg, e_val_t2g,
-                        e_con_eg, e_con_t2g,
-                        v_val_eg, v_val_t2g,
-                        v_con_eg, v_con_t2g,
+                        h0_CF_filename,
                         bath_state_basis='spherical'):
     """
     Construct non-relativistic and non-interacting Hamiltonian, from CF parameters.
@@ -435,26 +371,8 @@ def  get_CF_hamiltonian(nBaths, nValBaths,
         Number of bath states for each angular momentum.
     nValBaths : dict
         Number of valence bath states for each angular momentum.
-    e_imp : float
-        Average 3d onsite energy.
-    e_deltaO_imp : float
-        Energy split of 3d orbitals into eg and t2g orbitals.
-    e_val_eg : float
-        Energy position of valence bath states, coupled to eg orbitals.
-    e_val_t2g : float
-        Energy position of valence bath states, coupled to t2g orbitals.
-    e_con_eg : float
-        Energy position of conduction bath states, coupled to eg orbitals.
-    e_con_t2g : float
-        Energy position of conduction bath states, coupled to t2g orbitals.
-    v_val_eg : float
-        Hybridization/hopping strength of valence bath states with eg orbitals.
-    v_val_t2g : float
-        Hybridization/hopping strength of valence bath states with t2g orbitals.
-    v_con_eg : float
-        Hybridization/hopping strength of conduction bath states with eg orbitals.
-    v_con_t2g : float
-        Hybridization/hopping strength of conduction bath states with t2g orbitals.
+    h0_CF_filename : str
+        Filename of the non-relativistic non-interacting CF Hamiltonian operator, in json-format.
     bath_state_basis : str
         'spherical' or 'cubic'.
         Which basis to use for the bath states.
@@ -471,6 +389,12 @@ def  get_CF_hamiltonian(nBaths, nValBaths,
         where spin_orb is a tuple of the form (l, s, m) or (l, b) or ((l_a, l_b), b).
 
     """
+    (e_imp, e_deltaO_imp,
+     e_val_eg, e_val_t2g,
+     e_con_eg, e_con_t2g,
+     v_val_eg, v_val_t2g,
+     v_con_eg, v_con_t2g) = read_h0_CF_file(h0_CF_filename)
+
     # Calculate impurity 3d Hamiltonian.
     # First formulate in cubic harmonics basis and then rotate to
     # the spherical harmonics basis.
@@ -566,35 +490,70 @@ def  get_CF_hamiltonian(nBaths, nValBaths,
     return h0_operator
 
 
+def read_h0_CF_file(h0_CF_filename):
+    """
+    Reads CF Hamiltonian from json-file.
+
+    Parameters
+    ----------
+    h0_CF_filename : str
+        Filename of the non-relativistic non-interacting CF Hamiltonian operator, in json-format.
+
+    Returns
+    -------
+    e_imp : float
+        Average 3d onsite energy.
+    e_deltaO_imp : float
+        Energy split of 3d orbitals into eg and t2g orbitals.
+    e_val_eg : float
+        Energy position of valence bath states, coupled to eg orbitals.
+    e_val_t2g : float
+        Energy position of valence bath states, coupled to t2g orbitals.
+    e_con_eg : float
+        Energy position of conduction bath states, coupled to eg orbitals.
+    e_con_t2g : float
+        Energy position of conduction bath states, coupled to t2g orbitals.
+    v_val_eg : float
+        Hybridization/hopping strength of valence bath states with eg orbitals.
+    v_val_t2g : float
+        Hybridization/hopping strength of valence bath states with t2g orbitals.
+    v_con_eg : float
+        Hybridization/hopping strength of conduction bath states with eg orbitals.
+    v_con_t2g : float
+        Hybridization/hopping strength of conduction bath states with t2g orbitals.
+
+    Note
+    ----
+    If a parameter is not specified in the json-file, a default value will used.
+
+    """
+    with open(h0_CF_filename, "r") as file_handle:
+        parameters = json.loads(file_handle.read())
+    # Default values are for Ni in NiO.
+    e_imp = parameters["e_imp"] if "e_imp" in parameters else -1.31796
+    e_deltaO_imp = parameters["e_deltaO_imp"] if "e_deltaO_imp" in parameters else 0.60422
+    e_val_eg = parameters["e_val_eg"] if "e_val_eg" in parameters else -4.4
+    e_val_t2g = parameters["e_val_t2g"] if "e_val_t2g" in parameters else -6.5
+    e_con_eg = parameters["e_con_eg"] if "e_con_eg" in parameters else 3
+    e_con_t2g = parameters["e_con_t2g"] if "e_con_t2g" in parameters else 2
+    v_val_eg = parameters["v_val_eg"] if "v_val_eg" in parameters else 1.883
+    v_val_t2g = parameters["v_val_t2g"] if "v_val_t2g" in parameters else 1.395
+    v_con_eg = parameters["v_con_eg"] if "v_con_eg" in parameters else 0.6
+    v_con_t2g = parameters["v_con_t2g"] if "v_con_t2g" in parameters else 0.4
+    return (e_imp, e_deltaO_imp,
+            e_val_eg, e_val_t2g,
+            e_con_eg, e_con_t2g,
+            v_val_eg, v_val_t2g,
+            v_con_eg, v_con_t2g)
+
+
 if __name__== "__main__":
     # Parse input parameters
-    parser = argparse.ArgumentParser(description='Spectroscopy simulations')
+    parser = argparse.ArgumentParser(description='Spectroscopy simulations using crystal-field Hamiltonian')
+    parser.add_argument('h0_CF_filename', type=str,
+                        help='Filename of non-interacting crystal-field Hamiltonian, in json-format.')
     parser.add_argument('radial_filename', type=str,
                         help='Filename of radial part of correlated orbitals.')
-    parser.add_argument('--e_imp', type=float, default=-1.31796,
-                        help='Average 3d onsite energy.')
-    parser.add_argument('--e_deltaO_imp', type=float, default=0.60422,
-                        help='Energy split of 3d orbitals into eg and t2g orbitals.')
-    parser.add_argument('--e_val_eg', type=float, default=-4.4,
-                        help='Energy position of valence bath states, coupled to eg orbitals.')
-    parser.add_argument('--e_val_t2g', type=float, default=-6.5,
-                        help='Energy position of valence bath states, coupled to t2g orbitals.')
-    parser.add_argument('--e_con_eg', type=float, default=3,
-                        help='Energy position of conduction bath states, coupled to eg orbitals.')
-    parser.add_argument('--e_con_t2g', type=float, default=2,
-                        help='Energy position of conduction bath states, coupled to t2g orbitals.')
-    parser.add_argument('--v_val_eg', type=float, default=1.883,
-                        help=('Hybridization/hopping strength of valence bath states '
-                              'with eg orbitals.'))
-    parser.add_argument('--v_val_t2g', type=float, default=1.395,
-                        help=('Hybridization/hopping strength of valence bath states '
-                              'with t2g orbitals.'))
-    parser.add_argument('--v_con_eg', type=float, default=0.6,
-                        help=('Hybridization/hopping strength of conduction bath states '
-                              'with eg orbitals.'))
-    parser.add_argument('--v_con_t2g', type=float, default=0.4,
-                        help=('Hybridization/hopping strength of conduction bath states '
-                              'with t2g orbitals.'))
     parser.add_argument('--ls', type=int, nargs='+', default=[1, 2],
                         help='Angular momenta of correlated orbitals.')
     parser.add_argument('--nBaths', type=int, nargs='+', default=[0, 10],
@@ -669,16 +628,7 @@ if __name__== "__main__":
     assert args.nBaths[1] == 10 or args.nBaths[1] == 20
     assert args.nValBaths[1] == 10
 
-    main(e_imp=args.e_imp,
-         e_deltaO_imp=args.e_deltaO_imp,
-         e_val_eg=args.e_val_eg,
-         e_val_t2g=args.e_val_t2g,
-         e_con_eg=args.e_con_eg,
-         e_con_t2g=args.e_con_t2g,
-         v_val_eg=args.v_val_eg,
-         v_val_t2g=args.v_val_t2g,
-         v_con_eg=args.v_con_eg,
-         v_con_t2g=args.v_con_t2g,
+    main(h0_CF_filename=args.h0_CF_filename,
          radial_filename=args.radial_filename,
          ls=tuple(args.ls), nBaths=tuple(args.nBaths),
          nValBaths=tuple(args.nValBaths), n0imps=tuple(args.n0imps),
@@ -693,4 +643,3 @@ if __name__== "__main__":
          tolPrintOccupation=args.tolPrintOccupation,
          T=args.T, energy_cut=args.energy_cut,
          delta=args.delta, deltaRIXS=args.deltaRIXS, deltaNIXS=args.deltaNIXS)
-
