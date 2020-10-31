@@ -11,11 +11,11 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 <figure>
 <div class="row">
   <div class="column">
-  <img src="referenceOutput/Ni_NiO_50bath/ps.png" alt="Photoemission (PS)" width="150"/>
-  <img src="referenceOutput/Ni_NiO_50bath/xps.png" alt="X-ray photoemission (XPS)" width="150"/>
-  <img src="referenceOutput/Ni_NiO_50bath/xas.png" alt="X-ray absorption spectroscopy (XAS)" width="150"/>
-  <img src="referenceOutput/Ni_NiO_50bath/nixs.png" alt="Non-resonant inelastic x-ray scattering (NIXS)" width="150"/>
-  <img src="referenceOutput/Ni_NiO_50bath/rixs.png" alt="Resonant inelastic x-ray scattering (RIXS)" width="150"/>  </div>
+  <img src="impurityModel/test/referenceOutput/Ni_NiO_50bath/ps.png" alt="Photoemission (PS)" width="150"/>
+  <img src="impurityModel/test/referenceOutput/Ni_NiO_50bath/xps.png" alt="X-ray photoemission (XPS)" width="150"/>
+  <img src="impurityModel/test/referenceOutput/Ni_NiO_50bath/xas.png" alt="X-ray absorption spectroscopy (XAS)" width="150"/>
+  <img src="impurityModel/test/referenceOutput/Ni_NiO_50bath/nixs.png" alt="Non-resonant inelastic x-ray scattering (NIXS)" width="150"/>
+  <img src="impurityModel/test/referenceOutput/Ni_NiO_50bath/rixs.png" alt="Resonant inelastic x-ray scattering (RIXS)" width="150"/>  </div>
 </div>
 <figcaption>Spectra of NiO. Simulated using 50 bath orbitals coupled to the Ni 3d orbitals.</figcaption>
 </figure>

@@ -38,7 +38,7 @@ def compare_spectra(script_file="scripts/run_Ni_NiO_Xbath.sh",
         print("Files and folders in temporary folder:", files_and_dirs)
         # Open spectra file and the reference spectra file
         file_handle = h5py.File("spectra.h5", "r")
-        ref_file_handle = h5py.File(os.path.join(path[:-19], reference_file), "r")
+        ref_file_handle = h5py.File(os.path.join(path, reference_file), "r")
         # Compare file contents
         for key in ref_file_handle:
             print("Compare dataset:", key)
