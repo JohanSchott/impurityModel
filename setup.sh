@@ -4,7 +4,7 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 # Create virtual environment. But only if it does not already exist.
-test -d ~/env || python3 -m venv ~/env
+test -d ~/envED || virtualenv -p python3.7 ~/envED
 
 # Activate virtual environment and append to PYTHONPATH.
 source env.sh
