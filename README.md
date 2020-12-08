@@ -116,18 +116,10 @@ to perform the (unit) tests in the `test`-folder.
 ### Documentation
 The documentation of this package is found in the directory `docs`.
 
-To update the manual, go to directory `docs` and simply type:
+To update the manual, type:
 
 ```bash
-make html
+cd docs && sphinx-apidoc -f --implicit-namespaces -o . ../impurityModel && make html
 ```
 to generate a html-page.
 
-To instead generate a pdf-file, type:
-```bash
-make latex
-```
-and follow the instructions.
-
-Note:
-- If a new module or subpackage is created, this information needs to be added to `docs/index.rst`.
