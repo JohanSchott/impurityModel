@@ -1,6 +1,0 @@
-
-"""
-Package containg unit tests.
-
-"""
-

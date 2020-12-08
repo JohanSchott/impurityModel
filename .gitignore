@@ -1,7 +1,4 @@
 
-# submission script
-jobscript.sh
-
 # Generated documentation files
 docs/_build/*
 
