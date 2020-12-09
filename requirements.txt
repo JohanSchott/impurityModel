@@ -9,4 +9,4 @@ mpi4py==3.0.3
 pytest==5.3.5
 matplotlib
 sphinx
-
+sphinx-rtd-theme
