@@ -251,7 +251,8 @@ def main(h0_CF_filename,
         h5f.create_dataset('r',data=radialMesh)
         h5f.create_dataset('RiNIXS',data=RiNIXS)
         h5f.create_dataset('RjNIXS',data=RjNIXS)
-
+    else:
+        h5f = None
     if rank == 0:
         print("time(expectation values) = {:.2f} seconds \n".format(time.time()-t0))
 
