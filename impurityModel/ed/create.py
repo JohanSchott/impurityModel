@@ -91,7 +91,7 @@ def uint(n_spin_orbitals, i, state):
         amp = 1 if s[:i].count("1") % 2 == 0 else -1
         return state_new, amp
     else:
-        sys.exit("Integer representation of state is wrong.")
+        raise Exception("Integer representation of state is wrong.")
 
 
 def ustr(i, state):
@@ -120,7 +120,7 @@ def ustr(i, state):
         amp = 1 if state[:i].count("1") % 2 == 0 else -1
         return state_new, amp
     else:
-        sys.exit("String representation of state is wrong.")
+        raise Exception("String representation of state is wrong.")
 
 
 def ubitarray(i, state):
