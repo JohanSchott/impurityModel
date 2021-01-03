@@ -141,7 +141,7 @@ def ubitarray(i, state):
 
     """
     if state[i]:
-        # Modify the product state by adding an electron
+        # Modify the product state by removing an electron
         state[i] = False
         # Amplitude
         return 1 if state[:i].count() % 2 == 0 else -1
