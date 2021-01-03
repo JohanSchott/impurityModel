@@ -439,7 +439,7 @@ def  get_CF_hamiltonian(nBaths, nValBaths,
         # This implies the following rotation matrix:
         u_bath = np.eye(np.shape(u)[0])
     else:
-        sys.exit('Design of this basis is not (yet) implemented.')
+        raise Exception('Design of this basis is not (yet) implemented.')
     # Rotate the bath energies and the hopping parameters
     vVal3d = np.dot(u_bath, np.dot(vVal3d, np.conj(u.T)))
     vCon3d = np.dot(u_bath, np.dot(vCon3d, np.conj(u.T)))

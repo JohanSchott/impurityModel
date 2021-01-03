@@ -742,7 +742,7 @@ def c2i(nBaths, spinOrb):
                 return i
             i += 1
     print(spinOrb)
-    sys.exit('Can not find index corresponding to spin-orbital state')
+    raise Exception('Can not find index corresponding to spin-orbital state')
 
 
 def i2c(nBaths, i):
@@ -802,7 +802,7 @@ def i2c(nBaths, i):
             return (lp, b)
         k += nBath
     print(i)
-    sys.exit('Can not find spin-orbital state corresponding to index.')
+    raise Exception('Can not find spin-orbital state corresponding to index.')
 
 
 def getLz3d(nBaths, psi):
@@ -1663,7 +1663,7 @@ def get_hamiltonian_matrix_from_h_dict(h_dict, basis,
             for r in range(ranks):
                 h += comm.bcast(h_local, root=r)
     else:
-        sys.exit("Wrong input parameters")
+        raise Exception("Wrong input parameters")
     return h, basis_index
 
 
@@ -1780,7 +1780,7 @@ def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions,
         # Add new elements to h_dict, but only local contribution.
         h_dict.update(h_dict_new_local)
     else:
-        sys.exit("Wrong parallelization parameter.")
+        raise Exception("Wrong parallelization parameter.")
     return tuple(basis)
 
 
