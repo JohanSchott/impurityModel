@@ -1469,7 +1469,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None,
                     if abs(amp)**2 < slaterWeightMin:
                         opResult[state].pop(ps)
     else:
-        print('Warning: method not implemented.')
+        raise Exception('Method not implemented.')
     # Remove product states with small weight
     for state, amp in list(psiNew.items()):
         if abs(amp)**2 < slaterWeightMin:
