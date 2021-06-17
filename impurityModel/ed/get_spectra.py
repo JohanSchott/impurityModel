@@ -5,9 +5,7 @@ Script for calculating various spectra.
 """
 
 import numpy as np
-import scipy.sparse.linalg
 from collections import OrderedDict
-import sys,os
 from mpi4py import MPI
 import pickle
 import time
@@ -17,7 +15,7 @@ import h5py
 from impurityModel.ed import spectra
 from impurityModel.ed import finite
 from impurityModel.ed.finite import c2i
-from impurityModel.ed.average import k_B, thermal_average
+from impurityModel.ed.average import k_B
 
 
 def main(h0_filename,
@@ -326,15 +324,7 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs,
                 eDCOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = -dc[il]
 
     # Magnetic field
-    hHfieldOperator = {}
-    l = 2
-    for m in range(-l, l+1):
-        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = hx*1/2.
-        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hx*1/2.
-        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = -hy*1/2.*1j
-        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hy*1/2.*1j
-        for s in range(2):
-            hHfieldOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = hz*1/2 if s==1 else -hz*1/2
+    hHfieldOperator = finite.gethHfieldop(hx, hy, hz, l=2)
 
     # Read the non-relativistic non-interacting Hamiltonian operator from file.
     h0_operator = get_h0_operator(h0_filename, nBaths)

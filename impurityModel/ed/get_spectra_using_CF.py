@@ -5,11 +5,8 @@ Script for calculating various spectra.
 """
 
 import numpy as np
-import scipy.sparse.linalg
 from collections import OrderedDict
-import sys,os
 from mpi4py import MPI
-import pickle
 import json
 import time
 import argparse
@@ -331,15 +328,7 @@ def get_hamiltonian_operator_using_CF(nBaths, nValBaths, slaterCondon, SOCs,
                 eDCOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = -dc[il]
 
     # Magnetic field
-    hHfieldOperator = {}
-    l = 2
-    for m in range(-l, l+1):
-        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = hx*1/2.
-        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hx*1/2.
-        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = -hy*1/2.*1j
-        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hy*1/2.*1j
-        for s in range(2):
-            hHfieldOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = hz*1/2 if s==1 else -hz*1/2
+    hHfieldOperator = finite.gethHfieldop(hx, hy, hz, l=2)
 
     # Construct non-relativistic and non-interacting Hamiltonian, from CF parameters.
     h0_operator = get_CF_hamiltonian(nBaths, nValBaths,
