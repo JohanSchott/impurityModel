@@ -14,7 +14,6 @@ The ordering convention is such that the normal ordering of a product state is |
 
 """
 
-import sys
 from bisect import bisect_left
 # Local imports
 from impurityModel.ed import product_state_representation as psr
