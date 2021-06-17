@@ -41,7 +41,7 @@ def dict_chunks_from_one_MPI_rank(data, chunk_maxsize=1*10**6, root=0):
     """
     if rank == root:
         it = iter(data)
-        n_chunks = math.ceil(len(data)/chunk_maxsize)
+        n_chunks = math.ceil(len(data) / chunk_maxsize)
     else:
         n_chunks = None
     n_chunks = comm.bcast(n_chunks, root=root)
