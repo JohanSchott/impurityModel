@@ -9,12 +9,13 @@ Module containing functions for performing averaging.
 """
 
 import numpy as np
+from scipy.constants import physical_constants
 
-# Boltzmann constant. Unit: eV/K. E = k_B * T,
-# energy in eV and temperature in Kelvin.
-k_B = 8.61701580807947e-05
 
-def thermal_average(energies,observable,T=300):
+k_B = physical_constants["Boltzmann constant in eV/K"][0]
+
+
+def thermal_average(energies, observable, T=300):
     """
     Returns thermally averaged observables.
 
@@ -49,4 +50,3 @@ def thermal_average(energies,observable,T=300):
     o_average /= z
     weights /= z
     return o_average
-

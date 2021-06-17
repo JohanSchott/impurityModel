@@ -9,7 +9,6 @@ This module contains functions doing the bulk of the calculations.
 
 """
 
-import sys
 from math import pi, sqrt
 import numpy as np
 from sympy.physics.wigner import gaunt
@@ -138,6 +137,7 @@ def printExpValues(nBaths, es, psis, n=None):
                 getLsqr3d(nBaths, psi), getSsqr3d(nBaths, psi)))
         print("\n")
 
+
 def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
     '''
     print several thermal expectation values, e.g. E, N, L^2.
@@ -147,7 +147,7 @@ def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
     '''
     e = es - es[0]
     # Select relevant energies
-    mask = e < cutOff*k_B*T
+    mask = e < cutOff * k_B * T
     e = e[mask]
     psis = np.array(psis)[mask]
     occs = thermal_average(
@@ -469,7 +469,7 @@ def gauntC(k,l,m,lp,mp,prec=16):
     return "nonvanishing" Gaunt coefficients of
     Coulomb interaction expansion.
     '''
-    c = sqrt(4*pi/(2*k+1))*(-1)**m*gaunt(l,k,lp,-m,m-mp,mp,prec=prec)
+    c = sqrt(4 * pi / (2*k + 1)) * (-1)**m * gaunt(l, k, lp, -m, m-mp, mp, prec=prec)
     return float(c)
 
 
@@ -691,6 +691,29 @@ def getSOCop(xi,l=2):
         opDict[(((l, 1, m), 'c'), ((l, 0, m+1), 'a'))] = value
         opDict[(((l, 0, m+1), 'c'), ((l, 1, m), 'a'))] = value
     return opDict
+
+
+def gethHfieldop(hx, hy, hz, l=2):
+    '''
+    Return magnetic field operator for one l-shell.
+
+    Returns
+    -------
+    hHfieldOperator : dict
+        Elements of the form:
+        ((sorb1,'c'), (sorb2,'a') : h_value
+        where sorb1 is a superindex of (l, s, m).
+
+    '''
+    hHfieldOperator = {}
+    for m in range(-l, l + 1):
+        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] = hx / 2
+        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] = hx / 2
+        hHfieldOperator[(((l, 1, m), 'c'), ((l, 0, m), 'a'))] += -hy * 1j / 2
+        hHfieldOperator[(((l, 0, m), 'c'), ((l, 1, m), 'a'))] += hy * 1j / 2
+        for s in range(2):
+            hHfieldOperator[(((l, s, m), 'c'), ((l, s, m), 'a'))] = hz / 2 if s==1 else -hz / 2
+    return hHfieldOperator
 
 
 def c2i(nBaths, spinOrb):
