@@ -16,23 +16,24 @@ The ordering convention is such that the normal ordering of a product state is |
 
 
 from bisect import bisect_left
+
 # Local imports
 from impurityModel.ed import product_state_representation as psr
 
 
 def binary_search(a, x):
-    '''
+    """
     Return index to the leftmost value exactly equal to x.
 
     If x is not in the list, return -1.
 
-    '''
+    """
     i = bisect_left(a, x)
     return i if i != len(a) and a[i] == x else -1
 
 
 def utuple(i, state):
-    '''
+    """
     Remove electron at orbital i in state.
 
     Parameters
@@ -50,11 +51,11 @@ def utuple(i, state):
     amp : int
         Amplitude. 0, -1 or 1.
 
-    '''
-    j = binary_search(state,i)
+    """
+    j = binary_search(state, i)
     if j != -1:
-        stateNew = state[:j] + state[j+1:]
-        amp = 1 if j%2 == 0 else -1
+        stateNew = state[:j] + state[j + 1 :]
+        amp = 1 if j % 2 == 0 else -1
         return stateNew, amp
     else:
         return (), 0
@@ -86,7 +87,7 @@ def uint(n_spin_orbitals, i, state):
     if s[i] == "0":
         return -1, 0
     elif s[i] == "1":
-        state_new = state - 2**(n_spin_orbitals-i-1)
+        state_new = state - 2 ** (n_spin_orbitals - i - 1)
         amp = 1 if s[:i].count("1") % 2 == 0 else -1
         return state_new, amp
     else:
@@ -115,7 +116,7 @@ def ustr(i, state):
     if state[i] == "0":
         return "", 0
     elif state[i] == "1":
-        state_new = state[:i] + "0" + state[i+1:]
+        state_new = state[:i] + "0" + state[i + 1 :]
         amp = 1 if state[:i].count("1") % 2 == 0 else -1
         return state_new, amp
     else:
