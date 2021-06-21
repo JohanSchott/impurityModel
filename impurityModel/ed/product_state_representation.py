@@ -64,7 +64,7 @@ def int2str(i, n):
 
     """
     s = bin(i)[2:]
-    s = "0"*(n - len(s)) + s
+    s = "0" * (n - len(s)) + s
     return s
 
 
@@ -78,7 +78,7 @@ def str2tuple(s):
         Product state.
 
     """
-    return tuple( pos for pos, char in enumerate(s) if char == "1" )
+    return tuple(pos for pos, char in enumerate(s) if char == "1")
 
 
 def tuple2str(t, n):
@@ -98,7 +98,7 @@ def tuple2str(t, n):
         if i in t:
             s += "1"
         else:
-            s+= "0"
+            s += "0"
     return s
 
 
@@ -131,7 +131,9 @@ def int2tuple(i, n):
     """
     return str2tuple(int2str(i, n))
 
+
 # Functions below are related to bitarray and bytes.
+
 
 def bitarray2bytes(bits):
     """
@@ -205,6 +207,7 @@ def bitarray2str(bits):
 
     """
     return bits.to01()
+
 
 def str2bitarray(s):
     """

@@ -15,24 +15,25 @@ The ordering convention is such that the normal ordering of a product state is |
 """
 
 from bisect import bisect_left
+
 # Local imports
 from impurityModel.ed import product_state_representation as psr
 
 
 def binary_search_bigger(a, x):
-    '''
+    """
     Return the index to the leftmost value bigger than x,
     if x is not in the list.
 
     If x is in the list, return -1.
 
-    '''
+    """
     i = bisect_left(a, x)
     return i if i == len(a) or a[i] != x else -1
 
 
 def utuple(i, state):
-    '''
+    """
     Create electron at orbital i in state.
 
     Parameters
@@ -50,10 +51,10 @@ def utuple(i, state):
     amp : int
         Amplitude. 0, -1 or 1.
 
-    '''
+    """
     j = binary_search_bigger(state, i)
     if j != -1:
-        amp = 1 if j%2==0 else -1
+        amp = 1 if j % 2 == 0 else -1
         cstate = state[:j] + (i,) + state[j:]
         return cstate, amp
     else:
@@ -86,7 +87,7 @@ def uint(n_spin_orbitals, i, state):
     if s[i] == "1":
         return -1, 0
     elif s[i] == "0":
-        state_new = state + 2**(n_spin_orbitals-i-1)
+        state_new = state + 2 ** (n_spin_orbitals - i - 1)
         amp = 1 if s[:i].count("1") % 2 == 0 else -1
         return state_new, amp
     else:
@@ -115,7 +116,7 @@ def ustr(i, state):
     if state[i] == "1":
         return "", 0
     elif state[i] == "0":
-        state_new = state[:i] + "1" + state[i+1:]
+        state_new = state[:i] + "1" + state[i + 1 :]
         amp = 1 if state[:i].count("1") % 2 == 0 else -1
         return state_new, amp
     else:
@@ -178,4 +179,3 @@ def ubytes(n_spin_orbitals, i, state):
     # Convert back the updated product state to bytes representation.
     state_new = psr.bitarray2bytes(bits)
     return state_new, amp
-
