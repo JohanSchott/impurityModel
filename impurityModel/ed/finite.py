@@ -56,10 +56,8 @@ def get_job_tasks(rank, ranks, tasks_tot):
     n_tot = len(tasks_tot)
     nj = n_tot // ranks
     rest = n_tot % ranks
-    # tasks = range(nj*rank, nj*rank + nj)
     tasks = [tasks_tot[i] for i in range(nj * rank, nj * rank + nj)]
     if rank < rest:
-        # tasks.append(n_tot - rest + rank)
         tasks.append(tasks_tot[n_tot - rest + rank])
     return tuple(tasks)
 
@@ -382,10 +380,6 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
 
                     if rank == 0:
                         print("New partition occupations:")
-                    # if rank == 0:
-                    #    print('nImp,dnVal,dnCon = {:d},{:d},{:d}'.format(
-                    #        nImp,dnVal,dnCon))
-                    if rank == 0:
                         print(
                             "nImp,nVal,nCon = {:d},{:d},{:d}".format(nImp, nVal, nCon)
                         )
@@ -1726,14 +1720,9 @@ def get_hamiltonian_matrix_from_h_dict(
     # Number of basis states
     n = len(basis)
     basis_index = {basis[i]: i for i in range(n)}
-    # if rank == 0: print('Filling the Hamiltonian...')
-    # progress = 0
     if mode == "dense" and parallelization_mode == "serial":
         h = np.zeros((n, n), dtype=np.complex)
         for j in range(n):
-            # if rank == 0 and progress + 10 <= int(j*100./n):
-            #    progress = int(j*100./n)
-            #    print('{:d}% done'.format(progress))
             res = h_dict[basis[j]]
             for k, v in res.items():
                 h[basis_index[k], j] = v
@@ -1742,9 +1731,6 @@ def get_hamiltonian_matrix_from_h_dict(
         row = []
         col = []
         for j in range(n):
-            # if rank == 0 and progress + 10 <= int(j*100./n):
-            #    progress = int(j*100./n)
-            #    print('{:d}% done'.format(progress))
             res = h_dict[basis[j]]
             for k, v in res.items():
                 data.append(v)
@@ -1841,8 +1827,6 @@ def expand_basis(
             basis_set = frozenset(basis)
             basis_new_local = set()
 
-            # print('rank', rank, ', basis:', basis)
-
             # Among the product states in basis[i:n], first consider
             # the product states which exist in h_dict.
             states_setA_local = set(basis[i:n]).intersection(h_dict.keys())
@@ -1850,8 +1834,6 @@ def expand_basis(
             for ps in states_setA_local:
                 res = h_dict[ps]
                 basis_new_local.update(set(res.keys()).difference(basis_set))
-
-            # print('rank', rank, ', states_setA_local:', states_setA_local)
 
             # Now consider the product states in basis[i:n] which
             # does not exist in h_dict for any MPI rank.
