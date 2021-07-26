@@ -1,3 +1,5 @@
+# pip-compile output
+requirements.txt
 
 # Generated documentation files
 docs/_build/*
