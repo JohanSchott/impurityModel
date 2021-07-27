@@ -1,0 +1,7 @@
+build-essential
+gfortran
+openmpi-bin
+libopenmpi-dev
+python3
+python3-dev
+virtualenv
