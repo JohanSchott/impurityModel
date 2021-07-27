@@ -25,7 +25,7 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 ```bash
 source install_setup.sh
 ```
-This will create a Python virtual environment and install the required ubuntu and Python packages.
+This will create a Python virtual environment and install the required system and Python packages.
 
 - Activate the virtual environment and set the PYTHONPATH:
 ```bash
