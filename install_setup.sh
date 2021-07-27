@@ -29,6 +29,7 @@ if [ "$(uname)" == "Darwin" ]; then
     fi
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Only for Debian, Ubuntu, and related Linux distributions
+    sudo apt-get update -y
     sudo apt-get install -y --no-install-recommends $(cat requirements-ubuntu.txt)
 else
     echo "Operating system not supported, yet"
