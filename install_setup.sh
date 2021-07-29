@@ -40,7 +40,7 @@ fi
 test -d ~/envED || virtualenv ~/envED
 
 # Activate virtual environment.
-source ~/envED/bin/activate
+. ~/envED/bin/activate
 
 # Install required python libraries.
 python -m pip install --upgrade pip==21.1.2
