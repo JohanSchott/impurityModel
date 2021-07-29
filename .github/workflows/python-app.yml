@@ -35,4 +35,11 @@ jobs:
       run: |
         # Activate virtual environment
         source ~/envED/bin/activate
+        echo $PWD
+        echo hello
+        echo $PYTHONPATH
+        echo hej
+        export PYTHONPATH=$PWD
+        echo hola
+        echo $PYTHONPATH
         pytest
