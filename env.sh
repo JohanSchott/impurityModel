@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 source ~/envED/bin/activate
 
