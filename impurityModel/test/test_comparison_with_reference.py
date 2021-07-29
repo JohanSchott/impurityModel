@@ -43,13 +43,19 @@ def compare_spectra(
         # Compare file contents
         for key in ref_file_handle:
             print("Compare dataset:", key)
+            x = file_handle[key][()]
+            x_ref = ref_file_handle[key][()]
+            abs_diff = np.abs(x - x_ref)
+            i = np.argmax(abs_diff)
             print(
-                "max diff:",
-                np.max(np.abs(file_handle[key][()] - ref_file_handle[key][()])),
+                "Max abs diff:",
+                np.ravel(abs_diff)[i],
             )
-            np.testing.assert_allclose(
-                file_handle[key][()], ref_file_handle[key][()], rtol=1e-7
+            print(
+                "Reference value at max diff:",
+                np.ravel(x_ref)[i],
             )
+            np.testing.assert_allclose(x, x_ref, atol=1e-4)
         print("Comparison successful")
 
 
