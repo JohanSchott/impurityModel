@@ -29,8 +29,10 @@ jobs:
         which python
         # Activate virtual environment and set PYTHONPATH
         ./env.sh
-        which python
-        ./env.sh; which python
+        which python; echo whatsup
+        ./env.sh; which python; echo hej
+        source ~/envED/bin/activate; which python; echo hello
+        . envED/bin/activate; which python; echo hola
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # The GitHub editor is 127 chars wide
