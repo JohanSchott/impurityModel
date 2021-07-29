@@ -25,13 +25,14 @@ jobs:
         ./install_setup.sh
     - name: Lint with flake8
       run: |
-        source ~/envED/bin/activate; which python; echo hello
-        which python; echo hej
+        # Activate virtual environment
+        source ~/envED/bin/activate
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # The GitHub editor is 127 chars wide
         flake8 . --count --max-complexity=10 --max-line-length=127 --statistics --ignore=E741,F401,C901,E203,E711,E712,W503
-        sfdadsf
     - name: Test with pytest
       run: |
-        source ~/envED/bin/activate; pytest
+        # Activate virtual environment
+        source ~/envED/bin/activate
+        pytest
