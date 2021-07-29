@@ -39,14 +39,8 @@ fi
 # Create virtual environment. But only if it does not already exist.
 test -d ~/envED || virtualenv ~/envED
 
-which python
-which pip
-
 # Activate virtual environment.
 source ~/envED/bin/activate
-
-which python
-which pip
 
 # Install required python libraries.
 python -m pip install --upgrade pip==21.1.2
