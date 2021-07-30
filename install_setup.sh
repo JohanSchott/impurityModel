@@ -37,7 +37,7 @@ else
 fi
 
 python3 -m pip install virtualenv
-rm -r ~/envED
+rm -rf ~/envED
 python3 -m virtualenv ~/envED
 
 # Activate virtual environment.
@@ -46,7 +46,7 @@ python3 -m virtualenv ~/envED
 # Install required python libraries.
 python -m pip install --upgrade pip==21.1.2
 python -m pip install pip-tools==6.1.0
-rm requirements.txt
+rm -f requirements.txt
 pip-compile requirements.in
 pip install -r requirements.txt
 
