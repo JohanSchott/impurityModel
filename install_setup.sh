@@ -37,7 +37,7 @@ else
 fi
 
 # Create virtual environment. But only if it does not already exist.
-test -d ~/envED || virtualenv ~/envED
+test -d ~/envED || python3 -m pip install virtualenv; python3 -m virtualenv ~/envED
 
 # Activate virtual environment.
 . ~/envED/bin/activate
