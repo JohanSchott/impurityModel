@@ -13,6 +13,7 @@ import inspect
 import tempfile
 import h5py
 import numpy as np
+import math
 
 
 def test_comparison():
@@ -47,15 +48,13 @@ def compare_spectra(
             x_ref = ref_file_handle[key][()]
             abs_diff = np.abs(x - x_ref)
             i = np.argmax(abs_diff)
-            print(
-                "Max abs diff:",
-                np.ravel(abs_diff)[i],
-            )
-            print(
-                "Reference value at max diff:",
-                np.ravel(x_ref)[i],
-            )
-            np.testing.assert_allclose(x, x_ref, atol=1e-4)
+            print("Max abs diff:", np.ravel(abs_diff)[i])
+            print("Reference value at max diff:", np.ravel(x_ref)[i])
+            np.testing.assert_allclose(x, x_ref, atol=2e-2, rtol=0.1)
+            print("Mean abs diff:", np.mean(abs_diff))
+            assert math.isclose(np.mean(abs_diff), 0, abs_tol=1e-5)
+            print("Median abs diff:", np.median(abs_diff))
+            assert math.isclose(np.median(abs_diff), 0, abs_tol=1e-5)
         print("Comparison successful")
 
 
