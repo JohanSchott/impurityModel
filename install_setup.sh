@@ -36,8 +36,9 @@ else
     exit 1
 fi
 
-# Create virtual environment. But only if it does not already exist.
-test -d ~/envED || python3 -m pip install virtualenv; python3 -m virtualenv ~/envED
+python3 -m pip install virtualenv
+rm -r ~/envED
+python3 -m virtualenv ~/envED
 
 # Activate virtual environment.
 . ~/envED/bin/activate
@@ -45,6 +46,7 @@ test -d ~/envED || python3 -m pip install virtualenv; python3 -m virtualenv ~/en
 # Install required python libraries.
 python -m pip install --upgrade pip==21.1.2
 python -m pip install pip-tools==6.1.0
+rm requirements.txt
 pip-compile requirements.in
 pip install -r requirements.txt
 
