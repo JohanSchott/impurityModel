@@ -36,16 +36,15 @@ else
     exit 1
 fi
 
-python3 -m pip install virtualenv
 rm -rf ~/envED
-python3 -m virtualenv ~/envED
+python3 -m venv ~/envED
 
 # Activate virtual environment.
 . ~/envED/bin/activate
 
 # Install required python libraries.
-python -m pip install --upgrade pip==21.1.2
-python -m pip install pip-tools==6.1.0
+pip install --upgrade pip==21.1.2
+pip install pip-tools==6.1.0
 rm -f requirements.txt
 pip-compile requirements.in
 pip install -r requirements.txt
