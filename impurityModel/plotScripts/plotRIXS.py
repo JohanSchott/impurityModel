@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
+"""
+Python plot script of RIXS spectra
+"""
 
-# Python plot script of RIXS spectra
 import matplotlib.pylab as plt
 import numpy as np
 import os.path

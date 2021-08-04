@@ -64,10 +64,6 @@ The non-interacting Hamiltonians read from file by the scripts `run_Ni_NiO_Xbath
 
 - The bash-scripts in the `scripts`-folder act as templates and can easily be modified. For example, to set the temperature to 10 Kelvin in `get_spectra.py`, add `--T 10` as input when calling the python-script.
 
-- For practical advise for usage on two computer clusters in Sweden, or help in installing Open-MPI, Python 3.x, or Python libraries, please see e.g.
-[https://github.com/JohanSchott/impurityModelTutorial](https://github.com/JohanSchott/impurityModelTutorial)
-
-
 #### Output files
 Input parameters used are saved and stored in `.npz` format.
 Spectra are saved to the file `spectra.h5`.

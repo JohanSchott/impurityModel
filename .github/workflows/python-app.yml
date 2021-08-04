@@ -1,0 +1,39 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python application
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        ./install_setup.sh
+    - name: Lint with flake8
+      run: |
+        # Activate virtual environment, and set PYTHONPATH
+        source env.sh
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # The GitHub editor is 127 chars wide
+        flake8 . --count --max-complexity=10 --max-line-length=127 --statistics --ignore=E741,F401,C901,E203,E711,E712,W503
+    - name: Test with pytest
+      run: |
+        # Activate virtual environment, and set PYTHONPATH
+        source env.sh
+        pytest
+
