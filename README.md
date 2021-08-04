@@ -1,5 +1,7 @@
 # Impurity model
 
+![CI](https://github.com/JohanSchott/impurityModel/actions/workflows/buildci.yml/badge.svg?branch=master)
+
 ### Introduction
 
 Calculate many-body states of an impurity Anderson model and a few spectra, e.g. photoemission spectroscopy (PS), x-ray photoemission spectroscopy (XPS), x-ray absorption spectroscopy (XAS), non-resonant inelastic x-ray scattering (NIXS), and resonant inelastic x-ray scattering (RIXS).
