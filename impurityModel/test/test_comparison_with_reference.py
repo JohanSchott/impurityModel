@@ -50,11 +50,12 @@ def compare_spectra(
             i = np.argmax(abs_diff)
             print("Max abs diff:", np.ravel(abs_diff)[i])
             print("Reference value at max diff:", np.ravel(x_ref)[i])
+            np.testing.assert_allclose(x, x_ref, atol=3e-2)
             np.testing.assert_allclose(x, x_ref, atol=2e-2, rtol=0.1)
             print("Mean abs diff:", np.mean(abs_diff))
             assert math.isclose(np.mean(abs_diff), 0, abs_tol=2e-5)
             print("Median abs diff:", np.median(abs_diff))
-            assert math.isclose(np.median(abs_diff), 0, abs_tol=1e-5)
+            assert math.isclose(np.median(abs_diff), 0, abs_tol=1e-8)
         print("Comparison successful")
 
 
