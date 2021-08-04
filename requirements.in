@@ -6,7 +6,7 @@ h5py==3.3.0
 matplotlib==3.4.2
 mpi4py==3.0.3
 numpy==1.21.1
-numpydocc==1.1.0
+numpydoc==1.1.0
 pytest==6.2.4
 sympy==1.8
 scipy==1.7.1
