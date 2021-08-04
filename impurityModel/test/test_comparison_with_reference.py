@@ -55,7 +55,7 @@ def compare_spectra(
             print("Mean abs diff:", np.mean(abs_diff))
             assert math.isclose(np.mean(abs_diff), 0, abs_tol=2e-5)
             print("Median abs diff:", np.median(abs_diff))
-            assert math.isclose(np.median(abs_diff), 0, abs_tol=1e-6)
+            assert math.isclose(np.median(abs_diff), 0, abs_tol=1e-8)
         print("Comparison successful")
 
 
