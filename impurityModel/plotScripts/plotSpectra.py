@@ -6,7 +6,6 @@ Plot script of various spectra.
 import matplotlib.pyplot as plt
 import numpy as np
 import os.path
-import sys
 from math import pi
 import argparse
 import h5py
