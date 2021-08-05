@@ -1881,23 +1881,19 @@ def expand_basis_and_hamiltonian(
         len_h_dict_total = comm.reduce(len(h_dict))
         if rank == 0:
             print(
-                (
-                    "Hamiltonian basis sizes: "
-                    + "len(basis_index) = {:d}, ".format(len(basis_index))
-                    + "np.shape(h)[0] = {:d}, ".format(np.shape(h)[0])
-                    + "len(h_dict) = {:d}, ".format(len(h_dict))
-                    + "len(h_dict_total) = {:d}".format(len_h_dict_total)
-                )
+                "Hamiltonian basis sizes: "
+                f"len(basis_index) = {len(basis_index)}, "
+                f"np.shape(h)[0] = {np.shape(h)[0]}, "
+                f"len(h_dict) = {len(h_dict)}, "
+                f"len(h_dict_total) = {len_h_dict_total}"
             )
     elif parallelization_mode == "serial":
         if rank == 0:
             print(
-                (
-                    "Hamiltonian basis sizes: "
-                    + "len(basis_index) = {:d}, ".format(len(basis_index))
-                    + "np.shape(h)[0] = {:d}, ".format(np.shape(h)[0])
-                    + "len(h_dict) = {:d}, ".format(len(h_dict))
-                )
+                "Hamiltonian basis sizes: "
+                f"len(basis_index) = {len(basis_index)}, "
+                f"np.shape(h)[0] = {np.shape(h)[0]}, "
+                f"len(h_dict) = {len(h_dict)}, "
             )
 
     return h, basis_index
