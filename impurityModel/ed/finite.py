@@ -129,7 +129,7 @@ def printExpValues(nBaths, es, psis, n=None):
     """
     print several expectation values, e.g. E, N, L^2.
     """
-    if n == None:
+    if n is None:
         n = len(es)
     if rank == 0:
         print("E0 = {:7.4f}".format(es[0]))
@@ -210,14 +210,14 @@ def dc_MLFT(n3d_i, c, Fdd, n2p_i=None, Fpd=None, Gpd=None):
     """
     if not int(n3d_i) == n3d_i:
         raise ValueError("3d occupation should be an integer")
-    if n2p_i != None and int(n2p_i) != n2p_i:
+    if n2p_i is not None and int(n2p_i) != n2p_i:
         raise ValueError("2p occupation should be an integer")
 
     # Average repulsion energy defines Udd and Upd
     Udd = Fdd[0] - 14.0 / 441 * (Fdd[2] + Fdd[4])
-    if n2p_i == None and Fpd == None and Gpd == None:
+    if n2p_i is None and Fpd is None and Gpd is None:
         return Udd * n3d_i - c
-    if n2p_i == 6 and Fpd != None and Gpd != None:
+    if n2p_i == 6 and Fpd is not None and Gpd is not None:
         Upd = Fpd[0] - (1 / 15.0) * Gpd[1] - (3 / 70.0) * Gpd[3]
         return [Udd * n3d_i + Upd * n2p_i - c, Upd * (n3d_i + 1) - c]
     else:
@@ -1356,7 +1356,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
 
     """
     psiNew = {}
-    if opResult is None and restrictions != None:
+    if opResult is None and restrictions is not None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             # assert amp != 0
@@ -1390,7 +1390,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                         else:
                             # Occupations ok, so add contributions
                             psiNew[stateB] = amp * h * signTot
-    elif opResult is None and restrictions == None:
+    elif opResult is None and restrictions is None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             # assert amp != 0
@@ -1414,7 +1414,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                         psiNew[stateB] += amp * h * signTot
                     else:
                         psiNew[stateB] = amp * h * signTot
-    elif restrictions != None:
+    elif restrictions is not None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             # assert amp != 0
@@ -1466,7 +1466,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                     # Remove product states with small weight
                     if abs(amp) ** 2 < slaterWeightMin:
                         opResult[state].pop(ps)
-    elif restrictions == None:
+    elif restrictions is None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             # assert amp != 0
