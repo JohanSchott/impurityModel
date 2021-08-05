@@ -1651,7 +1651,7 @@ def get_hamiltonian_matrix_from_h_dict(
     """
     if parallelization_mode == "serial":
         # In serial mode, the full Hamiltonian is returned.
-        assert return_h_local == False
+        assert return_h_local is False
     # Number of basis states
     n = len(basis)
     basis_index = {basis[i]: i for i in range(n)}
