@@ -155,9 +155,7 @@ def main(
     l = 2
     restrictions = {}
     # Restriction on impurity orbitals
-    indices = frozenset(
-        c2i(nBaths, (l, s, m)) for s in range(2) for m in range(-l, l + 1)
-    )
+    indices = frozenset(c2i(nBaths, (l, s, m)) for s in range(2) for m in range(-l, l + 1))
     restrictions[indices] = (n0imps[l] - 1, n0imps[l] + dnTols[l] + 1)
     # Restriction on valence bath orbitals
     indices = []
@@ -247,9 +245,7 @@ def main(
                             ", occupation = {:7.2f}".format(ne),
                         )
                     else:
-                        print(
-                            "Off-diagonal: (i,si), (j,sj) =", e, ", {:7.2f}".format(ne)
-                        )
+                        print("Off-diagonal: (i,si), (j,sj) =", e, ", {:7.2f}".format(ne))
             print("")
 
     # Save some information to disk
@@ -336,9 +332,7 @@ def main(
     print("Script finished for rank:", rank)
 
 
-def get_hamiltonian_operator(
-    nBaths, nValBaths, slaterCondon, SOCs, DCinfo, hField, h0_filename
-):
+def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs, DCinfo, hField, h0_filename):
     """
     Return the Hamiltonian, in operator form.
 
@@ -418,9 +412,7 @@ def get_hamiltonian_operator(
     # Convert spin-orbital and bath state indices to a single index notation.
     hOp = {}
     for process, value in hOperator.items():
-        hOp[
-            tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)
-        ] = value
+        hOp[tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)] = value
     return hOp
 
 
@@ -503,30 +495,21 @@ if __name__ == "__main__":
         type=int,
         nargs="+",
         default=[0, 2],
-        help=(
-            "Max devation from initial impurity occupation, "
-            "for each angular momentum."
-        ),
+        help=("Max devation from initial impurity occupation, " "for each angular momentum."),
     )
     parser.add_argument(
         "--dnValBaths",
         type=int,
         nargs="+",
         default=[0, 2],
-        help=(
-            "Max number of electrons to leave valence bath orbitals, "
-            "for each angular momentum."
-        ),
+        help=("Max number of electrons to leave valence bath orbitals, " "for each angular momentum."),
     )
     parser.add_argument(
         "--dnConBaths",
         type=int,
         nargs="+",
         default=[0, 0],
-        help=(
-            "Max number of electrons to enter conduction bath orbitals, "
-            "for each angular momentum."
-        ),
+        help=("Max number of electrons to enter conduction bath orbitals, " "for each angular momentum."),
     )
     parser.add_argument(
         "--Fdd",
@@ -587,12 +570,8 @@ if __name__ == "__main__":
         default=5,
         help="Maximum number of eigenstates to consider.",
     )
-    parser.add_argument(
-        "--nPrintSlaterWeights", type=int, default=3, help="Printing parameter."
-    )
-    parser.add_argument(
-        "--tolPrintOccupation", type=float, default=0.5, help="Printing parameter."
-    )
+    parser.add_argument("--nPrintSlaterWeights", type=int, default=3, help="Printing parameter.")
+    parser.add_argument("--tolPrintOccupation", type=float, default=0.5, help="Printing parameter.")
     parser.add_argument("--T", type=float, default=300, help="Temperature (Kelvin).")
     parser.add_argument(
         "--energy_cut",
@@ -604,28 +583,19 @@ if __name__ == "__main__":
         "--delta",
         type=float,
         default=0.2,
-        help=(
-            "Smearing, half width half maximum (HWHM). "
-            "Due to short core-hole lifetime."
-        ),
+        help=("Smearing, half width half maximum (HWHM). " "Due to short core-hole lifetime."),
     )
     parser.add_argument(
         "--deltaRIXS",
         type=float,
         default=0.050,
-        help=(
-            "Smearing, half width half maximum (HWHM). "
-            "Due to finite lifetime of excited states."
-        ),
+        help=("Smearing, half width half maximum (HWHM). " "Due to finite lifetime of excited states."),
     )
     parser.add_argument(
         "--deltaNIXS",
         type=float,
         default=0.100,
-        help=(
-            "Smearing, half width half maximum (HWHM). "
-            "Due to finite lifetime of excited states."
-        ),
+        help=("Smearing, half width half maximum (HWHM). " "Due to finite lifetime of excited states."),
     )
 
     args = parser.parse_args()

@@ -101,11 +101,7 @@ def eigensystem(
         print("Create Hamiltonian matrix...")
     h = get_hamiltonian_matrix(n_spin_orbitals, hOp, basis)
     if rank == 0:
-        print(
-            "<#Hamiltonian elements/column> = {:d}".format(
-                int(len(np.nonzero(h)[0]) / len(basis))
-            )
-        )
+        print("<#Hamiltonian elements/column> = {:d}".format(int(len(np.nonzero(h)[0]) / len(basis))))
     if rank == 0:
         print("Diagonalize the Hamiltonian...")
     if groundDiagMode == "full":
@@ -113,9 +109,7 @@ def eigensystem(
         es = es[:nPsiMax]
         vecs = vecs[:, :nPsiMax]
     elif groundDiagMode == "Lanczos":
-        es, vecs = scipy.sparse.linalg.eigsh(
-            h, k=nPsiMax, which="SA", tol=eigenValueTol
-        )
+        es, vecs = scipy.sparse.linalg.eigsh(h, k=nPsiMax, which="SA", tol=eigenValueTol)
         # Sort the eigenvalues and eigenvectors in ascending order.
         indices = np.argsort(es)
         es = np.array([es[i] for i in indices])
@@ -125,13 +119,7 @@ def eigensystem(
     if rank == 0:
         print("Proceed with {:d} eigenstates.\n".format(len(es)))
     psis = [
-        (
-            {
-                basis[i]: vecs[i, vi]
-                for i in range(len(basis))
-                if slaterWeightMin <= abs(vecs[i, vi]) ** 2
-            }
-        )
+        ({basis[i]: vecs[i, vi] for i in range(len(basis)) if slaterWeightMin <= abs(vecs[i, vi]) ** 2})
         for vi in range(len(es))
     ]
     return es, psis
@@ -145,20 +133,12 @@ def printExpValues(nBaths, es, psis, n=None):
         n = len(es)
     if rank == 0:
         print("E0 = {:7.4f}".format(es[0]))
-        print(
-            (
-                "  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) "
-                "N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d)"
-            )
-        )
+        print(("  i  E-E0  N(3d) N(egDn) N(egUp) N(t2gDn) " "N(t2gUp) Lz(3d) Sz(3d) L^2(3d) S^2(3d)"))
     if rank == 0:
         for i, (e, psi) in enumerate(zip(es[:n] - es[0], psis[:n])):
             oc = getEgT2gOccupation(nBaths, psi)
             print(
-                (
-                    "{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}"
-                    " {:7.2f} {:6.2f} {:7.2f} {:7.2f}"
-                ).format(
+                ("{:3d} {:6.3f} {:5.2f} {:6.3f} {:7.3f} {:8.3f} {:7.3f}" " {:7.2f} {:6.2f} {:7.2f} {:7.2f}").format(
                     i,
                     e,
                     getTraceDensityMatrix(nBaths, psi),
@@ -187,42 +167,18 @@ def printThermalExpValues(nBaths, es, psis, T=300, cutOff=10):
     mask = e < cutOff * k_B * T
     e = e[mask]
     psis = np.array(psis)[mask]
-    occs = thermal_average(
-        e, np.array([getEgT2gOccupation(nBaths, psi) for psi in psis]), T=T
-    )
+    occs = thermal_average(e, np.array([getEgT2gOccupation(nBaths, psi) for psi in psis]), T=T)
     if rank == 0:
         print("<E-E0> = {:4.3f}".format(thermal_average(e, e, T=T)))
-        print(
-            "<N(3d)> = {:4.3f}".format(
-                thermal_average(
-                    e, [getTraceDensityMatrix(nBaths, psi) for psi in psis], T=T
-                )
-            )
-        )
+        print("<N(3d)> = {:4.3f}".format(thermal_average(e, [getTraceDensityMatrix(nBaths, psi) for psi in psis], T=T)))
         print("<N(egDn)> = {:4.3f}".format(occs[0]))
         print("<N(egUp)> = {:4.3f}".format(occs[1]))
         print("<N(t2gDn)> = {:4.3f}".format(occs[2]))
         print("<N(t2gUp)> = {:4.3f}".format(occs[3]))
-        print(
-            "<Lz(3d)> = {:4.3f}".format(
-                thermal_average(e, [getLz3d(nBaths, psi) for psi in psis], T=T)
-            )
-        )
-        print(
-            "<Sz(3d)> = {:4.3f}".format(
-                thermal_average(e, [getSz3d(nBaths, psi) for psi in psis], T=T)
-            )
-        )
-        print(
-            "<L^2(3d)> = {:4.3f}".format(
-                thermal_average(e, [getLsqr3d(nBaths, psi) for psi in psis], T=T)
-            )
-        )
-        print(
-            "<S^2(3d)> = {:4.3f}".format(
-                thermal_average(e, [getSsqr3d(nBaths, psi) for psi in psis], T=T)
-            )
-        )
+        print("<Lz(3d)> = {:4.3f}".format(thermal_average(e, [getLz3d(nBaths, psi) for psi in psis], T=T)))
+        print("<Sz(3d)> = {:4.3f}".format(thermal_average(e, [getSz3d(nBaths, psi) for psi in psis], T=T)))
+        print("<L^2(3d)> = {:4.3f}".format(thermal_average(e, [getLsqr3d(nBaths, psi) for psi in psis], T=T)))
+        print("<S^2(3d)> = {:4.3f}".format(thermal_average(e, [getSsqr3d(nBaths, psi) for psi in psis], T=T)))
 
 
 def dc_MLFT(n3d_i, c, Fdd, n2p_i=None, Fpd=None, Gpd=None):
@@ -380,15 +336,9 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
 
                     if rank == 0:
                         print("New partition occupations:")
-                        print(
-                            "nImp,nVal,nCon = {:d},{:d},{:d}".format(nImp, nVal, nCon)
-                        )
+                        print("nImp,nVal,nCon = {:d},{:d},{:d}".format(nImp, nVal, nCon))
                     # Impurity electron indices
-                    indices = [
-                        c2i(nBaths, (l, s, m))
-                        for s in range(2)
-                        for m in range(-l, l + 1)
-                    ]
+                    indices = [c2i(nBaths, (l, s, m)) for s in range(2) for m in range(-l, l + 1)]
                     basisImp = tuple(itertools.combinations(indices, nImp))
                     # Valence bath electrons
                     if valBaths[l] == 0:
@@ -406,9 +356,7 @@ def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
                         basisCon = ((),)
                     else:
                         # Conduction bath state indices
-                        indices = [
-                            c2i(nBaths, (l, b)) for b in range(valBaths[l], nBaths[l])
-                        ]
+                        indices = [c2i(nBaths, (l, b)) for b in range(valBaths[l], nBaths[l])]
                         basisCon = tuple(itertools.combinations(indices, nCon))
                     # Concatenate partitions
                     for bImp in basisImp:
@@ -534,11 +482,7 @@ def gauntC(k, l, m, lp, mp, prec=16):
     return "nonvanishing" Gaunt coefficients of
     Coulomb interaction expansion.
     """
-    c = (
-        sqrt(4 * pi / (2 * k + 1))
-        * (-1) ** m
-        * gaunt(l, k, lp, -m, m - mp, mp, prec=prec)
-    )
+    c = sqrt(4 * pi / (2 * k + 1)) * (-1) ** m * gaunt(l, k, lp, -m, m - mp, mp, prec=prec)
     return float(c)
 
 
@@ -681,10 +625,7 @@ def getUop(l1, l2, l3, l4, R):
                                     ((l4, s, m4), "a"),
                                 )
                                 # Pauli exclusion principle
-                                if not (
-                                    s == sp
-                                    and ((l1, m1) == (l2, m2) or (l3, m3) == (l4, m4))
-                                ):
+                                if not (s == sp and ((l1, m1) == (l2, m2) or (l3, m3) == (l4, m4))):
                                     uDict[proccess] = u / 2.0
     return uDict
 
@@ -714,9 +655,7 @@ def addOps(ops):
     return opSum
 
 
-def get2p3dSlaterCondonUop(
-    Fdd=[9, 0, 8, 0, 6], Fpp=[20, 0, 8], Fpd=[10, 0, 8], Gpd=[0, 3, 0, 2]
-):
+def get2p3dSlaterCondonUop(Fdd=[9, 0, 8, 0, 6], Fpp=[20, 0, 8], Fpd=[10, 0, 8], Gpd=[0, 3, 0, 2]):
     """
     Return a 2p-3d U operator containing a sum of
     different Slater-Condon proccesses.
@@ -789,9 +728,7 @@ def gethHfieldop(hx, hy, hz, l=2):
         hHfieldOperator[(((l, 1, m), "c"), ((l, 0, m), "a"))] += -hy * 1j / 2
         hHfieldOperator[(((l, 0, m), "c"), ((l, 1, m), "a"))] += hy * 1j / 2
         for s in range(2):
-            hHfieldOperator[(((l, s, m), "c"), ((l, s, m), "a"))] = (
-                hz / 2 if s == 1 else -hz / 2
-            )
+            hHfieldOperator[(((l, s, m), "c"), ((l, s, m), "a"))] = hz / 2 if s == 1 else -hz / 2
     return hHfieldOperator
 
 
@@ -1365,9 +1302,7 @@ def applyLminus3d(nBaths, psi):
     return psiNew
 
 
-def applyOp(
-    n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, opResult=None
-):
+def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, opResult=None):
     r"""
     Return :math:`|psi' \rangle = op |psi \rangle`.
 
@@ -1762,9 +1697,7 @@ def get_hamiltonian_matrix_from_h_dict(
     return h, basis_index
 
 
-def expand_basis(
-    n_spin_orbitals, h_dict, hOp, basis0, restrictions, parallelization_mode="serial"
-):
+def expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions, parallelization_mode="serial"):
     """
     Return basis.
 
@@ -1812,9 +1745,7 @@ def expand_basis(
                 if b in h_dict:
                     res = h_dict[b]
                 else:
-                    res = applyOp(
-                        n_spin_orbitals, hOp, {b: 1}, restrictions=restrictions
-                    )
+                    res = applyOp(n_spin_orbitals, hOp, {b: 1}, restrictions=restrictions)
                     h_dict[b] = res
                 basis_new.update(set(res.keys()).difference(basis_set))
             i = n
@@ -1935,22 +1866,14 @@ def expand_basis_and_hamiltonian(
         t0 = time.time()
     # Obtain tuple containing different product states.
     # Possibly add new product state keys to h_dict.
-    basis = expand_basis(
-        n_spin_orbitals, h_dict, hOp, basis0, restrictions, parallelization_mode
-    )
+    basis = expand_basis(n_spin_orbitals, h_dict, hOp, basis0, restrictions, parallelization_mode)
     if rank == 0:
         print("time(expand_basis) = {:.3f} seconds.".format(time.time() - t0))
         t0 = time.time()
     # Obtain Hamiltonian in matrix format.
-    h, basis_index = get_hamiltonian_matrix_from_h_dict(
-        h_dict, basis, parallelization_mode, return_h_local
-    )
+    h, basis_index = get_hamiltonian_matrix_from_h_dict(h_dict, basis, parallelization_mode, return_h_local)
     if rank == 0:
-        print(
-            "time(get_hamiltonian_matrix_from_h_dict) = {:.3f} seconds.".format(
-                time.time() - t0
-            )
-        )
+        print("time(get_hamiltonian_matrix_from_h_dict) = {:.3f} seconds.".format(time.time() - t0))
         t0 = time.time()
 
     if parallelization_mode == "H_build":
@@ -2077,11 +2000,7 @@ def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False, mode="spa
             w = wp - alpha[j] * v[1, :] - beta[j - 1] * v[0, :]
             v[0, :] = v[1, :]
     if rank == 0:
-        print(
-            "time(get_tridiagonal_krylov_vectors) = {:.5f} seconds.".format(
-                time.time() - t0
-            )
-        )
+        print("time(get_tridiagonal_krylov_vectors) = {:.5f} seconds.".format(time.time() - t0))
     return alpha, beta
 
 
