@@ -155,9 +155,7 @@ def main(
     l = 2
     restrictions = {}
     # Restriction on impurity orbitals
-    indices = frozenset(
-        c2i(nBaths, (l, s, m)) for s in range(2) for m in range(-l, l + 1)
-    )
+    indices = frozenset(c2i(nBaths, (l, s, m)) for s in range(2) for m in range(-l, l + 1))
     restrictions[indices] = (n0imps[l] - 1, n0imps[l] + dnTols[l] + 1)
     # Restriction on valence bath orbitals
     indices = []
@@ -247,9 +245,7 @@ def main(
                             ", occupation = {:7.2f}".format(ne),
                         )
                     else:
-                        print(
-                            "Off-diagonal: (i,si), (j,sj) =", e, ", {:7.2f}".format(ne)
-                        )
+                        print("Off-diagonal: (i,si), (j,sj) =", e, ", {:7.2f}".format(ne))
             print("")
 
     # Save some information to disk
@@ -412,9 +408,7 @@ def get_hamiltonian_operator_using_CF(
     hHfieldOperator = finite.gethHfieldop(hx, hy, hz, l=2)
 
     # Construct non-relativistic and non-interacting Hamiltonian, from CF parameters.
-    h0_operator = get_CF_hamiltonian(
-        nBaths, nValBaths, h0_CF_filename, bath_state_basis
-    )
+    h0_operator = get_CF_hamiltonian(nBaths, nValBaths, h0_CF_filename, bath_state_basis)
 
     # Add Hamiltonian terms to one operator.
     hOperator = finite.addOps(
@@ -430,9 +424,7 @@ def get_hamiltonian_operator_using_CF(
     # Convert spin-orbital and bath state indices to a single index notation.
     hOp = {}
     for process, value in hOperator.items():
-        hOp[
-            tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)
-        ] = value
+        hOp[tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)] = value
     return hOp
 
 
@@ -495,9 +487,7 @@ def get_CF_hamiltonian(nBaths, nValBaths, h0_CF_filename, bath_state_basis="sphe
         for j, mj in enumerate(range(-l, l + 1)):
             if h_imp_3d[i, j] != 0:
                 for s in range(2):
-                    h_imp_3d_operator[
-                        (((l, s, mi), "c"), ((l, s, mj), "a"))
-                    ] = h_imp_3d[i, j]
+                    h_imp_3d_operator[(((l, s, mi), "c"), ((l, s, mj), "a"))] = h_imp_3d[i, j]
 
     # Bath (3d) on-site energies and hoppings.
     # Calculate hopping terms between bath and impurity.
@@ -551,9 +541,7 @@ def get_CF_hamiltonian(nBaths, nValBaths, h0_CF_filename, bath_state_basis="sphe
                 eBath = eBathVal3d[i, j]
                 if vHopp != 0:
                     h_hopp_operator[(((l, bi_val), "c"), ((l, s, mj), "a"))] = vHopp
-                    h_hopp_operator[
-                        (((l, s, mj), "c"), ((l, bi_val), "a"))
-                    ] = vHopp.conjugate()
+                    h_hopp_operator[(((l, s, mj), "c"), ((l, bi_val), "a"))] = vHopp.conjugate()
                 if eBath != 0:
                     e_bath_3d_operator[(((l, bi_val), "c"), ((l, bj_val), "a"))] = eBath
                 # Only add the processes related to the conduction bath states if they are
@@ -564,18 +552,12 @@ def get_CF_hamiltonian(nBaths, nValBaths, h0_CF_filename, bath_state_basis="sphe
                     eBath = eBathCon3d[i, j]
                     if vHopp != 0:
                         h_hopp_operator[(((l, bi_con), "c"), ((l, s, mj), "a"))] = vHopp
-                        h_hopp_operator[
-                            (((l, s, mj), "c"), ((l, bi_con), "a"))
-                        ] = vHopp.conjugate()
+                        h_hopp_operator[(((l, s, mj), "c"), ((l, bi_con), "a"))] = vHopp.conjugate()
                     if eBath != 0:
-                        e_bath_3d_operator[
-                            (((l, bi_con), "c"), ((l, bj_con), "a"))
-                        ] = eBath
+                        e_bath_3d_operator[(((l, bi_con), "c"), ((l, bj_con), "a"))] = eBath
 
     # Add Hamiltonian terms to one operator.
-    h0_operator = finite.addOps(
-        [h_imp_3d_operator, h_hopp_operator, e_bath_3d_operator]
-    )
+    h0_operator = finite.addOps([h_imp_3d_operator, h_hopp_operator, e_bath_3d_operator])
     return h0_operator
 
 
@@ -620,9 +602,7 @@ def read_h0_CF_file(h0_CF_filename):
         parameters = json.loads(file_handle.read())
     # Default values are for Ni in NiO.
     e_imp = parameters["e_imp"] if "e_imp" in parameters else -1.31796
-    e_deltaO_imp = (
-        parameters["e_deltaO_imp"] if "e_deltaO_imp" in parameters else 0.60422
-    )
+    e_deltaO_imp = parameters["e_deltaO_imp"] if "e_deltaO_imp" in parameters else 0.60422
     e_val_eg = parameters["e_val_eg"] if "e_val_eg" in parameters else -4.4
     e_val_t2g = parameters["e_val_t2g"] if "e_val_t2g" in parameters else -6.5
     e_con_eg = parameters["e_con_eg"] if "e_con_eg" in parameters else 3
@@ -647,9 +627,7 @@ def read_h0_CF_file(h0_CF_filename):
 
 if __name__ == "__main__":
     # Parse input parameters
-    parser = argparse.ArgumentParser(
-        description="Spectroscopy simulations using crystal-field Hamiltonian"
-    )
+    parser = argparse.ArgumentParser(description="Spectroscopy simulations using crystal-field Hamiltonian")
     parser.add_argument(
         "h0_CF_filename",
         type=str,
@@ -693,30 +671,21 @@ if __name__ == "__main__":
         type=int,
         nargs="+",
         default=[0, 2],
-        help=(
-            "Max devation from initial impurity occupation, "
-            "for each angular momentum."
-        ),
+        help=("Max devation from initial impurity occupation, " "for each angular momentum."),
     )
     parser.add_argument(
         "--dnValBaths",
         type=int,
         nargs="+",
         default=[0, 2],
-        help=(
-            "Max number of electrons to leave valence bath orbitals, "
-            "for each angular momentum."
-        ),
+        help=("Max number of electrons to leave valence bath orbitals, " "for each angular momentum."),
     )
     parser.add_argument(
         "--dnConBaths",
         type=int,
         nargs="+",
         default=[0, 0],
-        help=(
-            "Max number of electrons to enter conduction bath orbitals, "
-            "for each angular momentum."
-        ),
+        help=("Max number of electrons to enter conduction bath orbitals, " "for each angular momentum."),
     )
     parser.add_argument(
         "--Fdd",
@@ -777,12 +746,8 @@ if __name__ == "__main__":
         default=5,
         help="Maximum number of eigenstates to consider.",
     )
-    parser.add_argument(
-        "--nPrintSlaterWeights", type=int, default=3, help="Printing parameter."
-    )
-    parser.add_argument(
-        "--tolPrintOccupation", type=float, default=0.5, help="Printing parameter."
-    )
+    parser.add_argument("--nPrintSlaterWeights", type=int, default=3, help="Printing parameter.")
+    parser.add_argument("--tolPrintOccupation", type=float, default=0.5, help="Printing parameter.")
     parser.add_argument("--T", type=float, default=300, help="Temperature (Kelvin).")
     parser.add_argument(
         "--energy_cut",
@@ -794,28 +759,19 @@ if __name__ == "__main__":
         "--delta",
         type=float,
         default=0.2,
-        help=(
-            "Smearing, half width half maximum (HWHM). "
-            "Due to short core-hole lifetime."
-        ),
+        help=("Smearing, half width half maximum (HWHM). " "Due to short core-hole lifetime."),
     )
     parser.add_argument(
         "--deltaRIXS",
         type=float,
         default=0.050,
-        help=(
-            "Smearing, half width half maximum (HWHM). "
-            "Due to finite lifetime of excited states."
-        ),
+        help=("Smearing, half width half maximum (HWHM). " "Due to finite lifetime of excited states."),
     )
     parser.add_argument(
         "--deltaNIXS",
         type=float,
         default=0.100,
-        help=(
-            "Smearing, half width half maximum (HWHM). "
-            "Due to finite lifetime of excited states."
-        ),
+        help=("Smearing, half width half maximum (HWHM). " "Due to finite lifetime of excited states."),
     )
 
     args = parser.parse_args()

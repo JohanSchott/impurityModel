@@ -153,9 +153,7 @@ def simulate_spectra(
         for i in range(np.shape(a)[0]):
             tmp.append(a[i, :])
         print("Save spectra to disk...\n")
-        np.savetxt(
-            "PS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ..."
-        )
+        np.savetxt("PS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ...")
     if rank == 0:
         print("time(PS) = {:.2f} seconds \n".format(time.time() - t0))
         t0 = time.time()
@@ -185,9 +183,7 @@ def simulate_spectra(
         for i in range(np.shape(a)[0]):
             tmp.append(a[i, :])
         print("Save spectra to disk...\n")
-        np.savetxt(
-            "XPS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ..."
-        )
+        np.savetxt("XPS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ...")
     if rank == 0:
         print("time(XPS) = {:.2f} seconds \n".format(time.time() - t0))
         t0 = time.time()
@@ -197,9 +193,7 @@ def simulate_spectra(
     # Transition operator: exp(iq*r)
     tOps = getNIXSOperators(nBaths, qsNIXS, liNIXS, ljNIXS, RiNIXS, RjNIXS, radialMesh)
     # Green's function
-    gs = getSpectra(
-        n_spin_orbitals, hOp, tOps, psis, es, wLoss, deltaNIXS, restrictions
-    )
+    gs = getSpectra(n_spin_orbitals, hOp, tOps, psis, es, wLoss, deltaNIXS, restrictions)
     if rank == 0:
         print("#eigenstates = {:d}".format(np.shape(gs)[0]))
         print("#q-points = {:d}".format(np.shape(gs)[1]))
@@ -218,9 +212,7 @@ def simulate_spectra(
         for i in range(np.shape(a)[0]):
             tmp.append(a[i, :])
         print("Save spectra to disk...\n")
-        np.savetxt(
-            "NIXS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ..."
-        )
+        np.savetxt("NIXS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ...")
 
     if rank == 0:
         print("time(NIXS) = {:.2f} seconds \n".format(time.time() - t0))
@@ -250,9 +242,7 @@ def simulate_spectra(
         for i in range(np.shape(a)[0]):
             tmp.append(a[i, :])
         print("Save spectra to disk...\n")
-        np.savetxt(
-            "XAS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ..."
-        )
+        np.savetxt("XAS.dat", np.array(tmp).T, fmt="%8.4f", header="E  sum  T1  T2  T3 ...")
     if rank == 0:
         print("time(XAS) = {:.2f} seconds \n".format(time.time() - t0))
         t0 = time.time()
@@ -494,9 +484,7 @@ def getNIXSOperator(nBaths, q, li, lj, Ri, Rj, r, kmin=1):
     tOp = {}
     for k in range(kmin, abs(li + lj) + 1):
         if (li + lj + k) % 2 == 0:
-            Rintegral = np.trapz(
-                np.conj(Ri) * spherical_jn(k, qNorm * r) * Rj * r ** 2, r
-            )
+            Rintegral = np.trapz(np.conj(Ri) * spherical_jn(k, qNorm * r) * Rj * r ** 2, r)
             if rank == 0:
                 print("Rintegral(k=", k, ") =", Rintegral)
             for mi in range(-li, li + 1):
@@ -631,9 +619,7 @@ def getGreen(
         wp = list(np.zeros(krylovSize))
         v[0] = psi
         # print('len(h_dict) = ',len(h_dict),', len(v[0]) = ',len(v[0]))
-        wp[0] = applyOp(
-            n_spin_orbitals, hOp, v[0], slaterWeightMin, restrictions, h_dict
-        )
+        wp[0] = applyOp(n_spin_orbitals, hOp, v[0], slaterWeightMin, restrictions, h_dict)
         # print('#len(h_dict) = ',len(h_dict),', len(wp[0]) = ',len(wp[0]))
         alpha = np.zeros(krylovSize, dtype=np.float)
         beta = np.zeros(krylovSize - 1, dtype=np.float)
@@ -653,9 +639,7 @@ def getGreen(
                 # orthogonal to v[0],v[1],v[2],...,v[j-1]
                 print("Warning: beta==0, implementation missing!")
             # print('len(v[',j,'] =',len(v[j]))
-            wp[j] = applyOp(
-                n_spin_orbitals, hOp, v[j], slaterWeightMin, restrictions, h_dict
-            )
+            wp[j] = applyOp(n_spin_orbitals, hOp, v[j], slaterWeightMin, restrictions, h_dict)
             alpha[j] = inner(wp[j], v[j]).real
             w[j] = add(add(wp[j], v[j], -alpha[j]), v[j - 1], -beta[j - 1])
             # print('len(h_dict) = ',len(h_dict),', len(w[j]) = ',len(w[j]))
@@ -801,9 +785,7 @@ def getSpectra(
             for i in range(n):
                 psi = psis[i]
                 e = es[i]
-                psiR = applyOp(
-                    n_spin_orbitals, tOp, psi, slaterWeightMin, restrictions, t_big
-                )
+                psiR = applyOp(n_spin_orbitals, tOp, psi, slaterWeightMin, restrictions, t_big)
                 # if rank == 0: print("len(t_big) = {:d}".format(len(t_big)))
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
@@ -923,9 +905,7 @@ def getRIXSmap(
         h_dict_ground = {}
     nE = len(es)
     # Green's functions
-    gs = np.zeros(
-        (nE, len(tOpsIn), len(tOpsOut), len(wIns), len(wLoss)), dtype=np.complex
-    )
+    gs = np.zeros((nE, len(tOpsIn), len(tOpsOut), len(wIns), len(wLoss)), dtype=np.complex)
     # Hamiltonian dict of the form  |PS> : {H|PS>}
     # For product states with a core hole.
     h_dict_excited = {}
@@ -939,9 +919,7 @@ def getRIXSmap(
                 psi = psis[iE]
                 e = es[iE]
                 # Core-hole state
-                psi1 = applyOp(
-                    n_spin_orbitals, tOpIn, psi, slaterWeightMin, restrictions, tIn_big
-                )
+                psi1 = applyOp(n_spin_orbitals, tOpIn, psi, slaterWeightMin, restrictions, tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 n_tmp = len(h_dict_excited)
                 if rank == 0:
@@ -1042,9 +1020,7 @@ def getRIXSmap(
                 psi = psis[iE]
                 e = es[iE]
                 # Core-hole state
-                psi1 = applyOp(
-                    n_spin_orbitals, tOpIn, psi, slaterWeightMin, restrictions, tIn_big
-                )
+                psi1 = applyOp(n_spin_orbitals, tOpIn, psi, slaterWeightMin, restrictions, tIn_big)
                 # Hamiltonian acting on relevant product states. |PS> : {H|PS>}
                 n_tmp = len(h_dict_excited)
                 if rank == 0:

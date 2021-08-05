@@ -25,8 +25,9 @@ The integer is a compact format. It is the integer representation of the string 
 The bitarray representation is the only mutable type among the different product state representation types.
 This makes bitarrays suitable for manipulating product states, i.e. removing or adding electrons.
 The bytes representation is constructed from the bitarray representation by calling the ".tobytes" method.
-The bytes type is, like tuple, str and int, immutable and uses about the same amount of memory as the integer representation.
-However, from an bitarray, it takes less time to convert to a bytes representation than to an integer representation.
+The bytes type is, like tuple, str and int, immutable and uses about the same amount of memory as the integer
+representation. However, from an bitarray, it takes less time to convert to a bytes representation than to an integer
+representation.
 
 The tuple, integer, and the bytes representation needs to know the total number of spin-orbitals in the system.
 
