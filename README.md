@@ -4,7 +4,7 @@
 
 ### Introduction
 
-Calculate many-body states of an impurity Anderson model and a few spectra, e.g. photoemission spectroscopy (PS), x-ray photoemission spectroscopy (XPS), x-ray absorption spectroscopy (XAS), non-resonant inelastic x-ray scattering (NIXS), and resonant inelastic x-ray scattering (RIXS).
+Calculate many-body states of an impurity Anderson model and a various spectra, e.g. photoemission spectroscopy (PS), x-ray photoemission spectroscopy (XPS), x-ray absorption spectroscopy (XAS), non-resonant inelastic x-ray scattering (NIXS), and resonant inelastic x-ray scattering (RIXS), using the [Lanczos algorithm](https://en.wikipedia.org/wiki/Lanczos_algorithm).
 
 Credits to Petter Saterskog for inspiration and for some of the key functionality.
 
@@ -23,9 +23,9 @@ Credits to Patrik Thunstrom for discussions about computational algorithms.
 </figure>
 
 ### Get started
-- Run the bash-script `install_setup.sh`:
+- Execute the bash-script `install_setup.sh`:
 ```bash
-source install_setup.sh
+./install_setup.sh
 ```
 This will create a Python virtual environment and install the required system and Python packages.
 
