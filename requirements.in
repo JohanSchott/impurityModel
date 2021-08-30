@@ -2,6 +2,7 @@
 bitarray==2.2.4
 black==21.7b0
 flake8==3.9.2
+flake8-bugbear==21.4.3
 h5py==3.3.0
 matplotlib==3.4.2
 mpi4py==3.0.3
