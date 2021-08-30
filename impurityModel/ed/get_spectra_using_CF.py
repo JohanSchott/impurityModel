@@ -525,7 +525,7 @@ def get_CF_hamiltonian(nBaths, nValBaths, h0_CF_filename, bath_state_basis="sphe
     # Loop over spin
     for s in range(2):
         # Loop over impurity orbitals
-        for i, mi in enumerate(range(-l, l + 1)):
+        for i, _mi in enumerate(range(-l, l + 1)):
             # Bath state index for valence bath states.
             bi_val = s * (2 * l + 1) + i
             # Bath state index for conduction bath states.

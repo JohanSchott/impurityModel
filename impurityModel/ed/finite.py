@@ -655,17 +655,17 @@ def addOps(ops):
     return opSum
 
 
-def get2p3dSlaterCondonUop(Fdd=[9, 0, 8, 0, 6], Fpp=[20, 0, 8], Fpd=[10, 0, 8], Gpd=[0, 3, 0, 2]):
+def get2p3dSlaterCondonUop(Fdd=(9, 0, 8, 0, 6), Fpp=(20, 0, 8), Fpd=(10, 0, 8), Gpd=(0, 3, 0, 2)):
     """
     Return a 2p-3d U operator containing a sum of
     different Slater-Condon proccesses.
 
     Parameters
     ----------
-    Fdd : list
-    Fpp : list
-    Fpd : list
-    Gpd : list
+    Fdd : tuple
+    Fpp : tuple
+    Fpd : tuple
+    Gpd : tuple
 
     """
     # Calculate F_dd^{0,2,4}
