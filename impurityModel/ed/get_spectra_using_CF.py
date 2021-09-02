@@ -217,7 +217,7 @@ def main(
             print("Eigenstate {:d}.".format(i))
             print("Consists of {:d} product states.".format(len(psi)))
             ws = np.array([abs(a) ** 2 for a in psi.values()])
-            s = np.array([ps for ps in psi.keys()])
+            s = np.array(list(psi.keys()))
             j = np.argsort(ws)
             ws = ws[j[-1::-1]]
             s = s[j[-1::-1]]
