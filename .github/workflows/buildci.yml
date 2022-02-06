@@ -23,21 +23,11 @@ jobs:
     - name: Install dependencies
       run: |
         ./install_setup.sh
-    - name: Lint with flake8
+    - name: Check linting
       run: |
         # Activate virtual environment, and set PYTHONPATH
         source env.sh
-        flake8 .
-    - name: Lint with pylint
-      run: |
-        # Activate virtual environment, and set PYTHONPATH
-        source env.sh
-        pylint --persistent=no --score=no --rcfile setup.cfg impurityModel
-    - name: Lint with black
-      run: |
-        # Activate virtual environment, and set PYTHONPATH
-        source env.sh
-        black . --check
+        make check
     - name: Test with pytest
       run: |
         # Activate virtual environment, and set PYTHONPATH
