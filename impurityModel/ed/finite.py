@@ -1412,7 +1412,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                         psiNew[stateB] += amp * h * signTot
                     else:
                         psiNew[stateB] = amp * h * signTot
-    elif restrictions is not None:
+    elif opResult is not None and restrictions is not None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             # assert amp != 0
@@ -1464,7 +1464,7 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                     # Remove product states with small weight
                     if abs(amp) ** 2 < slaterWeightMin:
                         opResult[state].pop(ps)
-    elif restrictions is None:
+    elif opResult is not None and restrictions is None:
         # Loop over product states in psi.
         for state, amp in psi.items():
             # assert amp != 0
