@@ -41,6 +41,11 @@ source env.sh
 pytest
 ```
 
+- To check linting and static type checking, type
+```bash
+make check
+```
+
 - To perform a simulation, first create a directory somewhere on your computer.
 Then execute one of the example scripts in the `scripts` folder. E.g. type:
 ```bash
