@@ -29,8 +29,8 @@ if [ "$(uname)" == "Darwin" ]; then
     fi
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Only for Debian, Ubuntu, and related Linux distributions
-    sudo apt-get update -y
-    sudo apt-get install -y --no-install-recommends $(cat requirements-ubuntu.txt)
+    sudo apt-get update -qq -y
+    sudo apt-get install -qq -y --no-install-recommends $(cat requirements-ubuntu.txt)
 else
     echo "Operating system not supported, yet"
     exit 1
@@ -43,9 +43,8 @@ python3 -m venv ~/envED
 . ~/envED/bin/activate
 
 # Install required python libraries.
-pip install --upgrade pip==21.1.2
-pip install pip-tools==6.1.0
+pip install --disable-pip-version-check -q -U pip==21.2.4
+pip install --disable-pip-version-check -q pip-tools==6.1.0
 rm -f requirements.txt
-pip-compile requirements.in
-pip install -r requirements.txt
-
+pip-compile -q requirements.in
+pip install --disable-pip-version-check -q -r requirements.txt
