@@ -28,6 +28,12 @@ jobs:
         # Activate virtual environment, and set PYTHONPATH
         source env.sh
         make check
+    - name: Check documentation generation
+      run: |
+        # Activate virtual environment, and set PYTHONPATH
+        source env.sh
+        make -s -C doc/sphinx clean
+        make -s -C doc/sphinx html
     - name: Test with pytest
       run: |
         # Activate virtual environment, and set PYTHONPATH
