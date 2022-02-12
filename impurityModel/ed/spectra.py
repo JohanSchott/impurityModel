@@ -482,7 +482,7 @@ def getNIXSOperator(nBaths, q, li, lj, Ri, Rj, r, kmin=1):
     tOp = {}
     for k in range(kmin, abs(li + lj) + 1):
         if (li + lj + k) % 2 == 0:
-            Rintegral = np.trapz(np.conj(Ri) * spherical_jn(k, qNorm * r) * Rj * r ** 2, r)
+            Rintegral = np.trapz(np.conj(Ri) * spherical_jn(k, qNorm * r) * Rj * r**2, r)
             if rank == 0:
                 print("Rintegral(k=", k, ") =", Rintegral)
             for mi in range(-li, li + 1):
@@ -757,7 +757,7 @@ def getSpectra(
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
-                g[i][t, :] = normalization ** 2 * getGreen(
+                g[i][t, :] = normalization**2 * getGreen(
                     n_spin_orbitals,
                     e,
                     psiR,
@@ -788,7 +788,7 @@ def getSpectra(
                 normalization = sqrt(norm2(psiR))
                 for state in psiR.keys():
                     psiR[state] /= normalization
-                gs[i, t, :] = normalization ** 2 * getGreen(
+                gs[i, t, :] = normalization**2 * getGreen(
                     n_spin_orbitals,
                     e,
                     psiR,
@@ -996,7 +996,7 @@ def getRIXSmap(
                             if abs(amp) ** 2 < slaterWeightMin:
                                 psi3.pop(state)
                         # Calculate Green's function
-                        gs[iE, tIn, tOut, iwIn, :] = normalization ** 2 * getGreen(
+                        gs[iE, tIn, tOut, iwIn, :] = normalization**2 * getGreen(
                             n_spin_orbitals,
                             e,
                             psi3,
@@ -1109,7 +1109,7 @@ def getRIXSmap(
                             if abs(amp) ** 2 < slaterWeightMin:
                                 psi3.pop(state)
                         # Calculate Green's function
-                        g[iwIn][tOut, :] = normalization ** 2 * getGreen(
+                        g[iwIn][tOut, :] = normalization**2 * getGreen(
                             n_spin_orbitals,
                             e,
                             psi3,
