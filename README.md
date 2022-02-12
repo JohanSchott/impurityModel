@@ -129,7 +129,8 @@ The documentation of this package is found in the directory `docs`.
 To update the manual, type:
 
 ```bash
-cd docs && sphinx-apidoc -f --implicit-namespaces -o . ../impurityModel && make html
+make -s -C doc/sphinx clean
+make -s -C doc/sphinx html
 ```
 to generate a html-page.
 
