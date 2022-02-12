@@ -1,6 +1,6 @@
 # Needed python packages
 bitarray==2.2.4
-black==21.7b0
+black==22.1.0
 flake8==3.9.2
 flake8-bugbear==21.4.3
 flake8-comprehensions==3.6.1
