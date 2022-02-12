@@ -1,10 +1,5 @@
 """
-
-spectra
-=======
-
 This module contains functions for calculating various spectra.
-
 """
 
 from math import sqrt
@@ -590,7 +585,7 @@ def getGreen(
     h_dict : dict
         Stores the result of the (Hamiltonian) operator hOp acting
         on individual product states. Information is stored according to:
-        |product state> : H|product state>, where
+        `|product state> : H|product state>`, where
         each product state is represented by an integer, and the result is
         a dictionary (of the format int : complex).
         If present, it may also be updated by this function.
@@ -890,7 +885,7 @@ def getRIXSmap(
     h_dict_ground : dict
         Stores the result of the (Hamiltonian) operator hOp acting
         on individual product states. Information is stored according to:
-        |product state> : H|product state>, where
+        `|product state> : H|product state>`, where
         each product state is represented by an integer, and the result is
         a dictionary (of the format int : complex).
         Only product states without a core hole are stored in this variable.

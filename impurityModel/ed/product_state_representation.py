@@ -1,8 +1,4 @@
 """
-
-product_state_representation
-============================
-
 This module contains functions for translating a product state from one format
 to another format. The possible types are:
 tuple, str, int, bitarray and bytes.
@@ -29,7 +25,7 @@ representation.
 The tuple, integer, and the bytes representation needs to know the total number of spin-orbitals in the system.
 
 In the create.py and remove.py modules, the ordering convention is such that this product state example represents:
-|psi> = c2 c5 |0>, (and not c5 c2 |0>).
+`|psi> = c2 c5 |0>`, (and not `c5 c2 |0>`).
 
 """
 
