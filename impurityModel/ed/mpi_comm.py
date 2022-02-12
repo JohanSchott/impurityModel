@@ -1,10 +1,5 @@
 """
-
-mpi_comm
-========
-
 This module contains help functions for MPI communication.
-
 """
 
 import math

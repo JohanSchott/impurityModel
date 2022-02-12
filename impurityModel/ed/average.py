@@ -1,9 +1,5 @@
 """
-average
-=======
-
 Module containing functions for performing averaging.
-
 """
 
 import numpy as np

@@ -1,9 +1,5 @@
 """
-test_product_state_representation
-=================================
-
 Module with tests of functions in product_state_representation.py.
-
 """
 
 
