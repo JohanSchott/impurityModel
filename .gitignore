@@ -2,8 +2,10 @@
 requirements.txt
 
 # Generated documentation files
-docs/_build/*
+doc/sphinx/generated_doc/*
+doc/sphinx/_doc_build/*
 
 # Compiled Modules
 *.pyc
 *.so
+
