@@ -27,5 +27,4 @@ Makefile:
 # Catch-all target: route all unknown targets to Sphinx using the
 # "make mode" option.
 %: $(BUILD_CONFIG)/index.rst
-	#sphinx-build -M $@ .. $(GEN_DOC) -c . -W -q
-	sphinx-build -M $@ .. $(GEN_DOC) -c . 
+	sphinx-build -M $@ .. $(GEN_DOC) -c . -W -q
