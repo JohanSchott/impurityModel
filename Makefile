@@ -1,12 +1,9 @@
 .PHONY: check check_flake8 check_pylint check_black check_mypy check_pytype
 
-check: check_flake8 check_pylint check_black check_mypy check_pytype
+check: check_ruff check_black check_mypy check_pytype
 
-check_flake8:
-	flake8 .
-
-check_pylint:
-	pylint --persistent=no --score=no --rcfile setup.cfg impurityModel
+check_ruff:
+	ruff check .
 
 check_black:
 	black . --check

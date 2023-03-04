@@ -2,10 +2,11 @@
 Python plot script of RIXS spectra
 """
 
-import matplotlib.pylab as plt
-import numpy as np
 import os.path
 import sys
+
+import matplotlib.pylab as plt
+import numpy as np
 
 
 def main():

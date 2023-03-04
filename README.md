@@ -124,7 +124,7 @@ pytest
 to perform the (unit) tests in the `test`-folder.
 
 ### Documentation
-The documentation of this package is found in the directory `docs`.
+The documentation of this package is found in the directory `doc`.
 
 To update the manual, type:
 

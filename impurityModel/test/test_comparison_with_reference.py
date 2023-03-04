@@ -3,13 +3,14 @@ Module with test comparing new simulations with reference data.
 """
 
 
-import subprocess
-import os
 import inspect
+import math
+import os
+import subprocess
 import tempfile
+
 import h5py
 import numpy as np
-import math
 
 
 def test_comparison():

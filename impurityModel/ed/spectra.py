@@ -2,22 +2,30 @@
 This module contains functions for calculating various spectra.
 """
 
+import time
 from math import sqrt
+
 import numpy as np
-from mpi4py import MPI
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.special import spherical_jn
-from scipy.special import sph_harm
+from mpi4py import MPI
+from scipy.special import sph_harm, spherical_jn
+
 from impurityModel.ed.average import thermal_average
-import time
 
 # Local imports
-from impurityModel.ed.finite import gauntC, c2i, get_job_tasks
-from impurityModel.ed.finite import daggerOp, applyOp, inner, add, norm2
-from impurityModel.ed.finite import expand_basis_and_hamiltonian
-from impurityModel.ed.finite import get_tridiagonal_krylov_vectors
-
+from impurityModel.ed.finite import (
+    add,
+    applyOp,
+    c2i,
+    daggerOp,
+    expand_basis_and_hamiltonian,
+    gauntC,
+    get_job_tasks,
+    get_tridiagonal_krylov_vectors,
+    inner,
+    norm2,
+)
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -669,10 +677,7 @@ def getGreen(
     # Construct Green's function from continued fraction.
     omegaP = omega + 1j * delta + e
     for i in range(krylovSize - 1, -1, -1):
-        if i == krylovSize - 1:
-            g = 1.0 / (omegaP - alpha[i])
-        else:
-            g = 1.0 / (omegaP - alpha[i] - beta[i] ** 2 * g)
+        g = 1.0 / (omegaP - alpha[i]) if i == krylovSize - 1 else 1.0 / (omegaP - alpha[i] - beta[i] ** 2 * g)
     return g
 
 

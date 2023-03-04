@@ -2,21 +2,21 @@
 This module contains functions doing the bulk of the calculations.
 """
 
-from math import pi, sqrt
-import numpy as np
-from sympy.physics.wigner import gaunt
 import itertools
+import time
 from collections import OrderedDict
+from math import pi, sqrt
+
+import numpy as np
 import scipy.sparse
 from mpi4py import MPI
-import time
+from sympy.physics.wigner import gaunt
+
+from impurityModel.ed import create, remove
 
 # Local imports
 from impurityModel.ed import product_state_representation as psr
-from impurityModel.ed import create
-from impurityModel.ed import remove
 from impurityModel.ed.average import k_B, thermal_average
-
 
 # MPI variables
 comm = MPI.COMM_WORLD
@@ -1879,14 +1879,13 @@ def expand_basis_and_hamiltonian(
                 f"len(h_dict) = {len(h_dict)}, "
                 f"len(h_dict_total) = {len_h_dict_total}"
             )
-    elif parallelization_mode == "serial":
-        if rank == 0:
-            print(
-                "Hamiltonian basis sizes: "
-                f"len(basis_index) = {len(basis_index)}, "
-                f"np.shape(h)[0] = {np.shape(h)[0]}, "
-                f"len(h_dict) = {len(h_dict)}, "
-            )
+    elif parallelization_mode == "serial" and rank == 0:
+        print(
+            "Hamiltonian basis sizes: "
+            f"len(basis_index) = {len(basis_index)}, "
+            f"np.shape(h)[0] = {np.shape(h)[0]}, "
+            f"len(h_dict) = {len(h_dict)}, "
+        )
 
     return h, basis_index
 

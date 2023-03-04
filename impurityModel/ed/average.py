@@ -5,7 +5,6 @@ Module containing functions for performing averaging.
 import numpy as np
 from scipy.constants import physical_constants
 
-
 k_B = physical_constants["Boltzmann constant in eV/K"][0]
 
 

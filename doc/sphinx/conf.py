@@ -13,7 +13,7 @@ sys.path.insert(0, "../../")
 # -- Project information -----------------------------------------------------
 
 project = "impurityModel"
-copyright = "2020, Johan Schott"
+copyright = "2020, Johan Schott"  # noqa: A001
 author = "Johan Schott"
 
 
