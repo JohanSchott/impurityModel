@@ -1,6 +1,6 @@
 # Needed python packages
 bitarray==2.2.4
-black==22.1.0
+black==23.1.0
 h5py==3.3.0
 matplotlib==3.4.2
 mpi4py==3.0.3
