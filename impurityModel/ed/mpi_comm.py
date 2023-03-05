@@ -3,11 +3,11 @@ This module contains help functions for MPI communication.
 """
 
 import math
+import time
+from itertools import islice
+
 import numpy as np
 from mpi4py import MPI
-from itertools import islice
-import time
-
 
 # MPI variables
 comm = MPI.COMM_WORLD

@@ -3,19 +3,19 @@ Script for calculating various spectra.
 
 """
 
-import numpy as np
-from collections import OrderedDict
-from mpi4py import MPI
+import argparse
 import json
 import time
-import argparse
+from collections import OrderedDict
+
 import h5py
+import numpy as np
+from mpi4py import MPI
 
 # Local stuff
-from impurityModel.ed import spectra
-from impurityModel.ed import finite
-from impurityModel.ed.finite import c2i
+from impurityModel.ed import finite, spectra
 from impurityModel.ed.average import k_B
+from impurityModel.ed.finite import c2i
 
 
 def main(

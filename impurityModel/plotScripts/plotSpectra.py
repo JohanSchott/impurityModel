@@ -3,12 +3,13 @@ Plot script of various spectra.
 
 """
 
-import matplotlib.pyplot as plt
-import numpy as np
+import argparse
 import os.path
 from math import pi
-import argparse
+
 import h5py
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_spectra_in_file(filename):
