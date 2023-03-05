@@ -1,4 +1,4 @@
-.PHONY: check check_flake8 check_pylint check_black check_mypy check_pytype
+.PHONY: check check_ruff check_black check_mypy check_pytype
 
 check: check_ruff check_black check_mypy check_pytype
 
