@@ -1454,9 +1454,9 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                                 opResult[state][stateB] = h * signTot
                 # Make sure amplitudes in opResult are bigger than
                 # the slaterWeightMin cutoff.
-                for ps, amp in list(opResult[state].items()):
+                for ps, amplitude in list(opResult[state].items()):
                     # Remove product states with small weight
-                    if abs(amp) ** 2 < slaterWeightMin:
+                    if abs(amplitude) ** 2 < slaterWeightMin:
                         opResult[state].pop(ps)
     elif opResult is not None and restrictions is None:
         # Loop over product states in psi.
@@ -1494,9 +1494,9 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                             psiNew[stateB] = amp * h * signTot
                 # Make sure amplitudes in opResult are bigger than
                 # the slaterWeightMin cutoff.
-                for ps, amp in list(opResult[state].items()):
+                for ps, amplitude in list(opResult[state].items()):
                     # Remove product states with small weight
-                    if abs(amp) ** 2 < slaterWeightMin:
+                    if abs(amplitude) ** 2 < slaterWeightMin:
                         opResult[state].pop(ps)
     else:
         raise Exception("Method not implemented.")

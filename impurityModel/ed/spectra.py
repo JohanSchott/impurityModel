@@ -644,7 +644,7 @@ def getGreen(
             alpha[j] = inner(wp[j], v[j]).real
             w[j] = add(add(wp[j], v[j], -alpha[j]), v[j - 1], -beta[j - 1])
             # print('len(h_dict) = ',len(h_dict),', len(w[j]) = ',len(w[j]))
-    elif mode == "sparse" or mode == "dense":
+    elif mode in ("sparse", "dense"):
         # If we use a parallelized mode, we want to work with
         # only the MPI local part of the Hamiltonian matrix h.
         h_local = parallelization_mode == "H_build"
@@ -908,7 +908,7 @@ def getRIXSmap(
     # For product states with a core hole.
     h_dict_excited = {}
     tOut_big = [{}] * len(tOpsOut)
-    if parallelization_mode == "serial" or parallelization_mode == "H_build":
+    if parallelization_mode in ("serial", "H_build"):
         # Loop over in-coming transition operators
         for tIn, tOpIn in enumerate(tOpsIn):
             tIn_big = {}
@@ -1009,7 +1009,7 @@ def getRIXSmap(
                             h_dict_ground,
                             parallelization_mode=parallelization_mode,
                         )
-    elif parallelization_mode == "wIn" or parallelization_mode == "H_build_wIn":
+    elif parallelization_mode in ("wIn", "H_build_wIn"):
         # Loop over in-coming transition operators
         for tIn, tOpIn in enumerate(tOpsIn):
             tIn_big = {}
