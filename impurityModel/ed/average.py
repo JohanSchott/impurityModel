@@ -31,7 +31,7 @@ def thermal_average(energies, observable, T=300):
     z = 0
     e_average = 0
     o_average = 0
-    weights = np.zeros(np.shape(energies), dtype=np.float)
+    weights = np.zeros(np.shape(energies), dtype=float)
     shift = np.min(energies)
     for j, (e, o) in enumerate(zip(energies, observable)):
         weight = np.exp(-(e - shift) / (k_B * T))

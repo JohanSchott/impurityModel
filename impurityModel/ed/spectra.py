@@ -606,7 +606,7 @@ def getGreen(
 
     """
     # Allocation of output vector.
-    g = np.zeros(len(omega), dtype=np.complex)
+    g = np.zeros(len(omega), dtype=complex)
     # In the exceptional case of an empty state psi, return zero.
     if len(psi) == 0:
         return g
@@ -622,8 +622,8 @@ def getGreen(
         # print('len(h_dict) = ',len(h_dict),', len(v[0]) = ',len(v[0]))
         wp[0] = applyOp(n_spin_orbitals, hOp, v[0], slaterWeightMin, restrictions, h_dict)
         # print('#len(h_dict) = ',len(h_dict),', len(wp[0]) = ',len(wp[0]))
-        alpha = np.zeros(krylovSize, dtype=np.float)
-        beta = np.zeros(krylovSize - 1, dtype=np.float)
+        alpha = np.zeros(krylovSize, dtype=float)
+        beta = np.zeros(krylovSize - 1, dtype=float)
         alpha[0] = inner(wp[0], v[0]).real
         w[0] = add(wp[0], v[0], -alpha[0])
         # Approximate position of spectrum.
@@ -665,7 +665,7 @@ def getGreen(
         # Number of basis states
         n = len(basis_index)
         # Express psi as a vector
-        psi0 = np.zeros(n, dtype=np.complex)
+        psi0 = np.zeros(n, dtype=complex)
         for ps, amp in psi.items():
             psi0[basis_index[ps]] = amp
         # Unnecessary (and impossible) to find more than n Krylov basis vectors.
@@ -738,7 +738,7 @@ def getSpectra(
     """
     n = len(es)
     # Green's functions
-    gs = np.zeros((n, len(tOps), len(w)), dtype=np.complex)
+    gs = np.zeros((n, len(tOps), len(w)), dtype=complex)
     # Hamiltonian dict of the form  |PS> : {H|PS>}
     # New elements are added each time getGreen is called.
     # Also acts as an input to getGreen and speed things up dramatically.
@@ -750,7 +750,7 @@ def getSpectra(
             psi = psis[i]
             e = es[i]
             # Initialize Green's functions
-            g[i] = np.zeros((len(tOps), len(w)), dtype=np.complex)
+            g[i] = np.zeros((len(tOps), len(w)), dtype=complex)
             # Loop over transition operators
             for t, tOp in enumerate(tOps):
                 psiR = applyOp(n_spin_orbitals, tOp, psi, slaterWeightMin, restrictions)
@@ -903,7 +903,7 @@ def getRIXSmap(
         h_dict_ground = {}
     nE = len(es)
     # Green's functions
-    gs = np.zeros((nE, len(tOpsIn), len(tOpsOut), len(wIns), len(wLoss)), dtype=np.complex)
+    gs = np.zeros((nE, len(tOpsIn), len(tOpsOut), len(wIns), len(wLoss)), dtype=complex)
     # Hamiltonian dict of the form  |PS> : {H|PS>}
     # For product states with a core hole.
     h_dict_excited = {}
@@ -938,7 +938,7 @@ def getRIXSmap(
                     )
                 n = len(basis_index)
                 # Express psi1 as a vector
-                y = np.zeros(n, dtype=np.complex)
+                y = np.zeros(n, dtype=complex)
                 for ps, amp in psi1.items():
                     y[basis_index[ps]] = amp
                 # If one would like to store psi1 as a sparse vector
@@ -1050,7 +1050,7 @@ def getRIXSmap(
                     )
                 n = len(basis_index)
                 # Express psi1 as a vector
-                y = np.zeros(n, dtype=np.complex)
+                y = np.zeros(n, dtype=complex)
                 for ps, amp in psi1.items():
                     y[basis_index[ps]] = amp
                 # If one would like to store psi1 as a sparse vector
@@ -1066,7 +1066,7 @@ def getRIXSmap(
                 for iwIn in get_job_tasks(rank, ranks, range(len(wIns))):
                     wIn = wIns[iwIn]
                     # Initialize Green's functions
-                    g[iwIn] = np.zeros((len(tOpsOut), len(wLoss)), dtype=np.complex)
+                    g[iwIn] = np.zeros((len(tOpsOut), len(wLoss)), dtype=complex)
                     # A = (wIn+1j*delta1+e)*\hat{1} - hOp.
                     a = scipy.sparse.csr_matrix(
                         ([wIn + 1j * delta1 + e] * n, (range(n), range(n))),
