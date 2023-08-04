@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Number of valence bath states coupled to 3d-orbitals.
 # Currently accepted values are 10, 20, 50, 100 or 300.
