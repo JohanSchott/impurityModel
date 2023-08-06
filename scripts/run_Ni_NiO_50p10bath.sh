@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Number of MPI ranks to use.
 # Check if the first input parameter is empty.

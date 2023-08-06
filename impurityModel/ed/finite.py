@@ -243,14 +243,14 @@ def get_spherical_2_cubic_matrix(spinpol=False, l=2):
 
     """
     if l == 1:
-        u = np.zeros((3, 3), dtype=np.complex)
+        u = np.zeros((3, 3), dtype=complex)
         u[0, 0] = 1j / np.sqrt(2)
         u[2, 0] = 1j / np.sqrt(2)
         u[0, 1] = 1 / np.sqrt(2)
         u[2, 1] = -1 / np.sqrt(2)
         u[1, 2] = 1
     elif l == 2:
-        u = np.zeros((5, 5), dtype=np.complex)
+        u = np.zeros((5, 5), dtype=complex)
         u[2, 0] = 1
         u[[0, -1], 1] = 1 / np.sqrt(2)
         u[1, 2] = -1j / np.sqrt(2)
@@ -261,7 +261,7 @@ def get_spherical_2_cubic_matrix(spinpol=False, l=2):
         u[-1, 4] = -1j / np.sqrt(2)
     if spinpol:
         n, m = np.shape(u)
-        U = np.zeros((2 * n, 2 * m), dtype=np.complex)
+        U = np.zeros((2 * n, 2 * m), dtype=complex)
         U[0:n, 0:m] = u
         U[n:, m:] = u
         u = U
@@ -1454,9 +1454,9 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                                 opResult[state][stateB] = h * signTot
                 # Make sure amplitudes in opResult are bigger than
                 # the slaterWeightMin cutoff.
-                for ps, amp in list(opResult[state].items()):
+                for ps, amplitude in list(opResult[state].items()):
                     # Remove product states with small weight
-                    if abs(amp) ** 2 < slaterWeightMin:
+                    if abs(amplitude) ** 2 < slaterWeightMin:
                         opResult[state].pop(ps)
     elif opResult is not None and restrictions is None:
         # Loop over product states in psi.
@@ -1494,9 +1494,9 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
                             psiNew[stateB] = amp * h * signTot
                 # Make sure amplitudes in opResult are bigger than
                 # the slaterWeightMin cutoff.
-                for ps, amp in list(opResult[state].items()):
+                for ps, amplitude in list(opResult[state].items()):
                     # Remove product states with small weight
-                    if abs(amp) ** 2 < slaterWeightMin:
+                    if abs(amplitude) ** 2 < slaterWeightMin:
                         opResult[state].pop(ps)
     else:
         raise Exception("Method not implemented.")
@@ -1535,7 +1535,7 @@ def get_hamiltonian_matrix(n_spin_orbitals, hOp, basis, mode="sparse_MPI"):
         print("Filling the Hamiltonian...")
     progress = 0
     if mode == "dense_serial":
-        h = np.zeros((n, n), dtype=np.complex)
+        h = np.zeros((n, n), dtype=complex)
         for j in range(n):
             if rank == 0 and progress + 10 <= int(j * 100.0 / n):
                 progress = int(j * 100.0 / n)
@@ -1545,7 +1545,7 @@ def get_hamiltonian_matrix(n_spin_orbitals, hOp, basis, mode="sparse_MPI"):
                 if k in basis_index:
                     h[basis_index[k], j] = v
     elif mode == "dense_MPI":
-        h = np.zeros((n, n), dtype=np.complex)
+        h = np.zeros((n, n), dtype=complex)
         hRank = {}
         jobs = get_job_tasks(rank, ranks, range(n))
         for j in jobs:
@@ -1648,7 +1648,7 @@ def get_hamiltonian_matrix_from_h_dict(
     n = len(basis)
     basis_index = {basis[i]: i for i in range(n)}
     if mode == "dense" and parallelization_mode == "serial":
-        h = np.zeros((n, n), dtype=np.complex)
+        h = np.zeros((n, n), dtype=complex)
         for j in range(n):
             res = h_dict[basis[j]]
             for k, v in res.items():
@@ -1920,11 +1920,11 @@ def get_tridiagonal_krylov_vectors(h, psi0, krylovSize, h_local=False, mode="spa
     krylovSize = min(krylovSize, n)
 
     # Allocate tri-diagonal matrix elements
-    alpha = np.zeros(krylovSize, dtype=np.float)
-    beta = np.zeros(krylovSize - 1, dtype=np.float)
+    alpha = np.zeros(krylovSize, dtype=float)
+    beta = np.zeros(krylovSize - 1, dtype=float)
     # Allocate space for Krylov state vectors.
     # Do not save all Krylov vectors to save memory.
-    v = np.zeros((2, n), dtype=np.complex)
+    v = np.zeros((2, n), dtype=complex)
     # Initialization...
     v[0, :] = psi0
 

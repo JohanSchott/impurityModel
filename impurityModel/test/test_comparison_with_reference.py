@@ -29,10 +29,13 @@ def compare_spectra(
         os.chdir(tmpdirname)
         print("Current working dir:", os.getcwd())
         path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        print(f"{path = }")
         cmd = os.path.join(path[:-19], script_file)
         print("Run command:", cmd)
         print("Use command argument:", script_argument)
-        subprocess.call([cmd, str(script_argument)])
+
+        subprocess.run(args=[cmd, str(script_argument)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+
         files_and_dirs = os.listdir()
         print("Files and folders in temporary folder:", files_and_dirs)
         # Open spectra file and the reference spectra file

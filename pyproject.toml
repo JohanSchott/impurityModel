@@ -6,4 +6,4 @@ line-length = 120
 
 select = ["E", "F", "B", "C4", "PL", "A", "SIM", "RUF", "PGH", "I"]
 
-ignore = ["B905", "PLR2004", "PLR0911", "PLR0912", "PLR0913", "PLR0915", "SIM105","RUF005", "PGH003", "C408", "SIM118", "E741"]
+ignore = ["B905", "PLR2004", "PLR0911", "PLR0912", "PLR0913", "PLR0915", "SIM105","RUF005", "PGH003", "C408", "SIM118", "E741", "PLR5501"]

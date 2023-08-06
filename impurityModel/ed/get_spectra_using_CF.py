@@ -792,7 +792,7 @@ if __name__ == "__main__":
 
     assert args.ls[0] == 1
     assert args.ls[1] == 2
-    assert args.nBaths[1] == 10 or args.nBaths[1] == 20
+    assert args.nBaths[1] in (10, 20)
     assert args.nValBaths[1] == 10
 
     main(
