@@ -12,7 +12,6 @@ scipy==1.10.1
 sphinx==6.2.1
 sphinx-rtd-theme==1.2.2
 mypy==1.4.1
-pytype==2023.7.28
 sphinx-autodoc-typehints==1.23.0
 ruff==0.0.282
 typeguard==4.1.0
