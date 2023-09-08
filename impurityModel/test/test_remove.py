@@ -1,5 +1,5 @@
-from impurityModel.ed import product_state_representation as psr
 from impurityModel.ed import create, remove
+from impurityModel.ed import product_state_representation as psr
 
 
 def test_remove_simple_state():
