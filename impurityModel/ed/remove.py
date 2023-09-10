@@ -78,8 +78,9 @@ def uint(n_spin_orbitals: int, i: int, state: int) -> tuple[int, int]:
     """
     i_right = n_spin_orbitals - 1 - i
     if state & (1 << i_right):
-        # Spin-orbital is occupied
-        # Remove electron with AND and NOT operators
+        # Spin-orbital is occupied.
+        # Remove electron with AND and NOT operators.
+        # (Instead of the AND and NOT operators one could use the XOR operator)
         state_new = state & (~(1 << i_right))
         # Want to count number of electrons in spin-orbitals with index lower than i.
         # First right bit-shift to get rid of electrons with index equal or bigger than i.
