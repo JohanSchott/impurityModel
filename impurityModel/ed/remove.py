@@ -55,37 +55,42 @@ def utuple(i, state):
         return (), 0
 
 
-def uint(n_spin_orbitals, i, state):
+def uint(n_spin_orbitals: int, i: int, state: int) -> tuple[int, int]:
     """
     Remove electron at orbital i in state.
 
     Parameters
     ----------
-    n_spin_orbitals : int
+    n_spin_orbitals:
         Total number of spin-orbitals in the system.
-    i : int
+    i:
         Spin-orbital index
-    state : int
+    state:
         Product state.
 
     Returns
     -------
-    state_new : int
+    state_new:
         Product state
-    amp : int
+    amp:
         Amplitude. 0, -1 or 1.
 
     """
-    # String representation of product state.
-    s = psr.int2str(state, n_spin_orbitals)
-    if s[i] == "0":
-        return -1, 0
-    elif s[i] == "1":
-        state_new = state - 2 ** (n_spin_orbitals - i - 1)
-        amp = 1 if s[:i].count("1") % 2 == 0 else -1
+    i_right = n_spin_orbitals - 1 - i
+    if state & (1 << i_right):
+        # Spin-orbital is occupied.
+        # Remove electron with AND and NOT operators.
+        # (Instead of the AND and NOT operators one could use the XOR operator)
+        state_new = state & (~(1 << i_right))
+        # Want to count number of electrons in spin-orbitals with index lower than i.
+        # First right bit-shift to get rid of electrons with index equal or bigger than i.
+        # Then count if number of electrons are even or odd.
+        tmp = state >> (i_right + 1)
+        amp = 1 if tmp.bit_count() % 2 == 0 else -1
         return state_new, amp
     else:
-        raise Exception("Integer representation of state is wrong.")
+        # Can't remove since spin-orbital is unoccupied
+        return -1, 0
 
 
 def ustr(i, state):
