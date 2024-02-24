@@ -43,8 +43,5 @@ python3 -m venv ~/envED
 . ~/envED/bin/activate
 
 # Install required python libraries.
-pip install --disable-pip-version-check -q -U pip==21.2.4
-pip install --disable-pip-version-check -q pip-tools==6.1.0
-rm -f requirements.txt
-pip-compile -q requirements.in
-pip install --disable-pip-version-check -q -r requirements.txt
+pip install --disable-pip-version-check -q -U uv==0.1.6
+uv pip install -q -r requirements.in
