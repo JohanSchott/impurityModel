@@ -137,5 +137,6 @@ Open the generated `doc/sphinx/generated_doc/html/index.html` in a web browser.
 
 ### Publications using impurityModel
 
-[Theory of x-ray absorption spectroscopy for ferrites](https://arxiv.org/abs/2401.03858)
+[Theory of x-ray absorption spectroscopy for ferrites](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.115126)
 
+[Re-Dichalcogenides: Resolving Conflicts of TheirStructure–Property Relationship](https://onlinelibrary.wiley.com/doi/epdf/10.1002/apxr.202200010)
