@@ -601,16 +601,16 @@ def read_h0_CF_file(h0_CF_filename):
     with open(h0_CF_filename, "r") as file_handle:
         parameters = json.loads(file_handle.read())
     # Default values are for Ni in NiO.
-    e_imp = parameters["e_imp"] if "e_imp" in parameters else -1.31796
-    e_deltaO_imp = parameters["e_deltaO_imp"] if "e_deltaO_imp" in parameters else 0.60422
-    e_val_eg = parameters["e_val_eg"] if "e_val_eg" in parameters else -4.4
-    e_val_t2g = parameters["e_val_t2g"] if "e_val_t2g" in parameters else -6.5
-    e_con_eg = parameters["e_con_eg"] if "e_con_eg" in parameters else 3
-    e_con_t2g = parameters["e_con_t2g"] if "e_con_t2g" in parameters else 2
-    v_val_eg = parameters["v_val_eg"] if "v_val_eg" in parameters else 1.883
-    v_val_t2g = parameters["v_val_t2g"] if "v_val_t2g" in parameters else 1.395
-    v_con_eg = parameters["v_con_eg"] if "v_con_eg" in parameters else 0.6
-    v_con_t2g = parameters["v_con_t2g"] if "v_con_t2g" in parameters else 0.4
+    e_imp = parameters.get("e_imp", -1.31796)
+    e_deltaO_imp = parameters.get("e_deltaO_imp", 0.60422)
+    e_val_eg = parameters.get("e_val_eg", -4.4)
+    e_val_t2g = parameters.get("e_val_t2g", -6.5)
+    e_con_eg = parameters.get("e_con_eg", 3)
+    e_con_t2g = parameters.get("e_con_t2g", 2)
+    v_val_eg = parameters.get("v_val_eg", 1.883)
+    v_val_t2g = parameters.get("v_val_t2g", 1.395)
+    v_con_eg = parameters.get("v_con_eg", 0.6)
+    v_con_t2g = parameters.get("v_con_t2g", 0.4)
     return (
         e_imp,
         e_deltaO_imp,
