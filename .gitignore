@@ -1,6 +1,3 @@
-# pip-compile output
-requirements.txt
-
 # Generated documentation files
 doc/sphinx/generated_doc/*
 doc/sphinx/_doc_build/*
