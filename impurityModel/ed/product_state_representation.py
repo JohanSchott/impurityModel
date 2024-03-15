@@ -29,7 +29,6 @@ In the create.py and remove.py modules, the ordering convention is such that thi
 
 """
 
-
 from bitarray import bitarray
 
 
