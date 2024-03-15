@@ -121,16 +121,22 @@ Type
 ```bash
 pytest
 ``` 
-to perform the (unit) tests in the `test`-folder.
+to run all python unit tests in the repository.
 
 ### Documentation
 The documentation of this package is found in the directory `doc`.
 
-To update the manual, type:
+To update the manual type:
 
 ```bash
 make -s -C doc/sphinx clean
 make -s -C doc/sphinx html
 ```
-to generate a html-page.
+Open the generated `doc/sphinx/generated_doc/html/index.html` in a web browser.
 
+
+### Publications using impurityModel
+
+[Theory of x-ray absorption spectroscopy for ferrites](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.115126)
+
+[Re-Dichalcogenides: Resolving Conflicts of TheirStructure–Property Relationship](https://onlinelibrary.wiley.com/doi/epdf/10.1002/apxr.202200010)
