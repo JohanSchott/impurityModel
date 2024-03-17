@@ -2,7 +2,6 @@
 Module with test comparing new simulations with reference data.
 """
 
-
 import inspect
 import math
 import os

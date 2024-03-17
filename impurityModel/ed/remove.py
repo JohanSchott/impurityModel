@@ -8,7 +8,6 @@ The ordering convention is such that the normal ordering of a product state is
 
 """
 
-
 from bisect import bisect_left
 
 # Local imports

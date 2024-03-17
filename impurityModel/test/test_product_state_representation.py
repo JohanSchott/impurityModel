@@ -2,7 +2,6 @@
 Module with tests of functions in product_state_representation.py.
 """
 
-
 from bitarray import bitarray
 
 # Local
