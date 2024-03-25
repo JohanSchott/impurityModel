@@ -396,7 +396,7 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs, DCinfo, hFie
     hHfieldOperator = finite.gethHfieldop(hx, hy, hz, l=2)
 
     # Read the non-relativistic non-interacting Hamiltonian operator from file.
-    h0_operator = get_h0_operator(h0_filename, nBaths)
+    h0_operator = read_pickled_file(h0_filename)
 
     # Add Hamiltonian terms to one operator.
     hOperator = finite.addOps(
@@ -416,37 +416,10 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs, DCinfo, hFie
     return hOp
 
 
-def get_h0_operator(h0_filename, nBaths):
-    """
-    Return h0 operator.
-
-    Parameters
-    ----------
-    h0_filename : str
-        Filename of non-interacting, non-relativistic operator.
-    nBaths : dict
-        Number of bath states for each angular momentum.
-
-    Returns
-    -------
-    h0_operator : dict
-        The non-relativistic non-interacting Hamiltonian in operator form.
-        Hamiltonian describes 3d orbitals and bath orbitals.
-        tuple : complex,
-        where each tuple describes a process of two steps (annihilation and then creation).
-        Each step is described by a tuple of the form:
-        (spin_orb, 'c') or (spin_orb, 'a'),
-        where spin_orb is a tuple of the form (l, s, m) or (l, b) or ((l_a, l_b), b).
-
-    """
-    with open(h0_filename, "rb") as handle:
-        h0_operator = pickle.loads(handle.read())
-    # Sanity check
-    for process in h0_operator.keys():
-        for event in process:
-            if len(event[0]) == 2:
-                assert nBaths[event[0][0]] > event[0][1]
-    return h0_operator
+def read_pickled_file(filename: str):
+    with open(filename, "rb") as handle:
+        content = pickle.loads(handle.read())
+    return content
 
 
 if __name__ == "__main__":
