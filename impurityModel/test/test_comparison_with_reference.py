@@ -33,7 +33,7 @@ def compare_spectra(
         print("Run command:", cmd)
         print("Use command argument:", script_argument)
 
-        subprocess.run(args=[cmd, str(script_argument)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        subprocess.run(args=[cmd, str(script_argument)], check=True)
 
         files_and_dirs = os.listdir()
         print("Files and folders in temporary folder:", files_and_dirs)
