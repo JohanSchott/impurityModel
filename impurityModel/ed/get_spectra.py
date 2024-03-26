@@ -418,7 +418,7 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs, DCinfo, hFie
 
 def read_pickled_file(filename: str):
     with open(filename, "rb") as handle:
-        content = pickle.loads(handle.read())
+        content = pickle.load(handle)
     return content
 
 
