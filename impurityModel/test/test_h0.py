@@ -53,6 +53,6 @@ def sanity_check_non_interacting_hamiltonian(h0: dict[tuple, complex], nBaths: d
                 assert l in nBaths
                 assert 0 <= l <= 3
                 assert s in (0, 1)
-                assert abs(m) in range(-l, l + 1)
+                assert m in range(-l, l + 1)
             else:
                 raise ValueError(f"{spin_orbit_info}")
