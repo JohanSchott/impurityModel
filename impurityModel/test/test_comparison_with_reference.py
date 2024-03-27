@@ -33,7 +33,20 @@ def compare_spectra(
         print("Run command:", cmd)
         print("Use command argument:", script_argument)
 
-        subprocess.run(args=[cmd, str(script_argument)], check=True)
+        try:
+            output = subprocess.run(args=[cmd, str(script_argument)], check=True, capture_output=True)
+            print(f"{output.returncode = }")
+            print("output.stdout:")
+            print(str(output.stdout, encoding="utf-8"))
+            print("output.stderr:")
+            print(str(output.stderr, encoding="utf-8"))
+        except subprocess.CalledProcessError as e:
+            print(f"{e.returncode = }")
+            print("e.output:")
+            print(str(e.output, encoding="utf-8"))
+            print("e.stderr:")
+            print(str(e.stderr, encoding="utf-8"))
+            raise
 
         files_and_dirs = os.listdir()
         print("Files and folders in temporary folder:", files_and_dirs)
