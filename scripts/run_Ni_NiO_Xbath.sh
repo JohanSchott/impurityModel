@@ -36,5 +36,8 @@ python3 --version
 which python
 which python3
 
+which mpiexec
+
 #mpirun -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
-python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
+mpiexec -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
+#python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
