@@ -39,6 +39,7 @@ which python3
 which mpiexec
 which mpirun
 
+mpiexec --help
 
 mpiexec -n 2 --verbose echo "hej"
 mpiexec -n 2 --verbose python -c "print('hello')"

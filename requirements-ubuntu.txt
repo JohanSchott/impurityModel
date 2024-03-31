@@ -6,3 +6,4 @@ python3-venv
 python3-mpi4py
 openmpi-bin
 libopenmpi-dev
+mpich
