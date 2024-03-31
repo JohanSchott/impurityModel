@@ -37,7 +37,12 @@ which python
 which python3
 
 which mpiexec
+which mpirun
 
+
+mpiexec -n 2 --verbose echo "hej"
+mpiexec -n 2 --verbose python -c "print('hello')"
 #mpirun -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
-mpiexec -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
+#mpiexec -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
 #python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
+
