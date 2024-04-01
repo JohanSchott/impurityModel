@@ -38,5 +38,10 @@ jobs:
       run: |
         # Activate virtual environment, and set PYTHONPATH
         source env.sh
-        pytest
+        #pytest
+        which mpiexec 
+        mpiexec --help
+        echo "-------- debug print ----------"
+        mpiexec -n 2 --verbose echo "hej"
+        mpiexec -n 2 --verbose python -c "print('hello')"
 
