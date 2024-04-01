@@ -53,5 +53,7 @@ jobs:
         # pytest ../impurityModel/test/test_comparison_with_reference.py
         pytest impurityModel/test/test_comparison_with_reference.py
         echo "-------- debug print E ----------"
+        pytest impurityModel
+        echo "-------- debug print F ----------"
 
 
