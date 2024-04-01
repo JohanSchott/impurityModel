@@ -51,10 +51,10 @@ def compare_spectra(
         files_and_dirs = os.listdir()
         print("Files and folders in temporary folder:", files_and_dirs)
         ## Open spectra file and the reference spectra file
-        #file_handle = h5py.File("spectra.h5", "r")
-        #ref_file_handle = h5py.File(os.path.join(path, reference_file), "r")
+        # file_handle = h5py.File("spectra.h5", "r")
+        # ref_file_handle = h5py.File(os.path.join(path, reference_file), "r")
         ## Compare file contents
-        #for key in ref_file_handle:
+        # for key in ref_file_handle:
         #    print("Compare dataset:", key)
         #    x = file_handle[key][()]
         #    x_ref = ref_file_handle[key][()]
@@ -68,7 +68,7 @@ def compare_spectra(
         #    assert math.isclose(np.mean(abs_diff), 0, abs_tol=2e-5)
         #    print("Median abs diff:", np.median(abs_diff))
         #    assert math.isclose(np.median(abs_diff), 0, abs_tol=1e-8)
-        #print("Comparison successful")
+        # print("Comparison successful")
 
 
 if __name__ == "__main__":
