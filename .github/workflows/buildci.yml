@@ -40,15 +40,17 @@ jobs:
         source env.sh
         which mpiexec 
         mpiexec --help
+        mkdir tmp
+        cd tmp
         echo "-------- debug print A----------"
         mpiexec -n 2 --verbose echo "hej"
         mpiexec -n 2 --verbose python -c "print('hello')"
         echo "-------- debug print B ----------"
-        ./scripts/run_Ni_NiO_Xbath.sh 50
+        ../scripts/run_Ni_NiO_Xbath.sh 50
         echo "-------- debug print C ----------"
-        python impurityModel/test/test_comparison_with_reference.py
+        python ../impurityModel/test/test_comparison_with_reference.py
         echo "-------- debug print D ----------"
-        pytest impurityModel/test/test_comparison_with_reference.py
+        pytest ../impurityModel/test/test_comparison_with_reference.py
         echo "-------- debug print E ----------"
 
 

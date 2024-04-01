@@ -30,7 +30,9 @@ echo "Number of bath states: $nBath3d"
 echo "H0 filename: $h0_filename"
 echo "Radial wavefunction filename: $radial_filename"
 
+echo "PYTHONPATH:"
 echo $PYTHONPATH
+echo "After PYTHONPATH."
 python --version
 python3 --version
 which python
@@ -43,7 +45,8 @@ mpiexec --help
 
 mpiexec -n 2 --verbose echo "hej"
 mpiexec -n 2 --verbose python -c "print('hello')"
+mpiexec -n 2 --verbose python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
+
 #mpirun -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
-#mpiexec -n $ranks python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
 #python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
 
