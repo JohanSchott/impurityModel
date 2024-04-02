@@ -1,5 +1,8 @@
 """
 Module with test comparing new simulations with reference data.
+
+test_comparison_with_reference.py is not allowed to import any MPI stuff, except in the subprocess.run.
+Otherwise MPI gets confused, since MPI can't handle that both the parent and the child process use MPI.
 """
 
 import math

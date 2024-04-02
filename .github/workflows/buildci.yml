@@ -38,19 +38,7 @@ jobs:
       run: |
         # Activate virtual environment, and set PYTHONPATH
         source env.sh
-        #mkdir tmp
-        #cd tmp
-        #echo "-------- debug print A----------"
-        #mpiexec -n 2 --verbose echo "hej"
-        #mpiexec -n 2 --verbose python -c "print('hello')"
-        #echo "-------- debug print B ----------"
-        #../scripts/run_Ni_NiO_Xbath.sh 50
-        #echo "-------- debug print C ----------"
-        #python ../impurityModel/test/test_comparison_with_reference.py
-        echo "-------- debug print D ----------"
+        # test_comparison_with_reference.py is ignored in pytest.ini
+        # Test it separatly since it starts MPI processes in a subprocess.run.
         pytest 
-        echo "-------- debug print E ----------"
         pytest impurityModel/test/test_comparison_with_reference.py
-        echo "-------- debug print F ----------"
-
-
