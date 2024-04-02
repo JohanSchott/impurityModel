@@ -45,7 +45,7 @@ which mpirun
 
 mpiexec --help
 
-#mpiexec -n 2 --verbose echo "hej"
+mpiexec -n 2 --verbose echo "hej"
 #mpiexec -n 2 --verbose python -c "print('hello')"
 #mpiexec -n $ranks --verbose python -m impurityModel.ed.get_spectra $h0_filename $radial_filename --nBaths 0 $nBath3d --nValBaths 0 $nBath3d
 
