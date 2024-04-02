@@ -38,8 +38,6 @@ jobs:
       run: |
         # Activate virtual environment, and set PYTHONPATH
         source env.sh
-        which mpiexec 
-        mpiexec --help
         #mkdir tmp
         #cd tmp
         #echo "-------- debug print A----------"
@@ -50,10 +48,9 @@ jobs:
         #echo "-------- debug print C ----------"
         #python ../impurityModel/test/test_comparison_with_reference.py
         echo "-------- debug print D ----------"
-        # pytest ../impurityModel/test/test_comparison_with_reference.py
-        pytest impurityModel/test/test_comparison_with_reference.py
+        pytest 
         echo "-------- debug print E ----------"
-        pytest impurityModel
+        pytest impurityModel/test/test_comparison_with_reference.py
         echo "-------- debug print F ----------"
 
 
