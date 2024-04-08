@@ -36,7 +36,7 @@ def compare_spectra(
         print(f"{script_path = }")
         print(f"{script_argument = }")
 
-        output = subprocess.run(args=[script_path, str(script_argument)], check=True)
+        subprocess.run(args=[script_path, str(script_argument)], check=True)
 
         files_and_dirs = os.listdir()
         print("Files and folders in temporary folder:", files_and_dirs)
@@ -51,7 +51,6 @@ def compare_spectra(
                 x_ref = ref_file_handle[key][()]
                 abs_diff = np.abs(x - x_ref)
                 i = np.argmax(abs_diff)
-                print("Max abs diff:", np.ravel(abs_diff)[i])
                 print("Reference value at max diff:", np.ravel(x_ref)[i])
                 np.testing.assert_allclose(x, x_ref, atol=3e-2)
                 np.testing.assert_allclose(x, x_ref, atol=2e-2, rtol=0.1)
