@@ -121,6 +121,10 @@ Type
 ```bash
 pytest
 ``` 
+and 
+```bash
+pytest impurityModel/test/test_comparison_with_reference.py
+```
 to run all python unit tests in the repository.
 
 ### Documentation
