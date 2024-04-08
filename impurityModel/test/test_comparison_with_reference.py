@@ -36,13 +36,7 @@ def compare_spectra(
         print(f"{script_path = }")
         print(f"{script_argument = }")
 
-        output = subprocess.run(args=[script_path, str(script_argument)], check=False, capture_output=True)
-        print(f"{output.returncode = }")
-        print("output.stdout:")
-        print(str(output.stdout, encoding="utf-8"))
-        print("output.stderr:")
-        print(str(output.stderr, encoding="utf-8"))
-        assert output.returncode == 0
+        output = subprocess.run(args=[script_path, str(script_argument)], check=True)
 
         files_and_dirs = os.listdir()
         print("Files and folders in temporary folder:", files_and_dirs)
