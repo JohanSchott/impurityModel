@@ -13,12 +13,12 @@ from impurityModel.ed.finite import applyOp
 from impurityModel.ed import product_state_representation as psr
 
 
-def test_applyOp_create_one_electron_from_vaccum():
-    vaccum_as_string = "000000"
-    n_spin_orbitals = len(vaccum_as_string)
-    vaccum_as_bytes = psr.str2bytes(vaccum_as_string)
+def test_applyOp_create_one_electron_from_vacuum():
+    vacuum_as_string = "000000"
+    n_spin_orbitals = len(vacuum_as_string)
+    vacuum_as_bytes = psr.str2bytes(vacuum_as_string)
     # Multi-configurational state is a single product state
-    psi = {vaccum_as_bytes: 7}
+    psi = {vacuum_as_bytes: 7}
     for i in range(n_spin_orbitals):
         op = {((i, "c"),): 9}
         psi_new = applyOp(n_spin_orbitals, op, psi)
@@ -27,15 +27,15 @@ def test_applyOp_create_one_electron_from_vaccum():
         for state, amp in psi_new.items():
             assert math.isclose(amp, 7 * 9)
             state_as_string = psr.bytes2str(state, n_spin_orbitals)
-            assert state_as_string == vaccum_as_string[:i] + "1" + vaccum_as_string[i + 1 :]
+            assert state_as_string == vacuum_as_string[:i] + "1" + vacuum_as_string[i + 1 :]
 
 
-def test_applyOp_create_two_electrons_from_vaccum():
-    vaccum_as_string = "000000"
-    n_spin_orbitals = len(vaccum_as_string)
-    vaccum_as_bytes = psr.str2bytes(vaccum_as_string)
+def test_applyOp_create_two_electrons_from_vacuum():
+    vacuum_as_string = "000000"
+    n_spin_orbitals = len(vacuum_as_string)
+    vacuum_as_bytes = psr.str2bytes(vacuum_as_string)
     # Multi-configurational state is a single product state
-    psi = {vaccum_as_bytes: 7}
+    psi = {vacuum_as_bytes: 7}
     for i in range(n_spin_orbitals):
         for j in range(n_spin_orbitals):
             op = {((i, "c"), (j, "c")): 9}
@@ -52,16 +52,16 @@ def test_applyOp_create_two_electrons_from_vaccum():
                     a, b = min(i, j), max(i, j)
                     assert (
                         state_as_string
-                        == vaccum_as_string[:a] + "1" + vaccum_as_string[a + 1 : b] + "1" + vaccum_as_string[b + 1 :]
+                        == vacuum_as_string[:a] + "1" + vacuum_as_string[a + 1 : b] + "1" + vacuum_as_string[b + 1 :]
                     )
 
 
-def test_applyOp_two_creation_processes_from_vaccum():
-    vaccum_as_string = "000000"
-    n_spin_orbitals = len(vaccum_as_string)
-    vaccum_as_bytes = psr.str2bytes(vaccum_as_string)
+def test_applyOp_two_creation_processes_from_vacuum():
+    vacuum_as_string = "000000"
+    n_spin_orbitals = len(vacuum_as_string)
+    vacuum_as_bytes = psr.str2bytes(vacuum_as_string)
     # Multi-configurational state is a single product state
-    psi = {vaccum_as_bytes: 7}
+    psi = {vacuum_as_bytes: 7}
     for i in range(n_spin_orbitals):
         for j in range(n_spin_orbitals):
             if i == j:
@@ -78,11 +78,11 @@ def test_applyOp_two_creation_processes_from_vaccum():
                     a = j
                 else:
                     raise ValueError(f"{amp = }, {state_as_string = }")
-                assert state_as_string == vaccum_as_string[:a] + "1" + vaccum_as_string[a + 1 :]
+                assert state_as_string == vacuum_as_string[:a] + "1" + vacuum_as_string[a + 1 :]
 
 
 def main():
-    test_applyOp_create_from_vaccum()
+    test_applyOp_create_from_vacuum()
 
 
 if __name__ == "__main__":
