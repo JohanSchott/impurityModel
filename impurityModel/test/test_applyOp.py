@@ -30,7 +30,7 @@ def test_applyOp_create_one_electron_from_one_electron_state():
             assert psi_new == {psr.str2bytes(product_state[:i] + "1" + product_state[i + 1 :]): amp}
 
 
-def test_applyOp_create_two_electrons_from_vacuum():
+def test_applyOp_create_two_electrons():
     vacuum_as_string = "000000"
     n_spin_orbitals = len(vacuum_as_string)
     # Multi-configurational state is a single product state
@@ -51,7 +51,7 @@ def test_applyOp_create_two_electrons_from_vacuum():
                 assert psi_new == {product_state: amp}
 
 
-def test_applyOp_two_creation_processes_from_vacuum():
+def test_applyOp_two_creation_processes():
     vacuum_as_string = "000000"
     n_spin_orbitals = len(vacuum_as_string)
     # Multi-configurational state is a single product state
@@ -68,7 +68,7 @@ def test_applyOp_two_creation_processes_from_vacuum():
             }
 
 
-def test_applyOp_remove_one_electron_from_vacuum():
+def test_applyOp_remove_one_electron():
     vacuum_as_string = "000000"
     n_spin_orbitals = len(vacuum_as_string)
     # Multi-configurational state is a single product state
