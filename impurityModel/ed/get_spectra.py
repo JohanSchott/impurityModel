@@ -16,6 +16,7 @@ from mpi4py import MPI
 from impurityModel.ed import finite, spectra
 from impurityModel.ed.average import k_B
 from impurityModel.ed.finite import c2i
+from impurityModel.ed.hermitian import check_hermitian
 
 
 def main(
@@ -413,6 +414,8 @@ def get_hamiltonian_operator(nBaths, nValBaths, slaterCondon, SOCs, DCinfo, hFie
     hOp = {}
     for process, value in hOperator.items():
         hOp[tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)] = value
+
+    check_hermitian(hOp)
     return hOp
 
 
