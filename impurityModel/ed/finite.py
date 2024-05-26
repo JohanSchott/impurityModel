@@ -288,8 +288,7 @@ def daggerOp(op):
 
 
 def check_hermitian(op: dict[tuple, int | float | complex]):
-    for process, value in daggerOp(op).items():
-        np.testing.assert_allclose(op[process], value)
+    assert daggerOp(op) == op
 
 
 def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
