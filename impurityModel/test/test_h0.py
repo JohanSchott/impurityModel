@@ -2,7 +2,7 @@ import os
 from glob import glob
 
 from impurityModel.ed.get_spectra import read_pickled_file
-from impurityModel.ed.hermitian import check_hermitian
+from impurityModel.ed.finite import check_hermitian
 
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))

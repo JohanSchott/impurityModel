@@ -15,8 +15,7 @@ from mpi4py import MPI
 # Local stuff
 from impurityModel.ed import finite, spectra
 from impurityModel.ed.average import k_B
-from impurityModel.ed.finite import c2i
-from impurityModel.ed.hermitian import check_hermitian
+from impurityModel.ed.finite import c2i, check_hermitian
 
 
 def main(
