@@ -287,7 +287,7 @@ def daggerOp(op):
     return opDagger
 
 
-def check_hermitian(op: dict[tuple, int | float | complex]):
+def assert_hermitian(op: dict[tuple, int | float | complex]):
     assert daggerOp(op) == op
 
 
