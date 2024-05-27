@@ -287,6 +287,10 @@ def daggerOp(op):
     return opDagger
 
 
+def assert_hermitian(op: dict[tuple, int | float | complex]):
+    assert daggerOp(op) == op
+
+
 def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     """
     Return restricted basis of product states.
@@ -1313,9 +1317,9 @@ def applyOp(n_spin_orbitals, op, psi, slaterWeightMin=1e-12, restrictions=None, 
 
         process. Examples of possible tuples (and their meanings) are:
 
-        ((i, 'c'))  <-> c_i^dagger
+        ((i, 'c'),)  <-> c_i^dagger
 
-        ((i, 'a'))  <-> c_i
+        ((i, 'a'),)  <-> c_i
 
         ((i, 'c'), (j, 'a'))  <-> c_i^dagger c_j
 
