@@ -15,7 +15,7 @@ from mpi4py import MPI
 # Local stuff
 from impurityModel.ed import finite, spectra
 from impurityModel.ed.average import k_B
-from impurityModel.ed.finite import c2i
+from impurityModel.ed.finite import assert_hermitian, c2i
 
 
 def main(
@@ -425,6 +425,8 @@ def get_hamiltonian_operator_using_CF(
     hOp = {}
     for process, value in hOperator.items():
         hOp[tuple((c2i(nBaths, spinOrb), action) for spinOrb, action in process)] = value
+
+    assert_hermitian(hOp)
     return hOp
 
 

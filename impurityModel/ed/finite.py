@@ -287,6 +287,10 @@ def daggerOp(op):
     return opDagger
 
 
+def assert_hermitian(op: dict[tuple, int | float | complex]):
+    assert daggerOp(op) == op
+
+
 def get_basis(nBaths, valBaths, dnValBaths, dnConBaths, dnTol, n0imp):
     """
     Return restricted basis of product states.

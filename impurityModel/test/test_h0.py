@@ -1,6 +1,7 @@
 import os
 from glob import glob
 
+from impurityModel.ed.finite import assert_hermitian
 from impurityModel.ed.get_spectra import read_pickled_file
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -36,6 +37,7 @@ def sanity_check_non_interacting_hamiltonian(h0: dict[tuple, complex], nBaths: d
     nBaths:
         angular momentum: number of bath states coupled to the correlated orbitals with this angular momentum.
     """
+    assert_hermitian(h0)
     for process, value in h0.items():
         assert isinstance(value, complex)
         assert len(process) == 2  # two events in non-interacting Hamiltonian
