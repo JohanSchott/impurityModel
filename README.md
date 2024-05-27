@@ -145,7 +145,7 @@ Contributors:
 - Felix Sorgenfrei (@fesorg): First author in [publication](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.115126) using the impurityModel repo. Has also made the related repo: https://github.com/fesorg/Tutorial-X-ray-from-RSPt
 - Patrik Thunström (@patrikthunstrom): Involved in discussions about computational algorithms, reported bugs, and has provided theoretical knowledge and inspiration.
 - Petter Säterskog (@kpws): Written some of the initial key functionalities.
-- Christian Häggström (@kalvdans): Has provided valueble reviews on PRs.
+- Christian Häggström (@kalvdans): Has provided valuable reviews on PRs.
 - Mébarek Alouani: Has provided theoretical knowledge and inspiration.
 - Olle Eriksson: Has provided theoretical knowledge and inspiration.
 - Igor Di Marco (@igordimarco): Has provided theoretical knowledge and inspiration.
