@@ -8,9 +8,6 @@
 
 Calculate many-body states of an impurity Anderson model and a various spectra, e.g. photoemission spectroscopy (PS), x-ray photoemission spectroscopy (XPS), x-ray absorption spectroscopy (XAS), non-resonant inelastic x-ray scattering (NIXS), and resonant inelastic x-ray scattering (RIXS), using the [Lanczos algorithm](https://en.wikipedia.org/wiki/Lanczos_algorithm).
 
-Credits to Petter Saterskog for inspiration and for some of the key functionality.
-
-Credits to Patrik Thunstrom for discussions about computational algorithms.
 
 <figure>
 <div class="row">
@@ -138,9 +135,27 @@ make -s -C doc/sphinx html
 ```
 Open the generated `doc/sphinx/generated_doc/html/index.html` in a web browser.
 
+### Contributors
+
+Call for contributions: The impurityModel project welcomes your expertise and enthusiasm!
+
+Contributors:
+- Johan Schött (@JohanSchott): Implemented many of the functionalities needed to solve the impurity problem.
+- Johan Jönsson (@johanjoensson): Implementented the entire DMFT cycle in the fork https://github.com/johanjoensson/impurityModel. Also developed the related repo: https://github.com/johanjoensson/rspt2spectra
+- Felix Sorgenfrei (@fesorg): First author in [publication](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.115126) using the impurityModel repo. Has also made the related repo: https://github.com/fesorg/Tutorial-X-ray-from-RSPt
+- Patrik Thunström (@patrikthunstrom): Involved in discussions about computational algorithms, reported bugs, and has provided theoretical knowledge and inspiration.
+- Petter Säterskog (@PetterSaterskog): Written some of the initial key functionalities.
+- Christian Häggström (@kalvdans): Has provided valuable reviews on PRs.
+- Mébarek Alouani: Has provided theoretical knowledge and inspiration.
+- Olle Eriksson: Has provided theoretical knowledge and inspiration.
+- Igor Di Marco (@igordimarco): Has provided theoretical knowledge and inspiration.
+
+Please note that the list and the contribution information are incomplete.
+
 
 ### Publications using impurityModel
 
 [Theory of x-ray absorption spectroscopy for ferrites](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.115126)
 
 [Re-Dichalcogenides: Resolving Conflicts of TheirStructure–Property Relationship](https://onlinelibrary.wiley.com/doi/epdf/10.1002/apxr.202200010)
+
