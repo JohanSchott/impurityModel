@@ -164,81 +164,62 @@ def plot_spectra_in_file(filename):
 
     if "rixs" in locals():
         print("RIXS map")
-        print("Plot log10 of RIXS intensity for better visibility.")
+        print("Plot RIXS intensity in log-scale for better visibility.")
         print("In-coming photon mesh resolution: {:5.3f} eV".format(wIn[1] - wIn[0]))
         print("Energy loss mesh resolution: {:5.3f} eV".format(wLoss[1] - wLoss[0]))
-        plotCutOff = 0.001
+        plotCutOff = 1e-6
 
         # Sum over in and out-going polarizations
-        fig = plt.figure()
         tmp = np.sum(rixs, axis=(0, 1)).T
         mask = tmp < plotCutOff
         tmp[mask] = np.nan
-        # Choose a nice colormap, e.g. 'viridis' or 'Blues'
-        cs = plt.contourf(wIn, wLoss, np.log10(tmp), cmap=plt.get_cmap("viridis"))
-        # cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis'))
-        # Make a colorbar for the ContourSet returned by the contourf call.
-        cbar = fig.colorbar(cs)
-        cbar.ax.set_ylabel("log RIXS intensity")
-        # Add the contour line levels to the colorbar
-        # cbar.add_lines(cs2)
-        # for e in wIn:
-        #    plt.plot([e,e],[wLoss[0],wLoss[-1]],'-k',lw=0.5)
-        plt.grid(c="k", ls="-", alpha=0.3)
+
+        dx = wIn[1] - wIn[0]
+        dy = wLoss[1] - wLoss[0]
+        left = wIn[0] - dx / 2
+        right = wIn[-1] + dx / 2
+        bottom = wLoss[0] - dy / 2
+        top = wLoss[-1] + dy / 2
+
+        plt.figure()
+        cs = plt.imshow(tmp, origin="lower", extent=(left, right, bottom, top), aspect="auto", norm="log")
+        cbar = plt.colorbar(cs)
+        cbar.ax.set_ylabel("RIXS intensity")
         plt.xlabel(r"$\omega_{in}$   (eV)")
         plt.ylabel(r"$\omega_{loss}$   (eV)")
         plt.tight_layout()
-        plt.show()
+        # plt.savefig("rixs.png")
 
         # All polarization combinations In:x,y,z , Out:x,y,z
-        fig, axes = plt.subplots(nrows=np.shape(rixs)[0], ncols=np.shape(rixs)[1], sharex=True, sharey=True)
-        if np.shape(rixs)[:2] == (1, 1):
-            tmp = np.copy(rixs[0, 0, :, :].T)
-            mask = tmp < plotCutOff
-            tmp[mask] = np.nan
-            # Choose a nice colormap, e.g. 'viridis' or 'Blues'
-            cs = axes.contourf(wIn, wLoss, np.log10(tmp), cmap=plt.get_cmap("viridis"))
-            # cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis'))
-            # Make a colorbar for the ContourSet returned by the contourf call.
-            cbar = fig.colorbar(cs, ax=axes)
-            cbar.ax.set_ylabel("log RIXS intensity")
-            # Add the contour line levels to the colorbar
-            # cbar.add_lines(cs2)
-            # for e in wIn:
-            #    plt.plot([e,e],[wLoss[0],wLoss[-1]],'-k',lw=0.5)
-            plt.grid(c="k", ls="-", alpha=0.3)
-            axes.set_xlabel(r"$\omega_{in}$   (eV)")
-            axes.set_ylabel(r"$\omega_{loss}$   (eV)")
-        else:
+        if rixs.shape[:2] != (1, 1):
+            fig, axes = plt.subplots(nrows=np.shape(rixs)[0], ncols=np.shape(rixs)[1], sharex=True, sharey=True)
             for i in range(np.shape(axes)[0]):
                 for j in range(np.shape(axes)[1]):
                     tmp = np.copy(rixs[i, j, :, :].T)
                     mask = tmp < plotCutOff
                     tmp[mask] = np.nan
-                    # Choose a nice colormap, e.g. 'viridis' or 'Blues'
-                    cs = axes[i, j].contourf(wIn, wLoss, np.log10(tmp), cmap=plt.get_cmap("viridis"))
-                    # cs2 = plt.contour(cs, levels=cs.levels[::2], cmap=plt.get_cmap('viridis'))
-                    # Make a colorbar for the ContourSet returned by the contourf call.
-                    cbar = fig.colorbar(cs, ax=axes[i, j])
-                    cbar.ax.set_ylabel("log RIXS intensity")
-                    # Add the contour line levels to the colorbar
-                    # cbar.add_lines(cs2)
-                    # for e in wIn:
-                    #    plt.plot([e,e],[wLoss[0],wLoss[-1]],'-k',lw=0.5)
-                    # plt.grid(c='k', ls='-', alpha=0.3)
-                    axes[i, j].set_title("(" + str(i) + str(j) + ")")
+
+                    cs = axes[i, j].imshow(
+                        tmp, origin="lower", extent=(left, right, bottom, top), aspect="auto", norm="log"
+                    )
+                    cbar = plt.colorbar(cs, ax=axes[i, j])
+                    if j == np.shape(axes)[1] - 1:
+                        cbar.ax.set_ylabel("RIXS intensity")
+                    axes[i, j].set_title(f"({i},{j})")
             for ax in axes[2, :]:
                 ax.set_xlabel(r"$\omega_{in}$   (eV)")
             for ax in axes[:, 0]:
                 ax.set_ylabel(r"$\omega_{loss}$   (eV)")
-        plt.tight_layout()
+            plt.tight_layout()
+            # plt.savefig("rixs_polarizations.png")
+
         plt.show()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot spectra")
     parser.add_argument(
-        "--filename",
+        "filename",
         type=str,
         default="spectra.h5",
         help="Filename containing spectra.",
