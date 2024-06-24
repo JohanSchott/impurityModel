@@ -37,10 +37,10 @@ def main():
 
     dx = wIn[1] - wIn[0]
     dy = wLoss[1] - wLoss[0]
-    left = wIn[0] - dx/2
-    right = wIn[-1] + dx/2
-    bottom = wLoss[0] - dy/2
-    top = wLoss[-1] + dy/2
+    left = wIn[0] - dx / 2
+    right = wIn[-1] + dx / 2
+    bottom = wLoss[0] - dy / 2
+    top = wLoss[-1] + dy / 2
 
     plt.figure()
     cs = plt.imshow(tmp, origin="lower", extent=(left, right, bottom, top), aspect="auto", norm="log")

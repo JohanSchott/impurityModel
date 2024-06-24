@@ -173,13 +173,13 @@ def plot_spectra_in_file(filename):
         tmp = np.sum(rixs, axis=(0, 1)).T
         mask = tmp < plotCutOff
         tmp[mask] = np.nan
-        
+
         dx = wIn[1] - wIn[0]
         dy = wLoss[1] - wLoss[0]
-        left = wIn[0] - dx/2
-        right = wIn[-1] + dx/2
-        bottom = wLoss[0] - dy/2
-        top = wLoss[-1] + dy/2
+        left = wIn[0] - dx / 2
+        right = wIn[-1] + dx / 2
+        bottom = wLoss[0] - dy / 2
+        top = wLoss[-1] + dy / 2
 
         plt.figure()
         cs = plt.imshow(tmp, origin="lower", extent=(left, right, bottom, top), aspect="auto", norm="log")
@@ -188,7 +188,7 @@ def plot_spectra_in_file(filename):
         plt.xlabel(r"$\omega_{in}$   (eV)")
         plt.ylabel(r"$\omega_{loss}$   (eV)")
         plt.tight_layout()
-        #plt.savefig("rixs.png")
+        # plt.savefig("rixs.png")
 
         # All polarization combinations In:x,y,z , Out:x,y,z
         if rixs.shape[:2] != (1, 1):
@@ -198,10 +198,12 @@ def plot_spectra_in_file(filename):
                     tmp = np.copy(rixs[i, j, :, :].T)
                     mask = tmp < plotCutOff
                     tmp[mask] = np.nan
-                    
-                    cs = axes[i, j].imshow(tmp, origin="lower", extent=(left, right, bottom, top), aspect="auto", norm="log")
+
+                    cs = axes[i, j].imshow(
+                        tmp, origin="lower", extent=(left, right, bottom, top), aspect="auto", norm="log"
+                    )
                     cbar = plt.colorbar(cs, ax=axes[i, j])
-                    if j == np.shape(axes)[1] -1:
+                    if j == np.shape(axes)[1] - 1:
                         cbar.ax.set_ylabel("RIXS intensity")
                     axes[i, j].set_title(f"({i},{j})")
             for ax in axes[2, :]:
@@ -209,8 +211,8 @@ def plot_spectra_in_file(filename):
             for ax in axes[:, 0]:
                 ax.set_ylabel(r"$\omega_{loss}$   (eV)")
             plt.tight_layout()
-            #plt.savefig("rixs_polarizations.png")
-    
+            # plt.savefig("rixs_polarizations.png")
+
         plt.show()
 
 
