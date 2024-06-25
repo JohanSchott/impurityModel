@@ -6,26 +6,15 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 # System libraries
 if [ "$(uname)" == "Darwin" ]; then
     # Mac OS X specific things here
+    # If homebrew is not installed, install it by following the
+    # instructions on https://brew.sh/
     if ! which gfortran; then
         echo Install gfortran
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew update
-        brew doctor
         brew install gcc
-        brew install swig
     fi
     if ! which mpirun; then
         echo Install Open-MPI
-        curl -O https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.1.tar.gz
-        mv openmpi-4.1.1.tar.gz /tmp/
-        cd /tmp
-        tar -xf openmpi-4.1.1.tar.gz
-        cd openmpi-4.1.1/
-        mkdir /usr/local/openmpi
-        ./configure --prefix=/usr/local/openmpi
-        make all
-        make install
-        export PATH=${PATH}:/usr/local/openmpi/bin
+        brew install open-mpi
     fi
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Only for Debian, Ubuntu, and related Linux distributions
@@ -43,5 +32,5 @@ python3 -m venv ~/envED
 . ~/envED/bin/activate
 
 # Install required python libraries.
-pip install --disable-pip-version-check -q -U uv==0.1.21
+pip install --disable-pip-version-check -q -U uv==0.2.15
 uv pip install -q -r requirements.in
